@@ -15,13 +15,13 @@ ROOT = Path(__file__).resolve().parents[1]
 SRC = Path(r"C:\Users\Administrator\Desktop")
 OUT = ROOT / "Web"
 
-# (源文件, 输出文件名, 移动端样式表)
+# (源文件, 输出文件名, 移动端样式表, 顶栏版本铭牌)
 PAGES = [
-    ("10维连错.html", "liancuo.html", "app-mobile-dark.css"),
-    ("10维连错V2.html", "liancuov2.html", "app-mobile-dark.css"),
-    ("10维连对.html", "liandui.html", "app-mobile-dark.css"),
-    ("10维连对V2.html", "lianduiv2.html", "app-mobile-dark.css"),
-    ("特别号生肖规律分析预测系统.html", "shengxiao.html", "app-mobile-light.css"),
+    ("10维连错.html", "liancuo.html", "app-mobile-dark.css", "十维连错"),
+    ("10维连错V2.html", "liancuov2.html", "app-mobile-dark.css", "十维连错 · V2"),
+    ("10维连对.html", "liandui.html", "app-mobile-dark.css", "十维连对"),
+    ("10维连对V2.html", "lianduiv2.html", "app-mobile-dark.css", "十维连对 · V2"),
+    ("特别号生肖规律分析预测系统.html", "shengxiao.html", "app-mobile-light.css", "853 生肖"),
 ]
 
 MARK = "<!-- facai-app-inject -->"
@@ -29,9 +29,14 @@ VIEWPORT = ('<meta name="viewport" content="width=device-width, initial-scale=1.
             'viewport-fit=cover">')
 
 
-def inject(html: str, css: str) -> str:
-    if MARK in html:
-        return html
+def inject(html: str, css: str, variant: str = "") -> str:
+    # 先剥掉上一次的注入块，保证重复执行也能拿到最新的注入内容
+    html = re.sub(
+        r'<!-- facai-app-inject -->.*?<script src="app-shell\.js" defer></script>\s*',
+        '',
+        html,
+        flags=re.S,
+    )
 
     # 规范化 viewport
     html2, n = re.subn(
@@ -46,6 +51,7 @@ def inject(html: str, css: str) -> str:
 
     snippet = (
         MARK + "\n"
+        f'<meta name="facai-variant" content="{variant}">\n'
         f'<link rel="stylesheet" href="{css}">\n'
         '<script src="app-shell.js" defer></script>\n'
     )
@@ -58,13 +64,13 @@ def inject(html: str, css: str) -> str:
 
 def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
-    for name, out_name, css in PAGES:
+    for name, out_name, css, variant in PAGES:
         src = SRC / name
         if not src.exists():
             print(f"缺少源文件：{src}", file=sys.stderr)
             return 1
         text = src.read_text(encoding="utf-8")
-        result = inject(text, css)
+        result = inject(text, css, variant)
         (OUT / out_name).write_text(result, encoding="utf-8")
         print(f"{name} -> Web/{out_name}  ({len(text)} -> {len(result)} chars)")
     print("web 资源准备完成")
