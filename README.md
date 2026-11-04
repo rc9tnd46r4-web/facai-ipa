@@ -31,7 +31,7 @@ scripts/
   build_ipa.sh               # macOS 上 swiftc 编译 + actool 图标 + 打 ipa
   gh_push.py                 # 用 api.github.com 推送（git 协议被墙时使用）
   mock_local_api.py          # 本地接口联调（复刻 /api/history，验证页面侧取数）
-  test_remote_btn.js         # 点「新澳」验证走本地通道能否加载
+  test_remote_btn.js         # 点「新澳」验证走本地通道能否加载（十维页）\n  test_853.js                # 同上，验证 853 生肖页（易缺失 LAGFIT_SRV_ON 定义）
 preview/shell.html           # 原生外壳的浏览器预览（用于渲染检查）
 ```
 

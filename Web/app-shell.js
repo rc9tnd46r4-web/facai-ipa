@@ -6,6 +6,16 @@
   var html = doc.documentElement;
   html.classList.add('in-facai-app');
 
+  /* 兜底：部分页面（如 853 生肖页的旧版本）没有定义 LAGFIT_SRV_ON，
+     导致 srcBuildStages() 里 typeof 恒为 'undefined'，「本地服务」这一级取数通道被永久跳过，
+     只剩「直连（被 CORS 拦）→ 公共代理（常失效）」两条死路，点新澳/老澳/香港必然失败。
+     页面用的是 typeof 判断，只要全局存在该变量即可生效；file:// 下不动（本机服务不可达）。 */
+  try {
+    if (typeof window.LAGFIT_SRV_ON === 'undefined' && location.protocol.indexOf('http') === 0) {
+      window.LAGFIT_SRV_ON = true;
+    }
+  } catch (e) { /* 忽略：不影响页面主流程 */ }
+
   function ready(fn) {
     if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', fn);
     else fn();

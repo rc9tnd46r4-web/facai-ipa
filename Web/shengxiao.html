@@ -1153,6 +1153,11 @@ const SRC_URLS={
   laogang:{name:'老澳',url:'https://www.wuweicb1.com/kj/CBAMHK1.txt'},
   xianggang:{name:'香港',url:'https://www.wuweicb1.com/kj/CBHK1.txt'}
 };
+/* 本机服务开关：本页面运行在 http://127.0.0.1（App/exe 内置服务）时为 true，
+   可直接请求同源 /api/history 取数；以 file:// 直接双击打开时为 false，跳过该级。
+   缺了这行判断，srcBuildStages() 里 typeof LAGFIT_SRV_ON 恒为 'undefined'，
+   本地通道永远不启用 → 只剩「直连(被CORS拦) → 公共代理(常失效)」，必然加载失败。 */
+const LAGFIT_SRV_ON=(typeof window!=='undefined'&&window.location&&window.location.protocol!=='file:');
 /* 本地同源接口（电脑端跑彩票转移概率分析10维.py 时可用，最快最稳） */
 const SRC_LOCAL_TIMEOUT=40000;   // 需覆盖服务端最坏重试预算 8s×3+退避3.6s≈27.6s
 const SRC_DIRECT_TIMEOUT=12000;   // 直连源站：跨域必被拦，快速失败
