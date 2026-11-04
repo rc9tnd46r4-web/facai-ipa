@@ -1,3 +1,4 @@
+node_modules/
+preview/shots/
 build/
-*.xcodeproj
-.DS_Store
+package-lock.json

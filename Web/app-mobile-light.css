@@ -1,0 +1,50 @@
+/* ============================================================
+   发财 App · iOS 移动端适配层（浅色页：特别号生肖规律分析预测系统）
+   在其原有 @media 断点之上再做一层 App 内适配
+   ============================================================ */
+
+html { -webkit-text-size-adjust: 100%; }
+body { overflow-x: hidden; }
+button, .btn-file, input, select, label, a { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+
+.wrap { padding: 10px 8px 24px; max-width: 100%; }
+
+/* 顶部标题 + 工具栏 */
+.header { gap: 6px; margin-bottom: 12px; }
+.header h1 { font-size: 16.5px; line-height: 1.35; }
+.header .meta { font-size: 11px; }
+.toolbar { gap: 6px; }
+.btn-file { padding: 6px 10px; font-size: 12px; border-radius: 8px; }
+
+/* 说明块（很长），在 App 内折叠高度 */
+.notice {
+  font-size: 11.5px;
+  line-height: 1.55;
+  padding: 9px 11px;
+  margin-bottom: 12px;
+  max-height: 96px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.notice.expanded { max-height: none; }
+
+/* 卡片与表格：表格允许横向滚动，不撑破页面 */
+.card { padding: 10px 9px; margin-bottom: 12px; border-radius: 9px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.card table { min-width: 100%; }
+#stratTable, #accTable, #rncTable, .bt-table, .win-card table { min-width: 480px; }
+.card::-webkit-scrollbar { height: 6px; }
+.card h2 { font-size: 15px; margin-bottom: 9px; }
+h3 { font-size: 12.5px; }
+.zmap { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 6px; }
+.zmap .zi { padding: 6px 8px; }
+.zmap .zi b { font-size: 14px; }
+th, td { padding: 4px 5px; font-size: 12px; }
+.chip { min-width: 0; }
+
+@media (max-width: 380px) {
+  .wrap { padding: 8px 6px 20px; }
+  .header h1 { font-size: 15px; }
+  .card { padding: 9px 7px; }
+  th, td { padding: 3px 4px; font-size: 11.5px; }
+  .zmap { grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); }
+}

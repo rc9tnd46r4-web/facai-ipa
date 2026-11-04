@@ -1,48 +1,44 @@
 name: Build Unsigned IPA (Facai 发财)
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
+  push:
+    branches: [ main ]
 
 jobs:
   build:
-    runs-on: macos-15
+    runs-on: macos-14
+    timeout-minutes: 40
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install xcodegen
-        run: brew install xcodegen
-
-      - name: Generate Xcode project
-        working-directory: ios
-        run: xcodegen generate
-
-      - name: Build (unsigned)
+      - name: 环境信息
         run: |
-          xcodebuild \
-            -project ios/Facai.xcodeproj \
-            -scheme Facai \
-            -configuration Release \
-            -sdk iphoneos \
-            -destination "generic/platform=iOS" \
-            -derivedDataPath build \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGN_IDENTITY="" \
-            CODE_SIGN_ENTITLEMENTS=""
+          xcodebuild -version
+          xcrun --sdk iphoneos --show-sdk-version
+          swift --version
 
-      - name: Package IPA
-        run: |
-          mkdir -p Payload
-          cp -r "build/Build/Products/Release-iphoneos/Facai.app" Payload/
-          zip -qry Facai-unsigned.ipa Payload
-          ls -lh Facai-unsigned.ipa
+      - name: 编译并打包未签名 ipa
+        run: bash scripts/build_ipa.sh
 
-      - name: Upload artifact
+      - name: 上传 ipa 产物
         uses: actions/upload-artifact@v4
         with:
           name: Facai-unsigned-ipa
-          path: Facai-unsigned.ipa
-          retention-days: 90
+          path: build/out/*.ipa
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: 构建摘要
+        run: |
+          {
+            echo "### 发财 App 构建完成"
+            echo ""
+            echo '```'
+            ls -lh build/out
+            echo '```'
+            echo ""
+            echo "安装：用爱思助手 / Sideloadly / AltStore 重签后安装（未签名 ipa 无法直接安装）。"
+          } >> "$GITHUB_STEP_SUMMARY"
