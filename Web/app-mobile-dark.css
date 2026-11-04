@@ -103,6 +103,9 @@ button, input, select, .upload-btn, .src-btn, .tab, .chip, .copy-btn, a {
   border-radius: 9px;
   white-space: nowrap;
   text-align: center;
+  /* 加载中会显示「⏳ 加载中…」，收进按钮内不撑破 */
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .fc-actions .upload-btn .fc-bico { font-size: .72rem; margin-right: 2px; }
 .fc-actions .upload-btn:active { transform: scale(.97); opacity: .88; }

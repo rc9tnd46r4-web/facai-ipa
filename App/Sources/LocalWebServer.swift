@@ -88,13 +88,25 @@ final class LocalWebServer {
         }
 
         let method = parts[0]
-        var path = parts[1]
-        if let mark = path.firstIndex(of: "?") { path = String(path[..<mark]) }
-        let decoded = path.removingPercentEncoding ?? path
+        var target = parts[1]
+        var query: [String: String] = [:]
+        if let mark = target.firstIndex(of: "?") {
+            let raw = String(target[target.index(after: mark)...])
+            target = String(target[..<mark])
+            query = LocalWebServer.parseQuery(raw)
+        }
+        let decoded = target.removingPercentEncoding ?? target
 
         // 页面内的本机接口（/ping、/lagfit 等）在 App 内没有服务端：立即返回，避免阻塞页面脚本
         guard method == "GET" else {
             respond(connection, status: "204 No Content", type: "text/plain; charset=utf-8", body: Data())
+            return
+        }
+
+        // 开奖数据中转：源站不发 CORS 头，浏览器直连必被拦，公共代理也常挂。
+        // 这里由 App 用 URLSession 代取，页面按同源 /api/history 拿到纯文本即可渲染。
+        if decoded == "/api/history" {
+            proxyHistory(connection, src: query["src"] ?? "")
             return
         }
 
@@ -113,6 +125,79 @@ final class LocalWebServer {
             return
         }
         respond(connection, status: "200 OK", type: mimeType(for: fileURL.pathExtension), body: data)
+    }
+
+    // MARK: - 开奖数据中转
+
+    /// 与页面里 SRC_INFO 保持一致；源站不提供 CORS，只能由原生层代取
+    private static let sourceURLs: [String: String] = [
+        "xinao": "https://www.wuweicb1.com/kj/CBAM1DHK1.txt",
+        "laogang": "https://www.wuweicb1.com/kj/CBAMHK1.txt",
+        "xianggang": "https://www.wuweicb1.com/kj/CBHK1.txt",
+    ]
+
+    /// 90 秒内同源复用（5 个 Tab 端口共享同一份缓存，切 Tab 后点按钮无需重抓）
+    private static let cacheLock = NSLock()
+    private static var historyCache: [String: (time: Date, body: Data)] = [:]
+
+    private static func parseQuery(_ raw: String) -> [String: String] {
+        var out: [String: String] = [:]
+        for pair in raw.split(separator: "&") {
+            let kv = pair.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false)
+            guard let first = kv.first else { continue }
+            let key = String(first).removingPercentEncoding ?? String(first)
+            let value: String
+            if kv.count > 1 {
+                value = String(kv[1]).removingPercentEncoding ?? String(kv[1])
+            } else {
+                value = ""
+            }
+            out[key] = value
+        }
+        return out
+    }
+
+    private func proxyHistory(_ connection: NWConnection, src: String) {
+        guard let urlString = LocalWebServer.sourceURLs[src], let url = URL(string: urlString) else {
+            respondNotFound(connection)
+            return
+        }
+
+        LocalWebServer.cacheLock.lock()
+        let cached = LocalWebServer.historyCache[src]
+        LocalWebServer.cacheLock.unlock()
+        if let cached = cached, Date().timeIntervalSince(cached.time) < 90 {
+            respond(connection, status: "200 OK", type: "text/plain; charset=utf-8", body: cached.body)
+            return
+        }
+
+        var request = URLRequest(url: url)
+        request.timeoutInterval = 25
+        request.cachePolicy = .reloadIgnoringLocalCacheData
+        request.setValue(
+            "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
+            forHTTPHeaderField: "User-Agent"
+        )
+        request.setValue("text/plain,*/*;q=0.8", forHTTPHeaderField: "Accept")
+
+        URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
+            guard let self = self else { return }
+            self.queue.async {
+                let status = (response as? HTTPURLResponse)?.statusCode ?? 0
+                // 源站异常时会返回 HTML 错误页：判为失败，避免把脏数据缓存下来
+                let looksLikeHTML = (data?.first.map { $0 == 0x3C } ?? false)
+                if let data = data, !data.isEmpty, !looksLikeHTML, (200..<300).contains(status) {
+                    LocalWebServer.cacheLock.lock()
+                    LocalWebServer.historyCache[src] = (Date(), data)
+                    LocalWebServer.cacheLock.unlock()
+                    self.respond(connection, status: "200 OK", type: "text/plain; charset=utf-8", body: data)
+                } else {
+                    let reason = error?.localizedDescription ?? (looksLikeHTML ? "上游返回 HTML 错误页" : "HTTP \(status)")
+                    let body = Data(("upstream error: " + reason).utf8)
+                    self.respond(connection, status: "502 Bad Gateway", type: "text/plain; charset=utf-8", body: body)
+                }
+            }
+        }.resume()
     }
 
     private func respondNotFound(_ connection: NWConnection) {

@@ -45,6 +45,7 @@ button, .btn-file, input, select, label, a { touch-action: manipulation; -webkit
   border-radius: 9px;
   white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 .fc-toolbar .btn-file .fc-bico { margin-right: 2px; }
 .fc-toolbar #fileStatus {
