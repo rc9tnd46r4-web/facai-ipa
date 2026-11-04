@@ -23,13 +23,15 @@ App/
     FacaiApp.swift           # @main 入口，启动时拉起本机 HTTP 服务
     RootView.swift           # 原生底部 TabBar（两行文字 + 选中态）+ 懒加载页面
     WebTabView.swift         # WKWebView 容器（含失败回退 file://）
-    LocalWebServer.swift     # 127.0.0.1 迷你 HTTP 服务（每 Tab 一个端口）
+    LocalWebServer.swift     # 127.0.0.1 迷你 HTTP 服务（每 Tab 一个端口）+ 开奖数据中转
     Models.swift             # 5 个 Tab 定义与配色
 Web/                         # 5 个页面 + 移动端适配层（CSS/JS）
 scripts/
   prepare_web.py             # 从桌面版 HTML 生成带适配层的副本
   build_ipa.sh               # macOS 上 swiftc 编译 + actool 图标 + 打 ipa
   gh_push.py                 # 用 api.github.com 推送（git 协议被墙时使用）
+  mock_local_api.py          # 本地接口联调（复刻 /api/history，验证页面侧取数）
+  test_remote_btn.js         # 点「新澳」验证走本地通道能否加载
 preview/shell.html           # 原生外壳的浏览器预览（用于渲染检查）
 ```
 
@@ -37,6 +39,12 @@ preview/shell.html           # 原生外壳的浏览器预览（用于渲染检�
 
 - **每 Tab 一个本机端口（47831–47835）**：页面用 `localStorage` 记住加载源健康度与 LAG 榜单，
   端口不同 = origin 不同，5 个版本互不污染，行为与桌面版「每个 exe 一个端口」一致。
+- **开奖数据中转（`/api/history?src=xxx`）**：三个源站（新澳 / 老澳 / 香港）不返回
+  `Access-Control-Allow-Origin`，浏览器直连必被 CORS 拦；页面原本靠公共跨域代理中转，
+  而这些代理随时会限流或下线（实测 `cors.eu.org` 返回 429、`allorigins` / `codetabs` 返回 522）。
+  因此本机服务实现了与桌面版 Python 服务同名的同源接口，由 `URLSession` 直接取源站文本再回给页面，
+  页面走「本地服务」这一档即可，完全不经代理。附 90 秒内存缓存（5 个 Tab 共享），
+  连续切换不用重抓；上游返回 HTML 错误页时判为失败、不写缓存。
 - **回退机制**：本机服务未就绪或加载失败时，自动退回 `file://` 直读，保证页面总能打开。
 - **移动端适配层**：`Web/app-mobile-dark.css` / `app-mobile-light.css` / `app-shell.js`
   由 `prepare_web.py` 注入副本，原始 HTML 不做破坏性改动。矩阵表在窄屏下自动改列宽、
