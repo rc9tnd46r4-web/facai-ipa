@@ -1,4 +1,6 @@
 node_modules/
-preview/shots/
+qa/out/
+qa/.cache/
 build/
-package-lock.json
+dist/
+.DS_Store

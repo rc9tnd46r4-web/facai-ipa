@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="fHGCQ7dxThEfJhxB9BPRnV">
+<head data-page-node-id="wZ9BgTFrFdRz9zYYiDz1z9">
+<meta charset="UTF-8" data-page-node-id="pGVWpL99oGmDH5oFh7uV39">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="1IY0QMWvNjH4blgXYJAclZ">
+<title>特别号生肖规律分析预测系统</title>
+<style>
+/* ===== 00 全局样式（扁平化设计） ===== */
+:root{
+  --bg:#f4f6fa; --card:#ffffff; --border:#e3e8f0; --text:#1f2937; --muted:#6b7280;
+  --primary:#3b6ef5; --primary-soft:#eaf0fe;
+  --hit:#e5484d; --hit-bg:#fdebec;          /* 命中=红 */
+  --miss:#9aa3af; --miss-bg:#f1f3f6;        /* 未中=灰 */
+  --hot:#f59e0b; --cool:#10b981; --warn:#8b5cf6;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;}
+.wrap{max-width:1440px;margin:0 auto;padding:20px 24px 60px;}
+h1{font-size:22px;font-weight:700;}
+h2{font-size:17px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+h2 .bar{width:4px;height:16px;background:var(--primary);border-radius:2px;display:inline-block;}
+h3{font-size:14px;font-weight:600;color:var(--muted);}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:18px;}
+.muted{color:var(--muted);}
+.small{font-size:12px;}
+/* ===== 顶部信息 ===== */
+.header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:18px;}
+.header .meta{font-size:12px;color:var(--muted);text-align:right;}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:12px;background:var(--primary-soft);color:var(--primary);margin-right:6px;}
+.notice{background:#fffbea;border:1px solid #f5e6a8;border-radius:8px;padding:10px 14px;font-size:12.5px;color:#8a6d1a;margin-bottom:18px;}
+/* ===== 生肖映射表 ===== */
+.zmap{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;}
+.zmap .zi{border:1px solid var(--border);border-radius:8px;padding:8px 10px;background:#fafbfe;}
+.zmap .zi b{font-size:15px;}
+.zmap .zi .nums{font-size:12px;color:var(--muted);margin-top:2px;letter-spacing:1px;}
+/* ===== 生肖统计表 ===== */
+table{border-collapse:collapse;width:100%;}
+th,td{border-bottom:1px solid var(--border);padding:6px 8px;text-align:center;font-size:13px;}
+th{background:#f7f9fc;color:var(--muted);font-weight:600;white-space:nowrap;}
+td.left,th.left{text-align:left;}
+tr:hover td{background:#f7f9fc;}
+.zname{font-weight:700;font-size:14px;}
+.freq-bar{height:6px;background:var(--primary-soft);border-radius:3px;overflow:hidden;}
+.freq-bar i{display:block;height:100%;background:var(--primary);border-radius:3px;}
+.tag{display:inline-block;min-width:26px;padding:1px 6px;border-radius:8px;font-size:11.5px;background:#f1f3f6;color:var(--muted);}
+.tag.hot{background:#fef3e2;color:#b45309;}
+.tag.streak{background:#e8f7f1;color:#047857;}
+.tag.miss{background:#f3eefe;color:#6d28d9;}
+.tag.cool{background:#e8f7f1;color:#047857;}
+.tag.custom{background:#eaf0fe;color:#3b6ef5;}
+/* ===== P15 邻期中性校正相关样式 ===== */
+.chip.prev{border-color:#c4b5fd;background:#f5f3ff;}          /* 上一期生肖：紫色标识，便于直观确认未被排除 */
+.chip.prev b{color:#6d28d9;}
+.chip .ptag{display:inline-block;margin-left:4px;padding:0 4px;border-radius:6px;font-size:9.5px;font-weight:600;background:#ede9fe;color:#6d28d9;vertical-align:middle;}
+.rnc-switch{display:inline-flex;align-items:center;gap:6px;margin-left:auto;font-size:12.5px;font-weight:400;color:var(--muted);cursor:pointer;}
+.rnc-switch input,.rnc-switch select{cursor:pointer;}
+.rnc-switch select{margin-left:4px;padding:2px 6px;border:1px solid var(--border);border-radius:6px;font-size:12px;color:var(--text);background:#fff;}
+#accTable td,#accTable th{padding:5px 8px;font-size:12.5px;}
+#rncTable td,#rncTable th{padding:5px 8px;font-size:12.5px;}
+#rncTable .old{color:var(--muted);font-size:11.5px;}
+#rncTable tr.base td{background:#f7f9fc;color:var(--muted);font-weight:600;}
+/* 文件选择工具栏 */
+.toolbar{display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap;}
+.btn-file{display:inline-block;padding:8px 18px;background:var(--primary);color:#fff;border-radius:8px;cursor:pointer;font-size:13.5px;font-weight:600;}
+.btn-file:hover{background:#2f5cd9;}
+.btn-file input{display:none;}
+/* 数据源快捷按钮（新澳/老澳/香港）—— 复用 .btn-file 形态，仅切换配色 */
+.src-btn{border:none;font-family:inherit;}
+.src-xg{background:var(--hot);}
+.src-xg:hover{background:#d97706;}
+.src-hk{background:var(--cool);}
+.src-hk:hover{background:#059669;}
+.src-btn:disabled{opacity:.5;cursor:not-allowed;}
+.src-btn.loading{animation:srcPulse 1.2s infinite;}
+@keyframes srcPulse{0%,100%{opacity:.6}50%{opacity:1}}
+.btn-ghost{padding:8px 16px;border:1px solid var(--border);background:#fff;border-radius:8px;cursor:pointer;font-size:13px;color:var(--muted);}
+.btn-ghost:hover{background:#f7f9fc;}
+/* ===== 预测卡片 ===== */
+/* P14：窗口数由三档扩为四档（含自定义），列最小宽提高到 560px，使 2×2 布局下每张卡的
+   9 列统计表（min-width:560px）无需横向滚动即可完整显示；窄屏自动退化为单列。 */
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(560px,100%),1fr));gap:18px;}
+.win-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;}
+.win-card .wt{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;}
+.win-card .wt b{font-size:15px;}
+.combo{margin:10px 0;}
+.combo .cl{font-size:12px;color:var(--muted);margin-bottom:5px;display:flex;align-items:center;gap:8px;}
+.chips{display:flex;flex-wrap:wrap;gap:6px;}
+.chip{border:1px solid var(--border);border-radius:8px;padding:4px 8px;min-width:66px;max-width:100%;text-align:center;background:#fafbfe;}
+.chip b{font-size:14px;display:block;}
+.chip .ev{font-size:10.5px;color:var(--muted);display:block;margin-top:1px;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis;}
+.chip.top1{border-color:var(--primary);background:var(--primary-soft);}
+.chip.top1 b{color:var(--primary);}
+/* P17 下一期实开命中标识（多窗口对比面板·历史回看）：组合包含下一期实开生肖的 chip 红色高亮 */
+.chip-hit{border-color:var(--hit);background:var(--hit-bg);}
+.chip-hit b{color:var(--hit);}
+/* ===== 多窗口对比面板 ===== */
+.cmp-table td,.cmp-table th{padding:8px 10px;vertical-align:top;}
+.cmp-cell .chips{margin-bottom:4px;}
+.cmp-cell .chip{min-width:56px;padding:2px 6px;}
+.cmp-cell .chip b{font-size:12.5px;display:inline;}
+.cmp-cell .chip .ev{display:none;}
+.cmp-stat{font-size:11.5px;color:var(--muted);}
+.cmp-stat b{color:var(--text);}
+.winname{font-weight:700;white-space:nowrap;}
+/* 窗口名下方的复制按钮（多窗口对比面板，ghost 风格） */
+.copy-btn{display:block;margin-top:5px;padding:2px 10px;font-size:11.5px;line-height:1.6;border:1px solid var(--border);border-radius:6px;background:#fff;color:var(--muted);cursor:pointer;white-space:nowrap;font-family:inherit;}
+.copy-btn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-soft);}
+.copy-btn.ok{border-color:var(--hit);color:var(--hit);}
+/* ===== P11 多窗口对比面板·期次回看导航 ===== */
+.cmp-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0 12px;padding:9px 12px;background:#fafbfe;border:1px solid var(--border);border-radius:8px;}
+.cmp-nav .pos{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px;color:var(--text);}
+.cmp-nav .dim{color:var(--muted);font-weight:400;font-size:12px;}
+.nav-tag{display:inline-block;padding:1px 9px;border-radius:10px;font-size:11.5px;font-weight:700;white-space:nowrap;}
+.nav-tag.latest{background:#e8f7f1;color:#047857;}
+.nav-tag.old{background:#fef3e2;color:#b45309;}
+.btn-ghost:disabled{opacity:.45;cursor:not-allowed;background:#f1f3f6;}
+/* ===== P14 自定义窗口输入（第四个窗口：用户填写近N期） ===== */
+.win-input{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 12px;padding:9px 12px;background:#fafbfe;border:1px solid var(--border);border-radius:8px;font-size:13px;}
+.win-input label{color:var(--muted);}
+.win-input input[type=number]{width:92px;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:13.5px;font-family:inherit;color:var(--text);background:#fff;}
+.win-input input[type=number]:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-soft);}
+.win-input .hint{font-size:11.5px;color:var(--muted);}
+.win-input .hint.err{color:var(--hit);}
+/* ===== 回测面板 ===== */
+.win-sel{display:inline-flex;flex-wrap:wrap;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:12px;}
+.win-sel button{border:none;background:#fff;padding:7px 20px;font-size:13.5px;cursor:pointer;color:var(--muted);}
+.win-sel button.on{background:var(--primary);color:#fff;font-weight:600;}
+.sum-strip{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px;}
+.sum-box{border:1px solid var(--border);border-radius:8px;padding:8px 14px;background:#fafbfe;min-width:130px;}
+.sum-box .t{font-size:12px;color:var(--muted);}
+.sum-box .v{font-size:16px;font-weight:700;white-space:nowrap;}
+.sum-box .b{font-size:11px;color:var(--muted);}
+.hit{color:var(--hit);font-weight:700;}
+.missc{color:var(--miss);}
+.bt-table td{padding:4px 6px;font-size:12.5px;}
+.bt-table .zset{font-size:12px;color:var(--muted);}
+.mark{display:inline-block;width:22px;padding:1px 0;border-radius:5px;font-size:11.5px;text-align:center;}
+.mark.h{background:var(--hit-bg);color:var(--hit);font-weight:700;}
+.mark.m{background:var(--miss-bg);color:var(--miss);}
+.dist{display:flex;flex-wrap:wrap;gap:6px;}
+.dist .d{border:1px solid var(--border);border-radius:8px;padding:5px 10px;text-align:center;background:#fafbfe;min-width:78px;}
+.dist .d b{font-size:14px;display:block;}
+.dist .d .bar{height:5px;background:var(--primary-soft);border-radius:3px;margin-top:4px;overflow:hidden;}
+.dist .d .bar i{display:block;height:100%;background:var(--primary);}
+/* ===== 01 表格布局保护（P2/P5/P7/P9 布局修复） ===== */
+.win-card .stat-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}   /* P2: 9列统计表包一层横向滚动容器，不再撑破卡片边框 */
+.win-card .stat-scroll table{min-width:560px;}                              /* P2: 统计表最小宽度，窄卡片下改为卡片内横向滚动 */
+.win-card td.mr-cell{white-space:nowrap;}                                   /* P2: 成员名次默认不换行，极窄屏由媒体查询放开 */
+.bt-table{min-width:1120px;}                                                /* P5: 14列回测明细表设最小宽度，列不挤压到不可读，超出由外层容器横向滚动 */
+#stratTable th.left{min-width:150px;}                                       /* P7: 策略对比表策略列表头宽度 */
+#stratTable td.left{min-width:170px;}                                       /* P7: 长策略名允许换行，不挤压百分比列 */
+#stratTable th:not(.left){white-space:nowrap;}                              /* P7: 百分比表头不换行 */
+#stratTable td:not(.left){white-space:nowrap;}                              /* P7: 百分比数值不换行 */
+table td.empty-cell{white-space:nowrap;min-width:220px;}                    /* P9: 空状态提示单元格不换行、卡片不出现怪异空白 */
+/* ===== 02 响应式断点（P4/P8/P10 布局修复） ===== */
+@media (max-width:768px){
+  .wrap{padding:14px 12px 40px;}                          /* P4: 缩小页面内边距 */
+  .header{align-items:flex-start;}
+  .header .meta{text-align:left;}                         /* P8: 窄屏下数据源信息左对齐 */
+  .toolbar{gap:8px;}                                      /* P4: 工具栏换行间距收紧 */
+  .zmap{grid-template-columns:repeat(auto-fill,minmax(120px,1fr));}  /* P4: 映射卡最小列宽降为120px */
+  .card{padding:12px;margin-bottom:14px;}
+  .win-card{padding:12px;}
+  .sum-box{min-width:104px;padding:6px 10px;}             /* P4: 汇总卡最小宽度收窄 */
+  .dist .d{min-width:64px;padding:4px 8px;}               /* P4: 分布卡最小宽度收窄 */
+  th,td{padding:5px 6px;font-size:12.5px;}                /* P4: 表格字号与内边距压缩 */
+  h1{font-size:19px;}
+  h2{font-size:16px;}
+}
+@media (max-width:480px){
+  .wrap{padding:10px 8px 32px;}
+  .header{flex-direction:column;align-items:flex-start;gap:8px;}  /* P8: 极窄屏标题与数据源上下堆叠、左对齐 */
+  .toolbar{gap:6px;}
+  .zmap{grid-template-columns:repeat(auto-fill,minmax(100px,1fr));}
+  .card{padding:10px 8px;}
+  .win-card{padding:10px 8px;}
+  .sum-box{min-width:88px;}
+  .sum-box .v{font-size:14px;}
+  .dist .d{min-width:56px;}
+  th,td{padding:4px 4px;font-size:12px;}
+  .bt-table td{padding:3px 4px;font-size:11.5px;}
+  h1{font-size:17px;}
+  .win-card td.mr-cell{white-space:normal;}               /* P2: 极窄屏允许成员名次换行（配合统计表横向滚动） */
+}
+</style>
+</head>
+<body data-page-node-id="hOmcfdLqBERz078qS2nhkA">
+<div class="wrap" data-page-node-id="4X9pBJOUpn3kCx8jcRC4eD">
+  <div class="header" data-page-node-id="5EzisBPTW89a0qI524lLB3">
+    <div data-page-node-id="ZyeAOuH4raRgGQ9VoXk5oC">
+      <h1 data-page-node-id="eGeXmlF8PvIxsN6tmcKRwn">特别号生肖规律分析预测系统 <span class="badge" data-page-node-id="ohBEDBDenN3c9CXEbvagPU">King</span></h1>
+      <div class="muted small" style="margin-top:4px;" data-page-node-id="abtAsJGfwa5EACc2NiEt45">多窗口（近30/50/100期 + 自定义近N期）统计 · 主策略：多策略加权集成 · 8/5/3/2/1肖组合预测 · 逐期回测 · 策略对比 · 多窗口横向对比</div>
+    </div>
+    <div class="meta" id="dataMeta" data-page-node-id="FxUVFYRCyBMXpz0H3jXEN2"></div>
+  </div>
+
+  <div class="toolbar">
+    <label class="btn-file">选择开奖记录文本<input type="file" id="fileInput" accept=".txt,.csv,text/plain"></label>
+    <button type="button" class="btn-file src-btn" onclick="loadRemoteSource('xinao',this)">🌐 新澳</button>
+    <button type="button" class="btn-file src-btn src-xg" onclick="loadRemoteSource('laogang',this)">🌐 老澳</button>
+    <button type="button" class="btn-file src-btn src-hk" onclick="loadRemoteSource('xianggang',this)">🌐 香港</button>
+    <span class="muted small" id="fileStatus">未加载数据——请选择开奖记录文本。格式：日期,期号,6个正码,T特别号（每期一行，如 2026-09-04,247,45,14,17,25,42,02,T27），需约130期以上</span>
+  </div>
+
+  <div class="notice" style="display:none;" data-page-node-id="u8NwFkQYd60T6Ar9Bm0tZ3">
+    <b data-page-node-id="2Qi3vwto1t7J9N9q8aEnQy">诚实声明：</b>彩票每期开奖为<b data-page-node-id="yDydT7LGqTDLKEQmef8TQ1">独立随机事件</b>，本系统仅对历史数据做统计描述与回测展示，不构成任何投注建议。
+    主策略为<b data-page-node-id="r3iCLyLaRHTvVUjvll3GmN">多策略加权集成</b>：反热择冷(×2)+频率(×1)+遗漏优先(×1)+马尔可夫1阶(×1)+静态权重(×1) 的 Borda 计分，经 60+ 候选方案 × 1800 期滚动回测离线筛选，平均偏差-0.33pp且前后半段最稳定；但各方案差异仍在随机波动范围内，理论上不存在稳定超越随机基线的方法，请理性看待。
+    <b>已修复（P15 邻期中性校正）</b>：原集成中「遗漏优先」按遗漏期数降序排序，而上一期生肖的遗漏恒为 0，故恒定排第 12 名，
+    造成上一期生肖被系统性排除（平均第 9.68 名，8 肖纳入率仅 28.1%，中性应为 66.7%）。现对该生肖的 Borda 原始分做仿射标准化校正（参数由滚动回测标定，只用历史样本），
+    平均名次回到 6.87、8 肖纳入率回到 62.8%，总体命中率无劣化；残余 −2~−4pp 偏差与 2~8 期前生肖仍低于基线的事实，均在下方<b>邻期偏差诊断</b>面板如实披露。
+    <b>准确率提升（P16）</b>：①修复"号码权重写死马=5"的缺陷——号码→生肖映射随农历年轮转，拥有 5 个号码的生肖每年不同
+    （2023兔/2024龙/2025蛇/2026马，实测各年 11.20%/10.17%/9.90%/13.36%，而固定"马"仅 8.16%），此前随机基线、静态权重成员、组合期望概率在非马年全部用错；
+    ②引入按号码数加权的"权重感知"项（λ，默认 6，可调整）：跨期独立已被卡方检验证实，故唯一真实可优化的是组合覆盖的号码数。
+    实测（1260 期滚动回测，w=50）：8 肖 66.03%→68.49%、5 肖 43.10%→45.24%、3 肖 25.63%→27.30%、2 肖 17.46%→19.13%。
+    <b>须注意</b>：该样本中 5 号码生肖实际开出 10.96%、高于理论 10.20%，故实测增幅含样本波动；可稳定复现的期望提升为 +0.3~0.6pp，二者均已在下方<b>准确率构成与理论上限</b>面板如实列出。
+  </div>
+
+  <!-- 01 生肖映射 -->
+  <div class="card" data-page-node-id="eQG63FKrOwjly90ApDlJww">
+    <h2 data-page-node-id="79JNyuuCqFlshtQYnVdqJa"><span class="bar" data-page-node-id="hFvxeyeXea8f0RG5SHo50E"></span>号码→生肖映射（<span id="mapYear" data-page-node-id="5sH7gBqPcPSGGd3LUprYnb"></span>农历年）</h2>
+    <div class="zmap" id="zodiacMap" data-page-node-id="v1NW4W8wVs8lvCCHjmR52J"></div>
+    <div class="muted small" style="margin-top:8px;" data-page-node-id="meeKZhdHouwQYpmjiQnbFh">
+      规则：zodiac_index = (1 − num % 12 + year_offset + 12) % 12，year_offset = (农历年 − 2020) % 12；每过一个农历年生肖顺移一位（已按各年农历新年日期切换，如2025-01-29、2026-02-17；支持2000~2050年）。
+    </div>
+  </div>
+
+  <!-- 02 特别号生肖分布 -->
+  <div class="card" data-page-node-id="jNRmLrOLVVIKFhYA04QvUa">
+    <h2 data-page-node-id="UgCXhcKHGsG9mOH62ridgA"><span class="bar" data-page-node-id="dieZctX3czUda4JmGAOaPx"></span>全量数据特别号生肖分布</h2>
+    <div class="dist" id="distAll" data-page-node-id="XEXL9BqyWDlUlDa5U0O513"></div>
+  </div>
+
+  <!-- 03 四窗口预测 -->
+  <h2 style="margin:6px 0 6px;display:none;" data-page-node-id="AdbKkX3mv4bbg75IfPH1Zu"><span class="bar" data-page-node-id="MzhkkBRGPTpLOjggdURiIA"></span><span id="predWinTitle">四窗口</span>组合预测（含各生肖核心支撑依据）</h2>
+  <div class="muted small" style="margin-bottom:12px;display:none;">
+    <b>选择依据</b>：每个生肖的入选由集成策略决定——5 个成员各自排名后按名次加权计分：反=反热择冷（权重×2）、频=频率热门、漏=遗漏优先、马=马尔可夫1阶、静=静态权重（各×1）；
+    Borda 总分 = Σ 权重×(13−成员名次)，满分 72，分数高者优先入选。"成员名次"列展示该生肖在每个成员中的名次（如 反1·频3·漏2·马5·静4）。
+    <b>邻期中性校正</b>：原始集成中「遗漏优先」按遗漏期数降序排序，而上一期生肖遗漏恒为 0 ⇒ 恒定排第 12 名，导致上一期生肖被系统性排除；
+    现对该生肖的原始 Borda 分按其自身历史分布做仿射标准化后补回（表中"校+X"、组合中以紫色<b>上一期</b>标记），
+    使其期望名次回到中性的 6.5 名。校正参数由滚动回测标定（只用历史样本，无未来函数），详见下方诊断面板。
+  </div>
+  <!-- P14 自定义窗口输入：第四个窗口由用户填写，固定 30/50/100 三档不受影响；
+       该窗口同时作用于预测卡片、多窗口对比面板、回测明细窗口按钮与连错统计。 -->
+  <div class="win-input" id="winInputBar">
+    <label for="winCustom">自定义窗口：近</label>
+    <input type="number" id="winCustom" min="10" max="2000" step="1" value="200" inputmode="numeric" aria-label="自定义窗口期数">
+    <span>期</span>
+    <button class="btn-ghost" id="winCustomApply" type="button">应用</button>
+    <button class="btn-ghost" id="winCustomReset" type="button">重置为 200 期</button>
+    <span class="hint" id="winCustomHint"></span>
+  </div>
+  <div class="grid3" id="predGrid" style="display:none;" data-page-node-id="zLqRUurcap5pmtfwLPUFcm"></div>
+
+  <!-- 03b 邻期偏差诊断（P15） -->
+  <div class="card" style="margin-top:18px;display:none;">
+    <h2><span class="bar"></span>邻期偏差诊断：上一期生肖是否被系统性排除
+      <label class="rnc-switch" for="rncToggle"><input type="checkbox" id="rncToggle" checked> 启用邻期中性校正</label></h2>
+    <div class="muted small" id="rncNote" style="margin-bottom:10px;line-height:1.7;"></div>
+    <div style="overflow-x:auto;"><table id="rncTable"></table></div>
+  </div>
+
+  <!-- 03c 准确率构成与理论上限（P16） -->
+  <div class="card" style="margin-top:18px;display:none;">
+    <h2><span class="bar"></span>准确率构成与理论上限
+      <span class="rnc-switch">权重优先强度
+        <select id="lamSel">
+          <option value="0">关闭 λ=0</option>
+          <option value="3">温和 λ=3</option>
+          <option value="6" selected>标准 λ=6</option>
+          <option value="12">激进 λ=12</option>
+        </select>
+      </span></h2>
+    <div class="muted small" id="accNote" style="margin-bottom:10px;line-height:1.7;"></div>
+    <div style="overflow-x:auto;"><table id="accTable"></table></div>
+  </div>
+
+  <!-- 04 策略对比 -->
+  <div class="card" style="margin-top:18px;display:none;">
+    <h2><span class="bar"></span>策略对比面板 <span class="muted small" style="font-weight:400;">（近<span id="stratScope">365</span>期滚动回测，同一协议）</span></h2>
+    <div class="muted small" style="margin-bottom:8px;">
+      主策略为<b>多策略加权 Borda 集成</b>：成员=反热择冷w(×2)+频率w(×1)+遗漏优先(×1)+马尔可夫1阶(×1)+静态权重(×1)，每个成员输出一个排名，按名次计分加权求和（第1名12分...第12名1分）。
+      经 60+ 候选方案 × 1800 期滚动回测离线筛选：集成5W50 平均偏差 -0.33pp（全场最优），前后半段 -0.26/-0.39pp（最稳定）。
+      "平均偏差"= 五档命中率相对静态权重上限（8肖67.3%/5肖42.9%/3肖26.5%/2肖18.4%/1肖10.2%）的平均差，越接近 0 越好。
+    </div>
+    <div style="overflow-x:auto;"><table id="stratTable"></table></div>
+  </div>
+
+  <!-- 05 多窗口对比 -->
+  <div class="card" style="margin-top:18px;" data-page-node-id="IV9bAyxaQZsFCZtdDBMMvD">
+    <h2 data-page-node-id="a5XjKmtUZcxRGIvWIKrTBi"><span class="bar" data-page-node-id="oteIKnBanlFRePdsVdR3Hc"></span>多窗口对比面板 <span class="muted small" style="font-weight:400;" data-page-node-id="ACM3JWrCiHBxRuApet6ENG">（含自定义近N期 · 连错统计基于近<span id="cmpScope">365</span>期逐期回测）</span></h2>
+    <!-- 期次回看导航（P11）：上一期/下一期 -->
+    <div class="cmp-nav" id="cmpNav" style="display:none;">
+      <button class="btn-ghost" id="cmpPrev" type="button" title="查看更早一期">◀ 上一期</button>
+      <button class="btn-ghost" id="cmpNext" type="button" title="查看更晚一期">下一期 ▶</button>
+      <span class="pos" id="cmpPos"></span>
+    </div>
+    <div style="overflow-x:auto;" data-page-node-id="dPbxV3DxS81CkeKFiwCOUH"><table class="cmp-table" id="cmpTable" data-page-node-id="DkxZl6EM5De9T002uuSxgd"></table></div>
+  </div>
+
+  <!-- 05 回测 -->
+  <div class="card" data-page-node-id="NCu4BeDyxtsTX5ho8PXkwu">
+    <h2 data-page-node-id="7DBMKCvIX6xbp4Bbnhsu2d"><span class="bar" data-page-node-id="zHmCcL8WvYxgxWUN0oFfqq"></span>近<span id="btScope">365</span>期逐期回测明细 <span class="muted small" style="font-weight:400;" data-page-node-id="hgEoYBXEOgkQIWMuhtfpU7">（统计口径期数；表格展示行数与导出说明见下方）</span></h2>
+    <!-- P13 口径说明：统计窗口 / 表格展示行数 / 可导出期数 三者不同，数字全部由 renderBT 运行时注入，避免"标题写100期、卡片按365期算"的歧义 -->
+    <div class="muted small" id="btScopeNote" style="margin:2px 0 10px;line-height:1.7;"></div>
+    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+      <div class="win-sel" id="btSel" data-page-node-id="k3JxpFZCusTHCSqSDU8A26"></div>
+      <button class="btn-ghost" id="btExport">导出回测CSV（全部回测期）</button>
+    </div>
+    <div class="sum-strip" id="btSum" data-page-node-id="mjMJhdNELEUoDd4xHCLKnY"></div>
+    <div id="btTableWrap" style="overflow-x:auto;max-height:640px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;" data-page-node-id="F4OzfxH7BnksoBOCfthFdp">
+      <table class="bt-table" id="btTable" data-page-node-id="r8zrN7NPGvHsdmMHsBwDXM"></table>
+    </div>
+  </div>
+
+  <div class="muted small" style="margin-top:8px;text-align:center;" data-page-node-id="XDolGZ539Grm14OaCpwr8y">特别号生肖规律分析预测系统 · 数据截至最新一期 · 预测结果仅供统计分析参考，请理性对待</div>
+</div>
+
+<script id="core">
+/* ===== 01 核心逻辑（纯函数，无DOM，可独立测试） ===== */
+const ZODIACS=['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'];
+const LUNAR_NY={'2000':'2000-02-05','2001':'2001-01-24','2002':'2002-02-12','2003':'2003-02-01','2004':'2004-01-22','2005':'2005-02-09','2006':'2006-01-29','2007':'2007-02-18','2008':'2008-02-07','2009':'2009-01-26','2010':'2010-02-14','2011':'2011-02-03','2012':'2012-01-23','2013':'2013-02-10','2014':'2014-01-31','2015':'2015-02-19','2016':'2016-02-08','2017':'2017-01-28','2018':'2018-02-16','2019':'2019-02-05','2020':'2020-01-25','2021':'2021-02-12','2022':'2022-02-01','2023':'2023-01-22','2024':'2024-02-10','2025':'2025-01-29','2026':'2026-02-17','2027':'2027-02-06','2028':'2028-01-26','2029':'2029-02-13','2030':'2030-02-03','2031':'2031-01-23','2032':'2032-02-11','2033':'2033-01-31','2034':'2034-02-19','2035':'2035-02-08','2036':'2036-01-28','2037':'2037-02-15','2038':'2038-02-04','2039':'2039-01-24','2040':'2040-02-12','2041':'2041-02-01','2042':'2042-01-22','2043':'2043-02-10','2044':'2044-01-30','2045':'2045-02-17','2046':'2046-02-06','2047':'2047-01-26','2048':'2048-02-14','2049':'2049-02-02','2050':'2050-01-23'};
+const TRACKS=[8,5,3,2,1];
+const STATS_WINDOW=365;   /* 统计窗口上限（期）：命中率/随机基线/最长连错一律按"最近 STATS_WINDOW 期"统计；回测不足该长度时按实际回测期数。
+                             全站口径唯一来源，禁止在 runBacktest / cmpStatsAt / 各处标签里再写死 365（P13 口径修复）。 */
+const FIXED_WINDOWS=[30,50,100]; /* P14 固定窗口三档（不可变）；第四个窗口为用户自定义近N期，由 UI 侧 activeWindows() 追加。 */
+
+/* 先求"该日期所属农历年份"（春节前归上一年），再换算偏移量；
+   lunarYearOf 单独导出供 UI 层展示"农历年"标签使用，避免展示成公历年（春节前不一致） */
+function lunarYearOf(dateStr){
+  let y=parseInt(dateStr.slice(0,4),10);
+  const ny=LUNAR_NY[String(y)]||(String(y)+'-02-04'); // 未收录年份以2月4日近似
+  if(dateStr<ny) y-=1;
+  return y;
+}
+function lunarYearOffset(dateStr){
+  return ((lunarYearOf(dateStr)-2020)%12+12)%12;
+}
+function numToZodiac(num,dateStr){
+  return ZODIACS[(1-(num%12)+lunarYearOffset(dateStr)+12)%12];
+}
+function parseData(raw){
+  const rows=[];
+  for(const line of raw.trim().split(/\r?\n/)){
+    const p=line.split(',');
+    if(p.length<9) continue;
+    const date=p[0].trim(), issue=p[1].trim();
+    const t=parseInt(p[8].trim().replace(/^T/i,''),10);
+    if(isNaN(t)||isNaN(parseInt(issue,10))) continue;
+    /* 日期格式非法时 numToZodiac 得到 NaN 下标（z=undefined），会静默污染全部统计，故直接剔除该行 */
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(date)) continue;
+    /* 特别号合法范围为 1~49：越界值（如 0/50+）会污染 49 号码卡方统计与映射表 */
+    if(t<1||t>49) continue;
+    rows.push({date,issue,nums:p.slice(2,8).map(x=>parseInt(x,10)),t,z:numToZodiac(t,date)});
+  }
+  rows.sort((a,b)=>a.date===b.date?(parseInt(a.issue,10)-parseInt(b.issue,10)):(a.date<b.date?-1:1));
+  return rows;
+}
+/* ===== 号码权重（P16 修复）=====
+   原实现把"马=5个号码"写死，但 numToZodiac 的映射随农历年轮转：
+   num%12==1 的号码为 1,13,25,37,49（共 5 个），映射到 ZODIACS[lunarYearOffset(date)]，
+   故**拥有 5 个号码的生肖每年不同**（2023兔 / 2024龙 / 2025蛇 / 2026马），其余 11 个各 4 个。
+   实测验证（1360 期）：
+     2023 兔 11.20%｜2024 龙 10.17%｜2025 蛇 9.90%｜2026 马 13.36%（理论 5/49=10.20%）
+     而固定"马"的总体频率仅 8.16%（= 4/49），说明写死马=5 与数据不符。
+   影响面：随机基线、静态权重成员、组合期望命中率——三者此前在非马年全部用错权重。 */
+function zodiacWeights(dateStr){
+  const big=ZODIACS[lunarYearOffset(dateStr)],o={};
+  ZODIACS.forEach(z=>o[z]=(z===big?5:4)/49);
+  return o;
+}
+/* 该年拥有 5 个号码的生肖 */
+function bigZodiac(dateStr){return ZODIACS[lunarYearOffset(dateStr)];}
+/* 兼容旧调用：不传日期时用"今天"所属农历年（仅用于无目标期的兜底展示） */
+const Z_WEIGHT=zodiacWeights(new Date().toISOString().slice(0,10));
+function setProb(set,zw){
+  const w=zw||Z_WEIGHT;
+  let p=0;for(const z of set)p+=w[z];return p;
+}
+
+/* 窗口统计：出现频率、当前遗漏、窗口内最大遗漏、连出、热度得分 */
+function computeStats(history,winLen){
+  const L=Math.min(winLen,history.length);
+  const win=history.slice(-L);
+  const s={};
+  for(const z of ZODIACS)s[z]={freq:0,miss:0,maxMiss:0,streak:0,hot:0,score:0};
+  for(const r of win)s[r.z].freq++;
+  /* P17 性能：原实现 miss/streak/maxMiss 各做 12 次扫描（miss/streak 全史反向、maxMiss 窗口正向），
+     改为两次遍历，结果逐位等价：
+     - 一次全史尾部反向遍历：每个生肖**首次**遇到时距尾部的距离即 miss（集齐 12 个提前退出；
+       全史未出现的生肖 miss=history.length，循环结束后统一补上）；
+       streak（尾部连续相同生肖长度）在同一次遍历中顺带统计（遇第一个非尾生肖即定型）；
+     - 一次窗口正向扫描：lastSeen 记录各生肖上次出现的窗口下标（初始 -1），
+       遇到 z 时 i-lastSeen[z]-1 即两次出现间的非 z 长度（首遇时 lastSeen=-1 ⇒ 恰为 i），
+       扫完后补尾部缺口 L-1-lastSeen[z]（z 整窗未出现时补缺口恰为 L，与原实现一致）。 */
+  const n=history.length;
+  const done={},tailZ=n?history[n-1].z:null;
+  let left=12,streak=0,streaking=true;
+  for(let i=n-1;i>=0;i--){
+    const z=history[i].z;
+    if(streaking){if(z===tailZ)streak++;else streaking=false;}
+    if(!done[z]){done[z]=1;s[z].miss=n-1-i;if(--left===0)break;}
+  }
+  if(left>0)for(const z of ZODIACS)if(!done[z])s[z].miss=n;
+  if(tailZ)s[tailZ].streak=streak;
+  const lastSeen={};
+  for(const z of ZODIACS)lastSeen[z]=-1;
+  for(let i=0;i<L;i++){
+    const z=win[i].z,gap=i-lastSeen[z]-1;
+    if(gap>s[z].maxMiss)s[z].maxMiss=gap;
+    lastSeen[z]=i;
+  }
+  for(const z of ZODIACS){const gap=L-1-lastSeen[z];if(gap>s[z].maxMiss)s[z].maxMiss=gap;}
+  /* 近50期出现次数（反热择冷策略的排序主键） */
+  const win50=history.slice(-50);
+  for(const z of ZODIACS)s[z].freq50=0;
+  for(const r of win50)s[r.z].freq50++;
+  return s;
+}
+/* ===== 集成成员1：反热择冷 =====
+   窗口内出现次数升序（越冷门越优先），平手按当前遗漏降序，再按固定生肖序。
+   单策略使用时在1800期回测中平均偏差-0.43pp（8肖67.7%/5肖43.3%），现作为集成的核心成员（权重2）。 */
+function rankZodiacs(stats){
+  return ZODIACS.slice().sort((a,b)=>{
+    if(stats[a].freq!==stats[b].freq)return stats[a].freq-stats[b].freq;
+    if(stats[b].miss!==stats[a].miss)return stats[b].miss-stats[a].miss;
+    return ZODIACS.indexOf(a)-ZODIACS.indexOf(b);
+  });
+}
+/* ---- 候选策略（供策略对比面板复现筛选过程，纯函数） ---- */
+function countsOf(hist,w){const c={};ZODIACS.forEach(z=>c[z]=0);hist.slice(-w).forEach(r=>c[r.z]++);return c;}
+function sortDesc(scores){return ZODIACS.slice().sort((a,b)=>scores[b]-scores[a]||ZODIACS.indexOf(a)-ZODIACS.indexOf(b));}
+function rankFreqWin(hist,w){const c=countsOf(hist,w);return sortDesc(Object.fromEntries(ZODIACS.map(z=>[z,c[z]])));}
+function rankMissDesc(hist){const m={};for(const z of ZODIACS){let k=0;for(let i=hist.length-1;i>=0;i--){if(hist[i].z===z)break;k++;}m[z]=k;}return sortDesc(m);}
+function rankStreakDesc(hist){const st={};for(const z of ZODIACS){let k=0;for(let i=hist.length-1;i>=0;i--){if(hist[i].z===z)k++;else break;}st[z]=k;}return sortDesc(st);}
+function rankMarkov(hist){const last=hist[hist.length-1].z;const c={};ZODIACS.forEach(z=>c[z]=0);for(let i=0;i<hist.length-1;i++)if(hist[i].z===last)c[hist[i+1].z]++;return sortDesc(Object.fromEntries(ZODIACS.map(z=>[z,c[z]+0.5])));}
+/* P16：静态权重成员改为按"目标期所属农历年"取权重（原为固定马=5） */
+function rankStatic(dateStr){
+  const w=dateStr?zodiacWeights(dateStr):Z_WEIGHT;
+  return sortDesc(Object.fromEntries(ZODIACS.map(z=>[z,w[z]])));
+}
+function rankOldComposite(hist){const s={};for(const z of ZODIACS){let hot=0,p=1;for(let i=hist.length-1;i>=0;i--){if(hist[i].z===z)hot+=p;p*=0.92;}let miss=0;for(let i=hist.length-1;i>=0;i--){if(hist[i].z===z)break;miss++;}let st=0;for(let i=hist.length-1;i>=0;i--){if(hist[i].z===z)st++;else break;}s[z]=hot*2+miss*0.5+Math.min(st,4);}return sortDesc(s);}
+function predictSets(ranked){const o={};for(const n of TRACKS)o[n]=ranked.slice(0,n);return o;}
+
+/* ===== 主策略：多策略加权 Borda 集成 =====
+   每个成员输出一个排名，按 Borda 计分（第1名12分...第12名1分）加权求和。
+   成员与权重：反热择冷w(×2)、频率w(×1)、遗漏优先(×1)、马尔可夫1阶(×1)、静态权重(×1)。
+   依据：60+候选策略/集成方案 × 1800期滚动回测离线筛选，本方案平均偏差-0.33pp全场最优，
+   且前后半段-0.26/-0.39pp为全部方案中最稳定（单策略反热w50为+0.34/-1.19pp）。
+   实测：8肖68.7%/5肖43.6%/3肖26.1%/2肖17.1%/1肖8.2%。各策略差异仍在随机波动范围内。 */
+function bordaRank(rankedLists,weights){
+  const s={};ZODIACS.forEach(z=>s[z]=0);
+  rankedLists.forEach((rk,li)=>{
+    const wgt=weights[li];
+    rk.forEach((z,i)=>{s[z]+=wgt*(12-i);});
+  });
+  return ZODIACS.slice().sort((a,b)=>s[b]-s[a]||ZODIACS.indexOf(a)-ZODIACS.indexOf(b));
+}
+function rankHotWin(stats){return ZODIACS.slice().sort((a,b)=>stats[b].freq-stats[a].freq||ZODIACS.indexOf(a)-ZODIACS.indexOf(b));}
+function rankMissOnly(stats){return ZODIACS.slice().sort((a,b)=>stats[b].miss-stats[a].miss||ZODIACS.indexOf(a)-ZODIACS.indexOf(b));}
+/* 集成成员定义：fn(hist,stats,targetDate) => 排名数组；w 为 Borda 权重
+   P16：静态权重成员改用 targetDate（预测目标期日期）确定当年 5 号码生肖。 */
+const ENSEMBLE_MEMBERS=[
+  {name:'反热择冷',short:'反',w:2,fn:(h,s)=>rankZodiacs(s)},
+  {name:'频率热门',short:'频',w:1,fn:(h,s)=>rankHotWin(s)},
+  {name:'遗漏优先',short:'漏',w:1,fn:(h,s)=>rankMissOnly(s)},
+  {name:'马尔可夫1阶',short:'马',w:1,fn:(h,s)=>rankMarkov(h)},
+  {name:'静态权重',short:'静',w:1,fn:(h,s,d)=>rankStatic(d)}
+];
+/* ===== 邻期中性校正 RNC（Recency-Neutrality Correction）=====
+   问题（实测 1360 期 / 1260 期滚动回测）：
+     「遗漏优先」成员按"距今遗漏期数"降序排序，而上一期生肖的遗漏恒为 0 ⇒ 恒定第 12 名；
+     「反热择冷」成员按窗口内出现次数升序、平手按遗漏降序 ⇒ 上一期生肖平均第 8.72 名。
+     叠加后上一期生肖在集成中的平均名次为 9.68（中性应为 6.5），8 肖纳入率仅 28.1%
+     （中性 66.7%）、5 肖 5.7%（中性 41.7%）——即"系统性排除上一期生肖"；
+     一旦开出重生肖（实测占比 8.1%），修正前 8 肖命中率仅 24.5%（总体 65.6%）。
+   原理：Borda 总分恒为常数——Σ_z(13−rank)=78 ⇒ 总分=78·Σw ⇒ 全体生肖平均分恒为 78·Σw/12=39。
+     故可把上一期生肖的原始分 raw 按其**自身历史分布**做仿射标准化，映射到**全体生肖**的分数尺度：
+        score'(prevZ) = RNC_MEAN + (σ_all/σ_prev)·(raw − μ_prev)
+     μ_prev / σ_prev / σ_all 一律用截至该期**之前**的滚动样本估计（标定窗 = STATS_WINDOW 期），严格无未来函数。
+   实测效果（w=50）：
+     上一期生肖平均名次        9.68 → 6.87（中性 6.5）
+     lag1 纳入率 8/5/3/2/1 肖  28.1/5.7/1.6/0.6/0.0% → 62.8/37.3/20.7/13.3/6.0%（中性 66.7/41.7/25.0/16.7/8.3%）
+     重生肖情形 8 肖命中率      24.5% → 64.7%（总体 66.1%）
+     总体命中率                65.56/43.10/26.03/17.38/9.44% → 66.03/43.10/25.63/17.46/9.29%（差异在随机波动内，无劣化）
+     残余 −2~−4pp 偏差来自分数分布形状差异（本校正仅匹配前两阶矩），已在诊断面板如实披露。 */
+const RNC_MEAN=78*ENSEMBLE_MEMBERS.reduce((a,m)=>a+m.w,0)/12;   /* =39：全体生肖 Borda 平均分的理论常数 */
+const RNC_MIN_SAMPLES=30;   /* 标定所需最少历史期数；样本不足时该期不做校正（退化为原集成） */
+/* P16 权重感知强度 λ：最终得分 = Borda(含RNC) + λ×(该生肖号码数−4)。
+   原理：开奖跨期独立已被卡方检验证实（号码均匀 χ²=40.1<65.2、生肖转移独立 χ²=98.8<193），
+   故任何"规律"都不产生稳定增益；唯一真实可利用的结构是各生肖覆盖号码数不同（5 vs 4），
+   期望命中率 = Σ选中生肖号码数/49。按号码数加权即可抬高期望，λ 越大越接近理论上限、
+   推荐越向高权重生肖集中。实测（1260 期）：λ=0/6/12 的 8 肖期望命中率 67.03/67.28/67.35%（上限 67.35%）。 */
+let WEIGHT_LAMBDA=6;        /* UI 可调：0=关闭 / 3=温和 / 6=标准 / 12=激进 */
+/* 滚动标定器：维护"上一期生肖原始分"与"全体 12 生肖原始分"两个滑动窗口的一阶/二阶矩 */
+function makeRncCalib(){
+  const capP=STATS_WINDOW, capA=STATS_WINDOW*12;
+  const bp=new Array(capP).fill(0), ba=new Array(capA).fill(0);
+  let hp=0,np=0,sp=0,sqp=0, ha=0,na=0,sa=0,sqa=0;
+  return {
+    /* 取截至当前（即"过去"）的校正参数；样本不足或分布退化时返回 null（不校正） */
+    params:function(){
+      if(np<RNC_MIN_SAMPLES||na<RNC_MIN_SAMPLES*12)return null;
+      const muP=sp/np, muA=sa/na;
+      const sdP=Math.sqrt(Math.max(0,sqp/np-muP*muP));
+      const sdA=Math.sqrt(Math.max(0,sqa/na-muA*muA));
+      if(!(sdP>1e-9)||!(sdA>1e-9))return null;
+      return {muPrev:muP,sdPrev:sdP,sdAll:sdA,k:sdA/sdP,n:np};
+    },
+    /* 推入一期的原始分：prevRaw=上一期生肖的原始分，allRaw=12 个生肖的原始分数组 */
+    push:function(prevRaw,allRaw){
+      if(np<capP){bp[(hp+np)%capP]=prevRaw;np++;}
+      else{const o=bp[hp];bp[hp]=prevRaw;hp=(hp+1)%capP;sp-=o;sqp-=o*o;}
+      sp+=prevRaw;sqp+=prevRaw*prevRaw;
+      for(let i=0;i<allRaw.length;i++){
+        const v=allRaw[i];
+        if(na<capA){ba[(ha+na)%capA]=v;na++;}
+        else{const o=ba[ha];ba[ha]=v;ha=(ha+1)%capA;sa-=o;sqa-=o*o;}
+        sa+=v;sqa+=v*v;
+      }
+    }
+  };
+}
+/* 集成明细：返回排名 + 各成员名次 + 加权得分，供"选择依据"展示；
+   rnc 为邻期中性校正参数（makeRncCalib().params()，null 表示不校正）。 */
+function ensembleDetail(hist,winLen,stats,rnc,targetDate,lam){
+  const lists=ENSEMBLE_MEMBERS.map(m=>{
+    const rk=m.fn(hist,stats,targetDate),rankOf={};
+    rk.forEach((z,i)=>rankOf[z]=i+1);
+    return {name:m.name,short:m.short,w:m.w,rk:rk,rankOf:rankOf};
+  });
+  const raw={};ZODIACS.forEach(z=>raw[z]=0);
+  lists.forEach(L=>ZODIACS.forEach(z=>{raw[z]+=L.w*(13-L.rankOf[z]);}));
+  const score={};ZODIACS.forEach(z=>score[z]=raw[z]);
+  const prevZ=hist.length?hist[hist.length-1].z:null;
+  let adj=null;
+  if(rnc&&prevZ&&isFinite(rnc.muPrev)){ /* 仅校正"上一期生肖"这一个，其余生肖分数不变 */
+    adj=RNC_MEAN+rnc.k*(raw[prevZ]-rnc.muPrev);
+    score[prevZ]=adj;
+  }
+  /* P16：先做邻期中性校正（保证无偏差），再叠加权重感知项（抬高期望命中率） */
+  const zw=targetDate?zodiacWeights(targetDate):Z_WEIGHT;
+  const L=(lam==null?WEIGHT_LAMBDA:lam);
+  if(L)ZODIACS.forEach(z=>{score[z]+=L*(Math.round(zw[z]*49)-4);});
+  const ranked=ZODIACS.slice().sort((a,b)=>score[b]-score[a]||ZODIACS.indexOf(a)-ZODIACS.indexOf(b));
+  return {ranked:ranked,lists:lists,score:score,raw:raw,prevZ:prevZ,adj:adj,rnc:rnc||null,zw:zw,lam:L};
+}
+function rankEnsemble(hist,winLen,stats,rnc,targetDate,lam){return ensembleDetail(hist,winLen,stats,rnc,targetDate,lam).ranked;}
+
+/* 逐期滚动回测（单窗口）：对最近 backLen 期，每期仅用之前数据生成该窗口的预测。
+   口径说明（P13）：
+   - 返回 rows = 全部回测期（长度=回测期数 backN），供明细表与 CSV 导出使用；
+   - 命中率/基线/连错等汇总由 summarizeRows() 按最近 STATS_WINDOW 期统计（回测不足则取整段）；
+   P14：窗口集合由调用方传入（固定 30/50/100 + 用户自定义近N期），本函数只算一个窗口，
+   使 UI 侧可按窗口值缓存结果——用户改自定义窗口时无需重算固定三档。
+   P15 邻期中性校正：rncOn（默认 true）控制是否启用 RNC。启用时每期先用"该期之前"的滚动样本
+   估计校正参数 p，再生成预测，最后把本期原始分推入标定池——顺序保证严格无未来函数。
+   返回数组额外挂载 rncCalib（供"下一期"预测使用的最新校正参数）；每行保存 rncParams
+   （该期实际使用的参数，供多窗口对比面板的历史期次回看复现同一结果）。 */
+function btWindowRows(records,backLen,w,rncOn){
+  const rows=[];
+  const start=Math.max(0,records.length-backLen);
+  const useRnc=(rncOn!==false);
+  const calib=makeRncCalib();
+  const hist=records.slice(0,start);   /* P17 性能：增量维护历史切片（每期循环开始时 hist 恰为 records[0..t-1]，语义与原每期 slice(0,t) 相同），消除 O(n²) 拷贝 */
+  for(let t=start;t<records.length;t++){
+    const cur=records[t];
+    const prevZ=t>0?records[t-1].z:null;
+    const p=useRnc?calib.params():null;   /* 严格只用 t 之前的样本 */
+    const det=ensembleDetail(hist,w,computeStats(hist,w),p,cur.date);   /* P16：按目标期日期取权重 */
+    const preds=predictSets(det.ranked);
+    const row={date:cur.date,issue:cur.issue,t:cur.t,actual:cur.z,preds:{},hits:{},probs:{},
+               prevZ:prevZ,rncParams:p,rncAdj:(det.adj==null||!prevZ)?0:det.adj-det.raw[prevZ],
+               prevRank:prevZ?det.ranked.indexOf(prevZ)+1:0};
+    for(const n of TRACKS){row.preds[n]=preds[n];row.hits[n]=preds[n].indexOf(cur.z)>=0;row.probs[n]=setProb(preds[n],det.zw);}
+    rows.push(row);
+    if(prevZ)calib.push(det.raw[prevZ],ZODIACS.map(z=>det.raw[z]));
+    hist.push(records[t]);   /* P17：本期处理完（含标定 push）后再纳入历史 */
+  }
+  rows.rncCalib=calib.params();   /* 下一期（最新一期）预测所用的校正参数 */
+  return rows;
+}
+/* 汇总统计：分母 = 最近 min(STATS_WINDOW, 行数) 期；返回 {命中,总数,命中率,当前连错,最长连错,随机基线} */
+function summarizeRows(rows){
+  const lastStats=rows.slice(-STATS_WINDOW),sm={};
+  for(const n of TRACKS){
+    let hits=0,run=0,maxMiss=0;
+    for(const r of lastStats){if(r.hits[n]){if(run>maxMiss)maxMiss=run;run=0;hits++;}else run++;}
+    if(run>maxMiss)maxMiss=run;
+    let curMiss=0;
+    for(let i=rows.length-1;i>=0;i--){if(rows[i].hits[n])break;curMiss++;}
+    const base=lastStats.length?lastStats.reduce((a,r)=>a+r.probs[n],0)/lastStats.length:0;
+    sm[n]={hits:hits,total:lastStats.length,hitRate:lastStats.length?hits/lastStats.length:0,curMiss:curMiss,maxMiss:maxMiss,base:base};
+  }
+  return sm;
+}
+/* 多窗口回测：windows 省略时用固定三档（保持旧调用兼容）；重复窗口仅按首次出现保留一份。 */
+function runBacktest(records,backLen,windows,rncOn){
+  const list=[],seen={};
+  (windows&&windows.length?windows:FIXED_WINDOWS).forEach(w=>{if(!seen[w]){seen[w]=1;list.push(w);}});
+  const out={rows:{},summary:{}};
+  for(const w of list){const rows=btWindowRows(records,backLen,w,rncOn);out.rows[w]=rows;out.summary[w]=summarizeRows(rows);}
+  return out;
+}
+</script>
+
+<script id="ui">
+/* ===== 02 UI 渲染（支持加载用户自选数据文件后整体重渲染） ===== */
+let CUR=null, CUR_NAME='', BT=null, btWin=30, CMP_IDX=null;
+let CMP_PREDS={}; /* P11: 各窗口预测缓存{w:{8:[...]}} 供复制按钮（renderCmpPanel 每次覆盖） */
+/* P15 邻期中性校正开关：默认开启。关闭后各面板退回原集成（仅用于对照诊断）。 */
+let RNC_ON=true;
+/* ===== P17 安全：HTML 转义 =====
+   parseData 不校验日期/期号内容，远程数据源返回文本经 srcValidate 也只校验日期前缀，
+   issue 形如 123<img src=x onerror=...> 可通过 parseInt 校验并被拼入 innerHTML。
+   因此所有**来自数据源的字段**（date/issue，及由数据派生直接插入的字符串）在 innerHTML 拼接前必须经 esc() 转义；
+   生肖名来自固定 ZODIACS 列表，顺手一并转义。 */
+function esc(s){
+  return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
+}
+/* P16：下一期日期估计（最新一期 +1 天），用于确定目标期所属农历年 → 该年的号码权重 */
+function nextIssueDate(rows){
+  const dt=new Date(rows[rows.length-1].date+'T00:00:00Z');
+  dt.setUTCDate(dt.getUTCDate()+1);
+  return dt.toISOString().slice(0,10);
+}
+/* 各档理论上限：必选当年 5 号码生肖 + 其余各 4 号码 */
+function trackCap(n){return (5+(n-1)*4)/49;}
+
+/* ===== P14 自定义窗口（第四个窗口）=====
+   固定三档 = FIXED_WINDOWS=[30,50,100]（永不改变）；第四个窗口由用户填写"近N期"，默认 200。
+   - activeWindows() 为全站唯一的窗口集合来源（原先把 [30,50,100] 写死在 4 处，改一处漏三处）；
+   - 自定义值与固定三档重复时只保留一份，避免预测卡片/对比面板出现完全相同的重复行；
+   - 每个窗口的回测结果按窗口值缓存在 WINCACHE，修改自定义窗口只重算该窗口，固定三档复用缓存。 */
+const WIN_MIN=10, WIN_MAX=2000, WIN_DEFAULT=200;
+let customWin=WIN_DEFAULT, WINCACHE={};
+function isCustomWin(w){return FIXED_WINDOWS.indexOf(w)<0;}
+function activeWindows(){
+  const list=FIXED_WINDOWS.slice();
+  if(customWin>=WIN_MIN&&customWin<=WIN_MAX&&FIXED_WINDOWS.indexOf(customWin)<0)list.push(customWin);
+  return list;
+}
+/* 按窗口取回测结果（缓存优先）：{rows,summary}。窗口值超过样本量时 computeStats 内部按可用期数收缩。 */
+function ensureWindow(w){
+  if(!WINCACHE[w]){
+    const rows=btWindowRows(CUR,btLenFor(CUR),w,RNC_ON);
+    WINCACHE[w]={rows:rows,summary:summarizeRows(rows)};
+  }
+  return WINCACHE[w];
+}
+/* 依据 activeWindows() 组装全局 BT，供所有面板统一读数（各面板禁止自行切片窗口集合） */
+function buildBT(){
+  const out={rows:{},summary:{}};
+  const wins=activeWindows();
+  wins.forEach(w=>{const c=ensureWindow(w);out.rows[w]=c.rows;out.summary[w]=c.summary;});
+  BT=out;
+  if(!BT.rows[btWin])btWin=wins[0];
+}
+/* 裁剪缓存：只保留当前生效窗口的回测结果。用户反复改自定义窗口时若不裁剪，
+   每个废弃窗口的明细行都会常驻内存（O(窗口数×回测期数)），长会话下会持续膨胀。 */
+function pruneWinCache(){
+  const keep={};activeWindows().forEach(w=>keep[w]=1);
+  Object.keys(WINCACHE).forEach(k=>{if(!keep[k])delete WINCACHE[k];});
+}
+
+const BT_TABLE_ROWS=100;    /* 逐期回测明细表最大展示行数（仅为可读性截断，不影响统计口径） */
+
+function btLenFor(rows){return Math.max(30,rows.length-100);} /* P12 全量回测：以全部加载数据回测（前100期为100期窗口预热；加载门槛≥130期 ⇒ 恒≥30期） */
+
+/* 回测三档期数（P13 口径唯一来源，页面所有"近N期"标签与切片长度都必须取自这里，禁止各算各的）：
+   backN = 实际回测期数（= BT.rows[*].length，CSV 导出的全部期数）
+   statN = 统计窗口实际期数 = min(STATS_WINDOW, backN)（命中率/基线/连错的分母，回测不足 365 时按实际）
+   showN = 明细表展示行数   = min(BT_TABLE_ROWS, statN)（回测不足 100 时按实际，避免出现"标题说100、表里只有60行"） */
+function btScopeInfo(){
+  const backN=BT?BT.rows[btWin].length:0;
+  const statN=Math.min(STATS_WINDOW,backN);
+  return {backN:backN,statN:statN,showN:Math.min(BT_TABLE_ROWS,statN)};
+}
+
+/* ===== P14 预测卡片区渲染 =====
+   窗口集合 = activeWindows()（固定 30/50/100 + 用户自定义近N期，与固定档重复时自动合并）。
+   独立成函数的目的：用户改自定义窗口后只需重渲染卡片区（+对比面板+回测明细），
+   不必重跑 策略对比面板（其口径与窗口集合无关）。 */
+/* 小标题里的窗口数（如"四窗口组合预测"）：随 activeWindows() 实时变化，避免与卡片数量不一致 */
+function updatePredWinTitle(){
+  const CN=['','一','二','三','四','五','六','七','八'],n=activeWindows().length;
+  document.getElementById('predWinTitle').textContent=(CN[n]||n)+'窗口';
+}
+function renderPredGrid(){
+  const el=document.getElementById('predGrid');
+  if(!CUR||!BT){el.innerHTML='<div class="win-card muted small">等待加载数据…加载后此处显示多窗口统计与 8/5/3/2/1 肖组合预测。</div>';updatePredWinTitle();return;}
+  const rows=CUR,latest=rows[rows.length-1],wins=activeWindows();
+  updatePredWinTitle();
+  /* P17 性能：nextIssueDate 与各窗口无关（日期解析+toISOString 不便宜），提到循环外只算一次 */
+  const nextDate=nextIssueDate(rows);
+  el.innerHTML=wins.map(w=>{
+    /* P15：最新一期的预测使用回测过程中标定出的最新校正参数（BT.rows[w].rncCalib）；关闭开关时传 null
+       P16：传入下一期日期，按该期所属农历年取号码权重（决定哪 1 个生肖有 5 个号码） */
+    const stats=computeStats(rows,w),det=ensembleDetail(rows,w,stats,RNC_ON?(BT.rows[w].rncCalib||null):null,nextDate),ranked=det.ranked,preds=predictSets(ranked),sm=BT.summary[w];
+    const maxFreq=Math.max.apply(null,ZODIACS.map(z=>stats[z].freq))||1;
+    const statRows=ranked.map(z=>{
+      const s=stats[z];
+      const mr=det.lists.map(L=>'<span title="'+L.name+'（权重×'+L.w+'）">'+L.short+L.rankOf[z]+'</span>').join('·');
+      return '<tr><td class="left"><span class="zname">'+z+'</span></td>'+
+        '<td>'+s.freq+'</td>'+
+        '<td style="min-width:70px;"><div class="freq-bar"><i style="width:'+(s.freq/maxFreq*100).toFixed(0)+'%"></i></div></td>'+
+        '<td><span class="tag '+(s.miss>=10?'miss':'')+'">'+s.miss+'</span></td>'+
+        '<td>'+s.maxMiss+'</td>'+
+        '<td><span class="tag '+(s.streak>=2?'streak':'')+'">'+s.streak+'</span></td>'+
+        '<td><span class="tag '+(s.freq50<=1?'cool':'')+'">'+s.freq50+'</span></td>'+
+        '<td class="small mr-cell">'+mr+'</td>'+
+        '<td><b>'+Math.round(det.score[z])+'</b>'+(z===det.prevZ&&det.adj!=null?'<div class="tag custom" title="上一期生肖：已做邻期中性校正" style="margin-top:2px;">校'+(det.adj-det.raw[z]>=0?'+':'')+Math.round(det.adj-det.raw[z])+'</div>':'')+'</td></tr>';
+    }).join('');
+    const comboHtml=n=>'<div class="combo"><div class="cl"><b style="color:var(--primary);">'+n+'肖</b>'+
+      '<span>回测命中率 '+(sm[n].hitRate*100).toFixed(1)+'% ｜ 期望 '+(setProb(preds[n],det.zw)*100).toFixed(1)+'% ｜ 上限 '+(trackCap(n)*100).toFixed(1)+'%</span></div>'+
+      '<div class="chips">'+preds[n].map(z=>'<div class="chip'+(n===1?' top1':'')+(z===det.prevZ?' prev':'')+'" title="'+
+        det.lists.map(L=>L.name+'第'+L.rankOf[z]+'名(×'+L.w+')').join('，')+
+        (z===det.prevZ?'　【上一期生肖'+(det.adj!=null?'，已做邻期中性校正 '+(det.adj-det.raw[z]>=0?'+':'')+Math.round(det.adj-det.raw[z])+' 分':'')+'】':'')+
+        '"><b>'+z+(z===det.prevZ?'<span class="ptag">上一期</span>':'')+'</b><span class="ev">Σ'+Math.round(det.score[z])+'·'+w+'期'+stats[z].freq+'次·遗'+stats[z].miss+'</span></div>').join('')+'</div></div>';
+    /* 窗口起始行：自定义窗口可能大于样本量，rows.length-w 为负时钳到 0（原写法会取到 undefined 而抛错） */
+    const si=Math.max(0,rows.length-w);
+    const rangeNote=rows.length<w?'（样本仅 '+rows.length+' 期，窗口取全部）':'';
+    return '<div class="win-card"><div class="wt"><span><b>窗口：近 '+w+' 期</b>'+
+      (isCustomWin(w)?' <span class="tag custom">自定义</span>':'')+'</span>'+
+      '<span class="muted small">'+esc(rows[si].date)+' ~ '+esc(latest.date)+rangeNote+'</span></div>'+
+      '<div class="stat-scroll"><table><thead><tr><th class="left">生肖</th><th>出现</th><th>频率</th><th>当前遗漏</th><th>窗口最大遗漏</th><th>连出</th><th>近50期</th><th>成员名次</th><th>Borda</th></tr></thead><tbody>'+statRows+'</tbody></table></div>'+
+      '<div style="margin-top:10px;">'+TRACKS.map(comboHtml).join('')+'</div></div>';
+  }).join('');
+}
+
+/* ===== P15 邻期偏差诊断面板 =====
+   口径：对逐期回测的每一期，统计"k 期之前出现过的生肖"是否落入该期各档预测组合。
+   若预测对"上一期开的是什么生肖"不携带任何信息，则纳入率应等于 n/12——因为最终排名是
+   12 生肖的一个排列，随机抽取的生肖落入前 n 名的概率恰为 n/12（8肖66.7%/5肖41.7%/3肖25%/2肖16.7%/1肖8.3%）。
+   面板同时给出"当前模式"与"对照模式"（校正开/关）两套数值，便于直接验证修复效果。 */
+function lagInclusion(btRows,lags){
+  const lo=CUR.length-btRows.length,a={};
+  btRows.forEach((r,i)=>{
+    const t=lo+i;
+    for(let k=1;k<=lags;k++){
+      const zk=CUR[t-k]?CUR[t-k].z:null; if(!zk)continue;
+      a[k]=a[k]||{};
+      TRACKS.forEach(n=>{a[k][n]=a[k][n]||{h:0,t:0};a[k][n].t++;if(r.preds[n].indexOf(zk)>=0)a[k][n].h++;});
+    }
+  });
+  return a;
+}
+function meanPrevRank(btRows){
+  let s=0,c=0;btRows.forEach(r=>{if(r.prevRank){s+=r.prevRank;c++;}});
+  return c?s/c:0;
+}
+/* P17 性能：对照组（反向 RNC 模式）回测结果的模块级缓存，键见 renderRncDiag 内 refKey */
+let RNC_REF_CACHE=null;
+function renderRncDiag(){
+  const tbl=document.getElementById('rncTable'),note=document.getElementById('rncNote');
+  if(!CUR||!BT){
+    tbl.innerHTML='<tbody><tr><td class="muted empty-cell" style="padding:14px;">等待加载数据…</td></tr></tbody>';
+    note.innerHTML='';return;
+  }
+  const w0=activeWindows()[0];
+  const curRows=BT.rows[w0];
+  /* P17 性能：对照组回测加模块级缓存。键 = 数据长度+最新期号+最新日期+窗口+RNC 开关+λ；
+     数据更新（renderAll 全量重建）、开关切换或 λ 调整时自然失效，避免每次渲染全量重跑回测。 */
+  const refKey=CUR.length+'|'+CUR[CUR.length-1].issue+'|'+CUR[CUR.length-1].date+'|'+w0+'|'+(!RNC_ON)+'|'+WEIGHT_LAMBDA;
+  if(!RNC_REF_CACHE||RNC_REF_CACHE.key!==refKey){
+    RNC_REF_CACHE={key:refKey,rows:btWindowRows(CUR,btLenFor(CUR),w0,!RNC_ON)};   /* 对照：反向模式另跑一次（未写入 WINCACHE） */
+  }
+  const refRows=RNC_REF_CACHE.rows;
+  const A=lagInclusion(curRows,8),B=lagInclusion(refRows,8);
+  const ma=meanPrevRank(curRows),mb=meanPrevRank(refRows);
+  const curLabel=RNC_ON?'当前（已校正）':'当前（未校正）';
+  const refLabel=RNC_ON?'对照（未校正）':'对照（已校正）';
+  const lastRow=curRows[curRows.length-1];
+  note.innerHTML='统计窗口：近 '+w0+' 期 · 回测 '+curRows.length+' 期（每期预测只用该期之前的数据）；'+
+    '若预测对"上一期开的是什么生肖"不携带信息，则 k 期前的生肖落入 n 肖组合的概率应等于 <b>n/12</b>，'+
+    '即 8肖66.7% / 5肖41.7% / 3肖25.0% / 2肖16.7% / 1肖8.3%。括号内为'+refLabel+'数值。<br>'+
+    '上一期生肖平均名次：'+curLabel+' <b>'+ma.toFixed(2)+'</b>　'+refLabel+' '+mb.toFixed(2)+'（中性期望 6.5）；'+
+    '最新一期校正量：'+(lastRow?(lastRow.rncAdj>=0?'+':'')+lastRow.rncAdj.toFixed(2)+' 分':'—')+
+    (lastRow&&!RNC_ON?'（未启用校正）':'')+'。<br>'+
+    '<span style="color:#b45309;">残余偏差说明：校正仅匹配分数分布的前两阶矩，档位越小残余偏差越明显（约 −2~−4pp）；'+
+    '2~8 期前的生肖仍低于中性基线，那是"反热择冷"类策略的固有属性（偏好久未出现的生肖），本次不做改动。</span>';
+  tbl.innerHTML='<thead><tr><th class="left">滞后期 k</th>'+TRACKS.map(n=>'<th>'+n+'肖</th>').join('')+'</tr></thead><tbody>'+
+    '<tr class="base"><td class="left">中性基线 n/12</td>'+TRACKS.map(n=>'<td>'+(n/12*100).toFixed(1)+'%</td>').join('')+'</tr>'+
+    [1,2,3,4,5,6,7,8].map(k=>{
+      const cells=TRACKS.map(n=>{
+        const a=A[k]&&A[k][n],b=B[k]&&B[k][n];
+        if(!a)return '<td>—</td>';
+        return '<td>'+(a.h/a.t*100).toFixed(1)+'%'+(b?'<span class="old">（'+(b.h/b.t*100).toFixed(1)+'%）</span>':'')+'</td>';
+      }).join('');
+      return '<tr'+(k===1?' style="background:var(--primary-soft);"':'')+'><td class="left">'+k+' 期前'+(k===1?'（上一期）':'')+'</td>'+cells+'</tr>';
+    }).join('')+'</tbody>';
+}
+/* ===== P16 准确率构成与理论上限面板 ===== */
+function renderAccPanel(){
+  const tbl=document.getElementById('accTable'),note=document.getElementById('accNote');
+  if(!CUR||!BT){
+    tbl.innerHTML='<tbody><tr><td class="muted empty-cell" style="padding:14px;">等待加载数据…</td></tr></tbody>';
+    note.innerHTML='';return;
+  }
+  const w0=activeWindows()[0],rows=BT.rows[w0],last=rows.slice(-STATS_WINDOW),T=last.length;
+  /* 号码均匀性卡方（检验是否存在可利用的号码偏好） */
+  const numCnt={};for(let i=1;i<=49;i++)numCnt[i]=0;
+  CUR.forEach(r=>{numCnt[r.t]++;});
+  const e49=CUR.length/49;let chi49=0;
+  for(let i=1;i<=49;i++)chi49+=(numCnt[i]-e49)*(numCnt[i]-e49)/e49;
+  /* 生肖一阶转移独立性卡方 */
+  const trans={},rt={},ct={};
+  ZODIACS.forEach(a=>{trans[a]={};rt[a]=0;ZODIACS.forEach(b=>trans[a][b]=0);});
+  ZODIACS.forEach(b=>ct[b]=0);
+  for(let i=0;i<CUR.length-1;i++){trans[CUR[i].z][CUR[i+1].z]++;rt[CUR[i].z]++;ct[CUR[i+1].z]++;}
+  let chiT=0;
+  ZODIACS.forEach(a=>ZODIACS.forEach(b=>{
+    const e=rt[a]*ct[b]/(CUR.length-1);
+    if(e>0)chiT+=(trans[a][b]-e)*(trans[a][b]-e)/e;
+  }));
+  const body=TRACKS.map(n=>{
+    let hit=0,exp=0,bigIn=0;
+    last.forEach(r=>{if(r.hits[n])hit++;exp+=r.probs[n];if(r.preds[n].indexOf(bigZodiac(r.date))>=0)bigIn++;});
+    const cap=trackCap(n),ex=exp/T;
+    return '<tr><td class="left">'+n+'肖</td><td><b>'+(hit/T*100).toFixed(2)+'%</b></td><td>'+(ex*100).toFixed(2)+
+      '%</td><td>'+(cap*100).toFixed(2)+'%</td><td>'+((cap-ex)*100).toFixed(2)+'pp</td><td>'+(bigIn/T*100).toFixed(0)+'%</td></tr>';
+  }).join('');
+  tbl.innerHTML='<thead><tr><th class="left">档位</th><th>实测命中率</th><th>期望命中率</th><th>理论上限</th><th>缺口</th><th>5号码生肖入选率</th></tr></thead><tbody>'+body+'</tbody>';
+  const nd=nextIssueDate(CUR);
+  note.innerHTML='<b>数据检验</b>（'+CUR.length+' 期）：49 号码均匀性 χ²='+chi49.toFixed(1)+'（df=48，5%临界 65.2）→ '+
+    (chi49>65.17?'<span style="color:#b45309;">存在偏离</span>':'<b>不能拒绝均匀</b>')+'；生肖一阶转移独立性 χ²='+chiT.toFixed(1)+'（df=121，5%临界≈193）→ '+
+    (chiT>193?'<span style="color:#b45309;">存在依赖</span>':'<b>不能拒绝独立</b>')+
+    '。即历史序列对下一期不携带可利用信息，准确率唯一真实可优化的部分是<b>组合覆盖的号码数</b>。<br>'+
+    '期望命中率 = Σ选中生肖号码数/49（不受开奖波动影响的真实概率）；理论上限 = 组合必含当年 5 号码生肖。'+
+    '实测与期望的差值为样本波动，样本越小波动越大。<br>'+
+    '下一期（'+nd+'）所属农历年的 5 号码生肖为 <b style="color:#6d28d9;">'+bigZodiac(nd)+'</b>（5/49=10.20%，其余各 4/49=8.16%）；'+
+    '权重优先强度 λ='+WEIGHT_LAMBDA+'：λ 越大越接近上限，但组合多样性越低。';
+}
+document.getElementById('rncToggle').addEventListener('change',e=>{
+  RNC_ON=!!e.target.checked;
+  if(CUR&&CUR_NAME)renderAll(CUR,CUR_NAME);   /* 全部面板按新模式重算（含策略对比面板的主策略行） */
+});
+document.getElementById('lamSel').addEventListener('change',e=>{
+  WEIGHT_LAMBDA=parseFloat(e.target.value);
+  if(CUR&&CUR_NAME)renderAll(CUR,CUR_NAME);   /* λ 影响所有预测/回测，需全量重算 */
+});
+
+function renderAll(rows,sourceName){
+  CUR=rows;CUR_NAME=sourceName;
+  const latest=rows[rows.length-1];
+  const NUM_BY_Z={};
+  for(let n=1;n<=49;n++){const z=numToZodiac(n,latest.date);(NUM_BY_Z[z]=NUM_BY_Z[z]||[]).push(n);}
+
+  /* 农历年覆盖提示 */
+  const years={};rows.forEach(r=>years[r.date.slice(0,4)]=1);
+  const approxYears=Object.keys(years).filter(y=>!LUNAR_NY[y]);
+  /* P17 安全：数据源字段（数据源名/日期/期号/生肖）拼入 innerHTML 前一律转义 */
+  const approxNote=approxYears.length?'<br><span style="color:#b45309;">提示：'+approxYears.map(esc).join('、')+' 年农历新年日期未收录，生肖映射按2月4日近似切换，年初边界日期可能有个别误差</span>':'';
+  document.getElementById('dataMeta').innerHTML=
+    '数据源：'+esc(sourceName)+'　样本：'+rows.length+' 期　'+esc(rows[0].date)+' ~ '+esc(latest.date)+approxNote+
+    '<br>最新一期：'+esc(latest.issue)+' 期（'+esc(latest.date)+'）特别号 <b>'+String(latest.t).padStart(2,'0')+'</b> → <b>'+esc(latest.z)+'</b>';
+  document.getElementById('mapYear').textContent=String(lunarYearOf(latest.date));   /* 显示实际农历年而非公历年（春节前二者不同） */
+
+  /* 生肖映射表 */
+  document.getElementById('zodiacMap').innerHTML=ZODIACS.map(z=>
+    '<div class="zi"><b>'+z+'</b><div class="nums">'+NUM_BY_Z[z].map(n=>String(n).padStart(2,'0')).join(' ')+'</div></div>').join('');
+
+  /* 全量分布 */
+  const cnt={};ZODIACS.forEach(z=>cnt[z]=0);
+  rows.forEach(r=>cnt[r.z]++);
+  const mx=Math.max.apply(null,ZODIACS.map(z=>cnt[z]))||1;
+  document.getElementById('distAll').innerHTML=ZODIACS.map(z=>
+    '<div class="d"><b>'+z+'</b>'+cnt[z]+'次<div class="bar"><i style="width:'+(cnt[z]/mx*100).toFixed(0)+'%"></i></div></div>').join('');
+
+  /* 回测（样本不足时自适应缩短回测长度）；P14：窗口集合 = 固定 30/50/100 + 自定义近N期，按窗口缓存 */
+  WINCACHE={};
+  buildBT();
+  /* 口径标签统一（P13）：stratScope / cmpScope / btScope 三处一律写统计窗口实际期数 statN，
+     不再对回测明细标题做 min(100, backN) 的特殊压缩（原写法导致"标题近100期 vs 卡片分母365"的矛盾）。
+     注意：cmpScope 会在 renderCmpPanel 中按"截至定位期次的可用回测行数"进一步细化（≤statN）。 */
+  const sc=btScopeInfo();
+  document.getElementById('stratScope').textContent=sc.statN;
+  document.getElementById('cmpScope').textContent=sc.statN;
+  document.getElementById('btScope').textContent=sc.statN;
+
+  /* 多窗口预测卡片（含集成选择依据：各成员名次 + Borda 加权得分）；P14：窗口集合由 activeWindows() 提供 */
+  renderPredGrid();
+  renderRncDiag();   /* P15：邻期偏差诊断（上一期生肖是否被系统性排除） */
+  renderAccPanel();  /* P16：准确率构成与理论上限 */
+
+  /* 策略对比面板 */
+  const STRATS=[
+    ['多策略集成5W50（当前采用'+(RNC_ON?'·含邻期中性校正':'·未校正')+'·权重λ='+WEIGHT_LAMBDA+'）', (h,p,d)=>rankEnsemble(h,50,computeStats(h,50),p,d)],
+    ['反热择冷w50（集成核心成员）', h=>rankZodiacs(computeStats(h,50))],
+    ['频率w30', h=>rankFreqWin(h,30)],
+    ['遗漏优先', h=>rankMissDesc(h)],
+    ['连出优先', h=>rankStreakDesc(h)],
+    ['马尔可夫1阶', h=>rankMarkov(h)],
+    ['静态权重上限', (h,p,d)=>rankStatic(d)],
+    ['旧复合热度公式', h=>rankOldComposite(h)]
+  ];
+  const ceil=[67.35,42.86,26.53,18.37,10.20];
+  /* 累计窗口 = 统计窗口 statN（与 stratScope 标签、BT.summary 口径三者一致；回测不足365期时即全部回测期） */
+  const N=sc.statN,start=Math.max(0,rows.length-N);
+  const acc={};
+  STRATS.forEach(s=>{acc[s[0]]={};TRACKS.forEach(k=>acc[s[0]][k]=0);});
+  /* P15：主策略行使用与其它面板同一协议的滚动标定器（只用 t 之前的样本），关闭开关时 p=null */
+  const ensCalib=makeRncCalib();
+  const hist=rows.slice(0,start);   /* P17 性能：增量维护历史切片（循环内 hist 恰为 rows[0..t-1]），替代每期 rows.slice(0,t) 全量拷贝 */
+  for(let t=start;t<rows.length;t++){
+    const cur=rows[t];
+    const p=RNC_ON?ensCalib.params():null;
+    /* P17 性能：主策略每期只建一次集成明细（原实现 rankEnsemble 内部建一次、标定 push 又建一次，共两次）。
+       det.raw 为未校正原始分（与 rnc 参数无关），push 语义不变；det.ranked 即 rankEnsemble 的返回值；
+       det.prevZ 即 rows[t-1].z。无论 RNC_ON 与否主策略都需要 det。 */
+    const det=ensembleDetail(hist,50,computeStats(hist,50),p,cur.date);
+    STRATS.forEach((st,si)=>{
+      const ranked=si===0?det.ranked:st[1](hist,p,cur.date);   /* P16：传入目标期日期（决定当年 5 号码生肖） */
+      TRACKS.forEach(k=>{if(ranked.slice(0,k).indexOf(cur.z)>=0)acc[st[0]][k]++;});
+    });
+    /* 本期各策略评估完成后再推进标定器，确保标定只用到 t 之前的信息 */
+    if(RNC_ON&&t>0)ensCalib.push(det.raw[rows[t-1].z],ZODIACS.map(z=>det.raw[z]));
+    hist.push(cur);   /* P17：本期处理完后再纳入历史 */
+  }
+  document.getElementById('stratTable').innerHTML=
+    '<thead><tr><th class="left">策略</th>'+TRACKS.map(k=>'<th>'+k+'肖</th>').join('')+'<th>平均偏差</th></tr></thead><tbody>'+
+    STRATS.map(st=>{
+      let d=0;
+      const cells=TRACKS.map((k,i)=>{
+        const p=acc[st[0]][k]/N*100;
+        d+=p-ceil[i];
+        return '<td>'+p.toFixed(1)+'%</td>';
+      }).join('');
+      const cur=st[0].indexOf('当前采用')>=0;
+      return '<tr'+(cur?' style="background:var(--primary-soft);"':'')+'><td class="left"'+(cur?' style="color:var(--primary);font-weight:700;"':'')+'>'+st[0]+'</td>'+cells+'<td>'+(d/TRACKS.length).toFixed(2)+'pp</td></tr>';
+    }).join('')+'</tbody>';
+
+  /* 多窗口对比面板（P11：期次回看——默认最新一期，可 上一期/下一期 浏览历史期次） */
+  CMP_IDX=CUR.length-1;
+  renderCmpPanel();
+
+  renderBtSel();
+  renderBT();
+  normWinHint();
+}
+
+/* ===== P11 多窗口对比面板·期次回看（P14：窗口集合 = 固定三档 + 用户自定义近N期） =====
+   定位期次 CMP_IDX（records 下标，默认=最新一期）：
+   - 预测肖组 = 以截至该期的历史 records[0..CMP_IDX] 重新生成该时点对"下一期"的各窗口预测（窗口集合由 activeWindows() 提供）；
+   - 连错/命中统计 = 取逐期回测 BT.rows[w] 中截至该期（行号 k）的行重算：当前连错（尾部）+ 最长连错 + 命中率与基线；
+     命中率/基线的窗口 = 最近 min(STATS_WINDOW, 可用行数) 行（可用行数 = k+1，不足 STATS_WINDOW 时按实际）；
+     最长连错的各档窗口 = activeWindows() + 统计窗口，长度按可用行数收缩后去重（P13-2 沿用），
+     避免可用行数不足时连出多条同名同值的"近N期最长连错"；
+     历史最长连错 = 自回测起点至定位期全段（标签"历史最长连错"，其长度随定位期变化，故不标期数）。
+   可回看范围 = 逐期回测覆盖期次 [lo,hi]（lo = CUR.length − 基础窗口回测行数）；到达边界禁用对应按钮。 */
+function renderCmpPanel(){
+  const tbl=document.getElementById('cmpTable');
+  if(!CUR||!BT){tbl.innerHTML='<tbody><tr><td class="muted empty-cell" style="padding:14px;">等待加载数据…</td></tr></tbody>';return;}
+  if(CMP_IDX==null)CMP_IDX=CUR.length-1;
+  const lo=CUR.length-(BT.rows[activeWindows()[0]]||[]).length, hi=CUR.length-1;
+  CMP_IDX=Math.max(lo,Math.min(hi,CMP_IDX));
+  const k=CMP_IDX-lo, snapDate=CUR[CMP_IDX].date;
+  /* P17 性能：定位最新一期时 snap 即 CUR 本身，无需每次渲染整表拷贝（snap 在下游只读，
+     computeStats/rankEnsemble 内部自行切片，不修改入参）；仅历史回看时才截取前缀。 */
+  const snap=(CMP_IDX===CUR.length-1)?CUR:CUR.slice(0,CMP_IDX+1);
+  const isLatest=(CMP_IDX===hi), nextRec=isLatest?null:CUR[CMP_IDX+1], nextZ=nextRec?nextRec.z:null;   /* P17：历史回看时下一期已开奖，用于实开提示与 chip 命中标识 */
+  /* 各"近N期"标签一律取自 cmpStatsAt 按可用行数收缩后的实际长度（P13/P14） */
+  document.getElementById('cmpScope').textContent=Math.min(STATS_WINDOW,k+1); /* 同步面板标题里的统计窗口期数（≤ 全量 statN） */
+  tbl.innerHTML='<thead><tr><th style="min-width:70px;">窗口</th>'+TRACKS.map(n=>'<th>'+n+'肖</th>').join('')+'</tr></thead><tbody>'+
+    activeWindows().map(w=>{
+      /* P17 预测口径修正：面板语义为"该时点基于历史对下一期的预测"。
+         - 定位历史期次（CMP_IDX<hi）：直接复用回测第 k+1 行存储的预测（= 对 CUR[CMP_IDX+1] 的预测，
+           与回测明细/CSV 导出逐位一致且免重算；RNC 开关或 λ 变化时 renderAll 会重建 WINCACHE，存储值无陈旧风险）；
+         - 定位最新一期：现算，与预测卡片完全同参（RNC 参数用 rncCalib、目标日期用 nextIssueDate）；
+         - k+1 行缺失的兜底：沿用原口径现算（row k 的 rncParams + 定位期日期）。 */
+      const rowsW=BT.rows[w]||[],rowNext=rowsW[k+1];
+      let preds;
+      if(rowNext){preds=rowNext.preds;}
+      else if(isLatest){preds=predictSets(ensembleDetail(snap,w,computeStats(snap,w),RNC_ON?(BT.rows[w].rncCalib||null):null,nextIssueDate(CUR)).ranked);}
+      else{const rowK=rowsW[k];preds=predictSets(rankEnsemble(snap,w,computeStats(snap,w),(RNC_ON&&rowK)?rowK.rncParams:null,snapDate));}
+      CMP_PREDS[w]=preds; /* 缓存当前定位期次下的预测，复制按钮取用 */
+      const sm=cmpStatsAt(w,k);
+      return '<tr><td class="winname">近'+w+'期'+(isCustomWin(w)?'<span class="tag custom">自定义</span>':'')+'<button class="copy-btn" type="button" data-win="'+w+'">复制</button></td>'+TRACKS.map(n=>{
+        const s=sm[n];
+        /* 各档"最长连错"由 cmpStatsAt 按可用行数收缩后返回（seg 已按窗口长度去重），此处仅负责渲染 */
+        const segs=s.segs.map(g=>'近'+g.len+'期最长连错 <b>'+g.val+'</b> 期');
+        return '<td class="cmp-cell"><div class="chips">'+preds[n].map(z=>'<div class="chip'+(z===nextZ?' chip-hit':'')+'"><b>'+esc(z)+'</b></div>').join('')+'</div>'+
+          '<div class="cmp-stat">当前连错 <b>'+s.curMiss+'</b> 期 · '+segs.join(' · ')+'<br>'+
+          '历史最长连错 <b>'+s.maxMissAll+'</b> 期<br>'+
+          '近'+s.total+'期命中率 <b>'+(s.hitRate*100).toFixed(1)+'%</b> · 随机基线 '+(s.base*100).toFixed(1)+'%</div></td>';
+      }).join('')+'</tr>';
+    }).join('')+'</tbody>';
+  syncCmpNav();
+}
+/* 数组内最长连续未中段长度（r.hits[n] 为 false 记为 1 段） */
+function maxRunOf(arr,n){let run=0,mx=0;for(const r of arr){if(r.hits[n])run=0;else{run++;if(run>mx)mx=run;}}return mx;}
+/* 截至回测行号 k 的连错/命中汇总
+   口径：统计窗口 = 最近 STATS_WINDOW 行（不足则取全部可用行 = k+1）用于命中率/基线；
+        P14：最长连错的窗口集合 = activeWindows()（固定三档 + 自定义近N期）+ 统计窗口，
+        各档窗口长度按可用行数收缩（Math.min）并去重，标签与数值同源，不再虚标窗口期数。 */
+function cmpStatsAt(w,k){
+  const rows=BT.rows[w].slice(0,k+1), lastStats=rows.slice(-STATS_WINDOW), sm={};
+  /* 展示顺序：固定三档 → 自定义窗口 → 统计窗口；长度相同者只保留首次出现的那一档 */
+  const segLens=[],seen={};
+  activeWindows().forEach(x=>{const L=Math.min(x,rows.length);if(L>0&&!seen[L]){seen[L]=1;segLens.push(L);}});
+  if(lastStats.length>0&&!seen[lastStats.length]){seen[lastStats.length]=1;segLens.push(lastStats.length);}
+  const segs=segLens.map(L=>({len:L,vals:{}}));
+  for(const n of TRACKS){
+    let hits=0;
+    for(const r of lastStats)if(r.hits[n])hits++;
+    const total=lastStats.length;
+    let curMiss=0;
+    for(let i=rows.length-1;i>=0;i--){if(rows[i].hits[n])break;curMiss++;}
+    segs.forEach(g=>{g.vals[n]=maxRunOf(rows.slice(-g.len),n);});
+    sm[n]={curMiss:curMiss,segs:segs.map(g=>({len:g.len,val:g.vals[n]})),maxMissAll:maxRunOf(rows,n),total:total,hitRate:total?hits/total:0,base:total?lastStats.reduce((a,r)=>a+r.probs[n],0)/total:0};
+  }
+  return sm;
+}
+/* 定位指示与按钮可用态 */
+function syncCmpNav(){
+  const nav=document.getElementById('cmpNav'),prev=document.getElementById('cmpPrev'),next=document.getElementById('cmpNext'),pos=document.getElementById('cmpPos');
+  if(!CUR||!BT){nav.style.display='none';return;}
+  nav.style.display='';
+  const lo=CUR.length-(BT.rows[activeWindows()[0]]||[]).length,hi=CUR.length-1,r=CUR[CMP_IDX],isNew=CMP_IDX>=hi;
+  prev.disabled=CMP_IDX<=lo; next.disabled=isNew;
+  prev.title=CMP_IDX<=lo?'已到最早可回看期次（逐期回测起点）':'查看更早一期';
+  next.title=isNew?'已到最新一期（无更晚数据）':'查看更晚一期';
+  /* P17：历史回看时下一期已开奖，展示"对下一期预测 · 实开生肖"；最新一期显示未开奖。字段一律转义 */
+  const nxt=CUR[CMP_IDX+1];
+  pos.innerHTML='<span class="nav-tag '+(isNew?'latest':'old')+'">'+(isNew?'最新一期':'历史回看 · 距最新差 '+(hi-CMP_IDX)+' 期')+'</span>'+
+    '<span>数据截至 <b>第 '+esc(r.issue)+' 期</b><span class="dim">（'+esc(r.date)+'）特别号 '+String(r.t).padStart(2,'0')+' → '+esc(r.z)+'</span></span>'+
+    (nxt?'<span>对下一期（第 '+esc(nxt.issue)+' 期）预测 · 下一期实开 <b class="hit">'+esc(nxt.z)+'</b></span>'
+        :'<span class="dim">对下一期预测 · 下一期未开奖</span>')+
+    '<span class="dim">预测为该时点基于历史对下一期的预测；命中/连错统计截至定位期。</span>';
+}
+document.getElementById('cmpPrev').addEventListener('click',()=>{if(CUR&&BT&&CMP_IDX>0){CMP_IDX--;renderCmpPanel();}});
+document.getElementById('cmpNext').addEventListener('click',()=>{if(CUR&&BT&&CMP_IDX<CUR.length-1){CMP_IDX++;renderCmpPanel();}});
+
+/* CSV 导出（当前窗口全部回测期） */
+function exportBT(){
+  if(!BT)return;
+  const rows=BT.rows[btWin];
+  const esc=v=>'"'+String(v).replace(/"/g,'""')+'"';
+  const lines=['日期,期号,特别号,真实生肖,'+TRACKS.map(n=>n+'肖预测,'+n+'肖命中').join(',')];
+  rows.forEach(r=>{
+    lines.push([r.date,r.issue,String(r.t).padStart(2,'0'),r.actual,
+      TRACKS.map(n=>esc(r.preds[n].join(' '))+(r.hits[n]?'中':'×')).join(',')].join(','));
+  });
+  const blob=new Blob(['\ufeff'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='生肖回测明细_'+btWin+'期窗口_'+rows.length+'期.csv';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+/* 回表明细渲染（当前窗口）
+   口径（P13）：汇总卡片取 BT.summary[btWin]（最近 statN 期统计）；表格只画最近 showN 行；
+   标题下的 #btScopeNote 用运行时数字说明"统计窗口 / 展示行数 / 可导出全量期数"三者的区别，
+   避免用户误以为明细被截断=数据丢失（CSV 导出仍是全部 backN 期，未改动）。 */
+function renderBT(){
+  if(!BT)return;
+  const sc=btScopeInfo();
+  const rows=BT.rows[btWin].slice(-sc.showN),sm=BT.summary[btWin];
+  const hidden=Math.max(0,sc.backN-sc.showN); /* 被截断而未在表中展示、但仍可导出的期数 */
+  /* 文案按两种情形分别措辞（P13-2）：
+     - backN > statN（数据>465期）：统计窗口只是回测尾部一段，需点明"仅最近 statN 期进入统计"；
+     - backN === statN（数据≤465期）：统计窗口即回测全部，避免"共 X 期"与"最近 X 期"重复的绕口表述。
+     hidden=0 时不能再说"仅展示"，否则与紧接着的"完整 X 期"自相矛盾（N∈[130,200] 可达）。 */
+  const statSentence=(sc.backN>sc.statN)
+    ? '命中率 / 随机基线 / 最长连错：按<b>最近 '+sc.statN+' 期</b>回测结果统计（本次回测共 '+sc.backN+' 期，仅最近 '+sc.statN+' 期进入统计）。'
+    : '命中率 / 随机基线 / 最长连错：按<b>最近 '+sc.statN+' 期</b>回测结果统计（即本次回测全部 '+sc.backN+' 期）。';
+  const tableSentence=hidden
+    ? '下方明细表为避免过长<b>仅展示最近 '+sc.showN+' 期</b>；回测全部 '+sc.backN+' 期中其余 '+hidden+' 期未展示但并未丢失，完整 '+sc.backN+' 期请用上方"导出回测CSV（全部回测期）"按钮下载。'
+    : '下方明细表已展示本次回测全部 '+sc.showN+' 期；完整 '+sc.backN+' 期也可用上方"导出回测CSV（全部回测期）"按钮下载。';
+  /* P14：说明窗口按钮中的「自定义」档来源，避免用户误以为切窗口会改变统计口径 */
+  const customNote='窗口按钮中的「自定义」档 = 上方输入框设置的近 '+customWin+' 期'+
+    (isCustomWin(customWin)?'':'（与固定窗口 30/50/100 期重复，已合并展示）')+
+    '；切换窗口按钮只改变下方明细所用窗口，不改变上述统计口径。';
+  document.getElementById('btScopeNote').innerHTML=
+    statSentence+tableSentence+'<br>每期预测仅使用该期之前的历史数据，滚动更新。'+customNote;
+  document.getElementById('btSum').innerHTML=TRACKS.map(n=>
+    '<div class="sum-box"><div class="t">'+n+'肖命中</div><div class="v '+(sm[n].hitRate>=sm[n].base?'hit':'')+'">'+
+    sm[n].hits+' / '+sm[n].total+'（'+(sm[n].hitRate*100).toFixed(1)+'%）</div><div class="b">随机基线 '+(sm[n].base*100).toFixed(1)+'%</div></div>').join('');
+  document.getElementById('btTable').innerHTML=
+    '<thead><tr><th>日期</th><th>期号</th><th>特号</th><th>真实生肖</th>'+TRACKS.map(n=>'<th>'+n+'肖预测</th><th>中</th>').join('')+'</tr></thead><tbody>'+
+    rows.map(r=>'<tr><td class="muted">'+esc(r.date)+'</td><td>'+esc(r.issue)+'</td><td>'+String(r.t).padStart(2,'0')+'</td><td class="zname">'+esc(r.actual)+'</td>'+
+      TRACKS.map(n=>'<td class="zset">'+r.preds[n].join(' ')+'</td><td><span class="mark '+(r.hits[n]?'h':'m')+'">'+(r.hits[n]?'中':'×')+'</span></td>').join('')+'</tr>').join('')+
+    '</tbody>';
+  /* 自动滚动到最新一期（表格按时间正序，最新在最底部）：
+     用 requestAnimationFrame 包裹，确保浏览器完成本次 innerHTML 渲染布局后再测量 scrollHeight，
+     否则同步读取可能拿到旧的高度；仅在 renderBT 重渲染时定位一次，
+     不监听 scroll 事件，用户手动上滚查看历史不会被强制拉回。容器不存在时静默跳过。 */
+  const wrap=document.getElementById('btTableWrap');
+  if(wrap){
+    requestAnimationFrame(()=>{wrap.scrollTop=wrap.scrollHeight;});
+  }
+}
+
+/* 回测明细窗口切换（P14：按钮由 renderBtSel 按 activeWindows() 生成，支持自定义窗口） */
+function renderBtSel(){
+  const wins=activeWindows();
+  if(wins.indexOf(btWin)<0)btWin=wins[0];
+  document.getElementById('btSel').innerHTML=wins.map(w=>
+    '<button data-w="'+w+'"'+(w===btWin?' class="on"':'')+'>'+w+'期窗口'+(isCustomWin(w)?'·自定义':'')+'</button>').join('');
+}
+document.getElementById('btSel').addEventListener('click',e=>{
+  const w=+e.target.getAttribute('data-w');if(!w)return;
+  btWin=w;
+  document.getElementById('btSel').querySelectorAll('button').forEach(b=>b.classList.toggle('on',+b.getAttribute('data-w')===w));
+  renderBT();
+});
+
+/* ===== P14 自定义窗口交互（第四个窗口） =====
+   输入框内容仅在点击"应用"或回车时生效；生效值收敛到 [WIN_MIN,WIN_MAX] 的整数。
+   应用后：仅重算自定义窗口的逐期回测（固定三档命中 WINCACHE），随后重渲染
+   预测卡片区 / 多窗口对比面板 / 回测明细窗口按钮与明细表；策略对比面板口径与窗口无关，不重算。 */
+function setWinHint(msg,isErr){
+  const el=document.getElementById('winCustomHint');
+  el.textContent=msg;
+  el.classList.toggle('err',!!isErr);
+}
+/* 常态提示：窗口数与合并情况随当前生效值变化 */
+function normWinHint(){
+  const wins=activeWindows();
+  updatePredWinTitle();
+  setWinHint(wins.length>FIXED_WINDOWS.length
+    ? '范围 '+WIN_MIN+'~'+WIN_MAX+' 期整数；结果同时作用于预测卡片、多窗口对比面板与回测明细窗口按钮。'
+    : '自定义窗口（近 '+customWin+' 期）与固定窗口 30/50/100 期重复，已合并为 '+wins.length+' 个窗口展示。',false);
+}
+function rebuildForCustomWin(){
+  if(!CUR||!BT){pruneWinCache();normWinHint();return;}
+  ensureWindow(customWin);        /* 只算新窗口：固定三档复用 WINCACHE（与固定档重复时该条目会被下面的裁剪丢弃） */
+  pruneWinCache();                /* 丢弃被替换掉的旧自定义窗口，避免缓存无限增长 */
+  buildBT();
+  renderPredGrid();
+  renderCmpPanel();
+  renderBtSel();
+  renderBT();
+  normWinHint();
+}
+function applyCustomWin(){
+  const inp=document.getElementById('winCustom');
+  const raw=String(inp.value).trim();
+  const n=parseInt(raw,10);
+  if(!isFinite(n)){setWinHint('请输入 '+WIN_MIN+'~'+WIN_MAX+' 之间的整数期数（当前生效值仍为近 '+customWin+' 期）',true);return;}
+  const v=Math.max(WIN_MIN,Math.min(WIN_MAX,Math.round(n)));
+  inp.value=v;
+  if(v!==Math.round(n))setWinHint('已把输入收敛为 '+v+' 期（超出 '+WIN_MIN+'~'+WIN_MAX+' 范围）',true);
+  const changed=(v!==customWin);
+  customWin=v;
+  rebuildForCustomWin();
+  if(v!==Math.round(n))return;   /* 收敛提示优先于常态提示，避免立即被覆盖 */
+  if(changed){setWinHint('已应用：新增近 '+v+' 期窗口'+(isCustomWin(v)?'':'（与固定窗口重复，未新增卡片）'),false);}
+}
+document.getElementById('winCustomApply').addEventListener('click',applyCustomWin);
+document.getElementById('winCustomReset').addEventListener('click',()=>{
+  document.getElementById('winCustom').value=WIN_DEFAULT;
+  applyCustomWin();
+});
+document.getElementById('winCustom').addEventListener('keydown',e=>{
+  if(e.key==='Enter'){e.preventDefault();applyCustomWin();}
+});
+
+/* 多窗口对比面板：复制按钮（事件委托，仅绑定一次；cmpTable innerHTML 由 renderAll/renderCmpPanel 重建，按钮需委托处理） */
+document.getElementById('cmpTable').addEventListener('click',e=>{
+  const btn=e.target.closest('.copy-btn');if(!btn)return;
+  const w=+btn.getAttribute('data-win');
+  const preds=CMP_PREDS[w];
+  if(!preds||!TRACKS.some(n=>preds[n]&&preds[n].length)){setStatus('暂无可复制的预测数据，请先加载数据',true);return;}
+  /* 复制文本格式：首行窗口名，随后每行“N肖\t生肖1 生肖2 …”（生肖间空格分隔，轨道顺序 8→5→3→2→1） */
+  const lines=['近'+w+'期预测'];
+  TRACKS.forEach(n=>lines.push(n+'肖\t'+preds[n].join(' ')));
+  const text=lines.join('\n');
+  const done=()=>{ /* 成功反馈：直接改被点按钮文字，1.2 秒后还原，不触发整表重渲染 */
+    btn.textContent='已复制✓';btn.classList.add('ok');
+    setTimeout(()=>{btn.textContent='复制';btn.classList.remove('ok');},1200);
+  };
+  const fallback=()=>{ /* 兼容 file:// 场景：clipboard API 不可用时回退隐藏 textarea + execCommand */
+    const ta=document.createElement('textarea');
+    ta.value=text;
+    ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);
+    ta.select();
+    let ok=false;
+    try{ok=document.execCommand('copy');}catch(err){ok=false;}
+    document.body.removeChild(ta);
+    if(ok){done();}else{setStatus('复制失败：当前环境不支持剪贴板写入，请手动选择文本复制',true);}
+  };
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done,fallback);
+  }else{fallback();}
+});
+
+/* 文件选择加载 */
+function setStatus(msg,isErr){
+  const el=document.getElementById('fileStatus');
+  el.textContent=msg;
+  el.style.color=isErr?'var(--hit)':'';
+}
+document.getElementById('fileInput').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f)return;
+  e.target.value='';   /* 立即清空选择：否则连续两次选同一文件不会触发 change（File 对象已捕获，不受影响） */
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const rows=parseData(String(reader.result));
+      if(rows.length<130){setStatus('解析到 '+rows.length+' 期，样本过少（至少约130期才能支撑窗口统计与回测），已保留当前数据',true);return;}
+      renderAll(rows,f.name);
+      setStatus('已加载 '+f.name+'：'+rows.length+' 期（'+rows[0].date+' ~ '+rows[rows.length-1].date+'），全部面板已按新数据重算');
+    }catch(err){setStatus('解析失败：'+err.message,true);}
+  };
+  reader.onerror=()=>setStatus('文件读取失败，请重试',true);
+  reader.readAsText(f,'utf-8');
+});
+
+/* ===== 数据源快捷加载（新澳/老澳/香港）===== */
+const SRC_URLS={
+  xinao:{name:'新澳',url:'https://www.wuweicb1.com/kj/CBAM1DHK1.txt'},
+  laogang:{name:'老澳',url:'https://www.wuweicb1.com/kj/CBAMHK1.txt'},
+  xianggang:{name:'香港',url:'https://www.wuweicb1.com/kj/CBHK1.txt'}
+};
+/* 本机服务开关：本页面运行在 http://127.0.0.1（App/exe 内置服务）时为 true，
+   可直接请求同源 /api/history 取数；以 file:// 直接双击打开时为 false，跳过该级。
+   缺了这行判断，srcBuildStages() 里 typeof LAGFIT_SRV_ON 恒为 'undefined'，
+   本地通道永远不启用 → 以 file:// 打开时只剩直连（被CORS拦），必然加载失败。 */
+const LAGFIT_SRV_ON=(typeof window!=='undefined'&&window.location&&window.location.protocol!=='file:');
+/* 本地同源接口（电脑端跑彩票转移概率分析10维.py 时可用，最快最稳） */
+const SRC_LOCAL_TIMEOUT=40000;   // 需覆盖服务端最坏重试预算 8s×3+退避3.6s≈27.6s
+const SRC_DIRECT_TIMEOUT=12000;   // 直连源站：跨域必被拦，快速失败
+/* ==========================================================================
+   数据源加载：本地同源服务 → 直连源站（公共代理机制已按需求移除）
+   ========================================================================== */
+
+/** 校验返回文本是否为有效开奖记录（防止把错误页/JSON 包裹当数据） */
+function srcValidate(txt){
+  if(typeof txt!=='string') return '';
+  let t=txt.trim();
+  if(!t||t.length<80) return '';
+  if(t.charAt(0)==='{'){                      // 兼容 {contents|body|data} 包裹
+    try{ const j=JSON.parse(t); t=String(j.contents||j.body||j.data||''); }catch(e){ return ''; }
+  }
+  if(t.charAt(0)==='<') return '';            // HTML 错误页
+  const lines=t.split(/\r?\n/).filter(x=>x.trim());
+  if(!lines.length) return '';
+  // 抽查前 20 行，至少 1 行形如「日期,期号,…,T特别号」
+  for(const ln of lines.slice(0,20)){
+    const p=ln.split(',');
+    if(p.length>=9 && /^\d{4}-\d{2}-\d{2}/.test(p[0].trim()) && /T/i.test(ln)) return t;
+  }
+  return '';
+}
+
+/** 单个入口取数：返回 {ok, text, reason} */
+async function srcTryOne(url, timeout){
+  if(typeof AbortController==='undefined'){
+    const r=await fetch(url,{cache:'no-store'});
+    if(!r.ok) return {ok:false, reason:'HTTP '+r.status};
+    return {ok:true, text:await r.text()};
+  }
+  const ctl=new AbortController();
+  const timer=setTimeout(()=>ctl.abort(), timeout||25000);
+  try{
+    const r=await fetch(url,{signal:ctl.signal,cache:'no-store',redirect:'follow'});
+    if(!r.ok) return {ok:false, reason:'HTTP '+r.status};
+    return {ok:true, text:await r.text()};
+  }catch(e){
+    return {ok:false, reason:(e&&e.name==='AbortError')?'超时':((e&&e.message)?e.message:String(e))};
+  }finally{ clearTimeout(timer); }
+}
+
+/** 构造候选通道：本地同源 → 直连源站 */
+function srcBuildStages(key, cfg){
+  const stages=[];
+  if(typeof LAGFIT_SRV_ON!=='undefined'&&LAGFIT_SRV_ON){
+    stages.push({name:'本地服务',kind:'single',
+                 url:'/api/history?src='+encodeURIComponent(key), timeout:SRC_LOCAL_TIMEOUT});
+  }
+  stages.push({name:'直连',kind:'single', url:cfg.url, timeout:SRC_DIRECT_TIMEOUT});
+  return stages;
+}
+
+/** 直连/本地单一通道取数 */
+async function srcFetchSingle(st){
+  const r=await srcTryOne(st.url, st.timeout);
+  if(!r.ok) return {ok:false, reason:r.reason};
+  const text=srcValidate(r.text);
+  if(!text) return {ok:false, reason:'返回内容不是有效开奖记录'};
+  return {ok:true, text};
+}
+
+/** 按顺序尝试各通道，全部失败则汇总原因 */
+async function srcLoadAny(key, cfg, onStage){
+  const errs=[];
+  for(const st of srcBuildStages(key, cfg)){
+    try{
+      if(onStage) onStage('正在获取'+cfg.name+'数据（'+st.name+'）…','');
+      const r=await srcFetchSingle(st);
+      if(r.ok) return {ok:true, text:r.text, via:st.name};
+      errs.push(st.name+'：'+r.reason);
+    }catch(e){
+      errs.push(st.name+'：'+((e&&e.message)?e.message:String(e)));
+    }
+  }
+  return {ok:false, errs};
+}
+
+/* 与本地文件加载保持同一套校验：样本不足 130 期一律不覆盖当前数据 */
+async function loadRemoteSource(key,btn){
+  const cfg=SRC_URLS[key]; if(!cfg) return;
+  const btns=document.querySelectorAll('.src-btn');
+  btns.forEach(b=>b.disabled=true);
+  if(btn){ btn.dataset.old=btn.textContent; btn.textContent='⏳ 加载中…'; btn.classList.add('loading'); }
+  setStatus('正在从 '+cfg.name+' 加载历史记录…');
+
+  let res=null;
+  try{
+    res=await srcLoadAny(key, cfg, (msg)=>setStatus(msg));
+  }catch(e){
+    res={ok:false, errs:['加载过程异常：'+((e&&e.message)?e.message:String(e))]};
+  }
+
+  // 取数阶段结束，先恢复按钮可点
+  btns.forEach(b=>b.disabled=false);
+  if(btn){ btn.classList.remove('loading'); btn.textContent=btn.dataset.old||cfg.name; }
+
+  if(!res.ok){
+    setStatus(cfg.name+' 加载失败。'
+      +'若在本地服务环境下请确认服务已启动；'
+      +'或点击"选择开奖记录文本"导入本地 txt（地址：'+cfg.url+'）。'
+      +' 失败详情：'+res.errs.join('；'),true);
+    return;
+  }
+
+  // 拿到有效文本 → 后续失败都属本地处理问题，回报真实原因、不再切代理
+  let rows;
+  try{
+    rows=parseData(res.text);
+  }catch(e){
+    setStatus(cfg.name+' 数据解析失败：'+((e&&e.message)?e.message:String(e)),true);
+    return;
+  }
+  if(rows.length<130){
+    setStatus(cfg.name+' 仅解析到 '+rows.length+' 期，样本过少（至少约130期才能支撑窗口统计与回测），已保留当前数据',true);
+    return;
+  }
+  try{
+    renderAll(rows, cfg.name+'(远程)');
+  }catch(e){
+    setStatus(cfg.name+' 渲染失败：'+((e&&e.message)?e.message:String(e)),true);
+    return;
+  }
+  setStatus('已加载 '+cfg.name+'(远程，经'+res.via+'）：'+rows.length+' 期（'+rows[0].date+' ~ '+rows[rows.length-1].date+'），全部面板已按新数据重算');
+}
+/* CSV 导出 */
+document.getElementById('btExport').addEventListener('click',exportBT);
+
+/* 初始空状态：等待用户选择开奖记录文件（本系统不内置任何数据） */
+function renderEmptyState(){
+  const t=new Date();
+  const ds=t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0');
+  const NUM_BY_Z={};
+  for(let n=1;n<=49;n++){const z=numToZodiac(n,ds);(NUM_BY_Z[z]=NUM_BY_Z[z]||[]).push(n);}
+  document.getElementById('dataMeta').innerHTML='<b style="color:var(--hit);">未加载数据</b>　请点击上方"选择开奖记录文本"（需约130期以上，加载数据的农历年份需在2000~2050范围内方可精确映射）';
+  document.getElementById('mapYear').textContent=String(lunarYearOf(ds));   /* 显示实际农历年而非公历年 */
+  document.getElementById('zodiacMap').innerHTML=ZODIACS.map(z=>
+    '<div class="zi"><b>'+z+'</b><div class="nums">'+NUM_BY_Z[z].map(n=>String(n).padStart(2,'0')).join(' ')+'</div></div>').join('');
+  document.getElementById('distAll').innerHTML='<div class="muted small" style="padding:6px 2px;">等待加载数据…</div>';
+  document.getElementById('predGrid').innerHTML='<div class="win-card muted small">等待加载数据…加载后此处显示多窗口统计与 8/5/3/2/1 肖组合预测。</div>';
+  document.getElementById('predWinTitle').textContent='四窗口';   /* P14：空状态下按默认 30/50/100/200 显示为四窗口 */
+  document.getElementById('stratTable').innerHTML='<tbody><tr><td class="muted empty-cell" style="padding:14px;">等待加载数据…</td></tr></tbody>';
+  document.getElementById('cmpTable').innerHTML='<tbody><tr><td class="muted empty-cell" style="padding:14px;">等待加载数据…</td></tr></tbody>';
+  document.getElementById('cmpNav').style.display='none';
+  /* P15/P16：空状态下的邻期偏差诊断面板与准确率面板 */
+  document.getElementById('rncTable').innerHTML='<tbody><tr><td class="muted empty-cell" style="padding:14px;">等待加载数据…</td></tr></tbody>';
+  document.getElementById('rncNote').innerHTML='';
+  document.getElementById('accTable').innerHTML='<tbody><tr><td class="muted empty-cell" style="padding:14px;">等待加载数据…</td></tr></tbody>';
+  document.getElementById('accNote').innerHTML='';
+  document.getElementById('btSum').innerHTML='';
+  document.getElementById('btScopeNote').innerHTML='';   /* P13：空状态下不显示统计口径说明 */
+  /* P13-2：空状态下三处"近N期"显示占位符，避免未加载数据时标题写死 365、加载后又跳到实际值（如 30）的突兀感 */
+  document.getElementById('stratScope').textContent='—';
+  document.getElementById('cmpScope').textContent='—';
+  document.getElementById('btScope').textContent='—';
+  document.getElementById('btTable').innerHTML='<tbody><tr><td class="muted empty-cell" style="padding:14px;">等待加载数据…</td></tr></tbody>';
+  /* P14：空状态下也把窗口按钮与自定义窗口提示渲染出来，界面结构在加载前后保持一致 */
+  renderBtSel();
+  normWinHint();
+}
+renderEmptyState();
+</script>
+</body>
+</html>

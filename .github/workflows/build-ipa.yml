@@ -1,0 +1,86 @@
+name: build-ipa
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+    timeout-minutes: 40
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode 16
+        run: |
+          set -euo pipefail
+          ls /Applications | grep -i '^Xcode' || true
+          XC="$(ls -d /Applications/Xcode_16*.app 2>/dev/null | sort -V | tail -1 || true)"
+          if [ -z "${XC}" ]; then
+            echo "Xcode 16 not found, fallback to newest available"
+            XC="$(ls -d /Applications/Xcode*.app | sort -V | tail -1)"
+          fi
+          echo "Using ${XC}"
+          sudo xcode-select -s "${XC}/Contents/Developer"
+          xcodebuild -version
+
+      - name: Install xcodegen
+        run: |
+          brew install xcodegen || brew upgrade xcodegen
+          xcodegen --version
+
+      - name: Generate Xcode project
+        run: xcodegen generate --spec project.yml
+
+      - name: Compile app icon (actool)
+        run: |
+          set -euo pipefail
+          mkdir -p build/Assets
+          xcrun actool \
+            --compile build/Assets \
+            --platform iphoneos \
+            --minimum-deployment-target 15.0 \
+            --app-icon AppIcon \
+            --output-partial-info-plist build/icon-partial.plist \
+            Assets.xcassets
+          ls -la build/Assets
+          plutil -p build/icon-partial.plist
+
+      - name: Merge icon keys into Info.plist
+        run: python3 tools/merge_icons.py build/icon-partial.plist Info.plist
+
+      - name: Build unsigned app
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project Facai.xcodeproj \
+            -scheme Facai \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath build/dd \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            build | tee build/xcodebuild.log | tail -60
+
+      - name: Package unsigned ipa
+        run: bash tools/make_ipa.sh
+
+      - name: Upload ipa artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: facai-unsigned-ipa
+          path: dist/*.ipa
+          if-no-files-found: error
+
+      - name: Upload build log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: |
+            build/xcodebuild.log
+            build/*.log
+          if-no-files-found: ignore
