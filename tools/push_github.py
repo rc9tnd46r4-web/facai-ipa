@@ -114,13 +114,18 @@ def main():
         tree.append({"path": rel, "mode": mode, "type": "blob", "sha": blob["sha"]})
         print(f"  blob {rel} ({len(raw)} bytes)")
 
-    # 旧版本遗留文件：显式删除（sha=null），否则 base_tree 会一直带着
+    # 旧版本遗留文件：显式删除（sha=null）。只删当前 tree 里确实存在的路径，
+    # 否则 GitHub 会回 422 GitRPC::BadObjectState
     deleted_file = os.path.join(ROOT, "tools", "deleted.txt")
-    if os.path.exists(deleted_file):
+    if os.path.exists(deleted_file) and base_tree:
+        _, full_tree = call("GET", f"/repos/{owner}/{repo}/git/trees/{base_tree}?recursive=1")
+        existing = {item["path"] for item in full_tree.get("tree", []) if item["type"] == "blob"}
         with open(deleted_file, "r", encoding="utf-8") as fh:
             for line in fh:
                 path = line.strip()
-                if path and not os.path.exists(os.path.join(ROOT, path.replace("/", os.sep))):
+                if not path or os.path.exists(os.path.join(ROOT, path.replace("/", os.sep))):
+                    continue
+                if path in existing:
                     tree.append({"path": path, "mode": "100644", "type": "blob", "sha": None})
                     print("  delete", path)
 
