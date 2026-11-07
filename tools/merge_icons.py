@@ -1,11 +1,22 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""把 actool 生成的 CFBundleIcons 等图标信息合并回 Info.plist（递归合并，后者覆盖前者）。"""
+"""把 actool 产出的图标键合并回 Info.plist。
+
+actool --output-partial-info-plist 会生成 CFBundleIcons / CFBundleIcons~ipad /
+CFBundleIconName 等键，这里只挑图标相关键做递归合并，避免把别的构建设置带歪。
+"""
 import plistlib
 import sys
+from pathlib import Path
+
+ICON_PREFIXES = ("CFBundleIcon", "CFBundlePrimaryIcon")
 
 
-def merge(dst, src):
+def wanted(key: str) -> bool:
+    return any(key.startswith(prefix) for prefix in ICON_PREFIXES)
+
+
+def merge(dst: dict, src: dict) -> None:
     for key, value in src.items():
         if isinstance(value, dict) and isinstance(dst.get(key), dict):
             merge(dst[key], value)
@@ -13,24 +24,30 @@ def merge(dst, src):
             dst[key] = value
 
 
-def main():
+def main() -> int:
     if len(sys.argv) != 3:
-        print("usage: merge_icons.py <partial.plist> <Info.plist>")
+        print("usage: merge_icons.py <partial-info.plist> <Info.plist>")
         return 2
-    partial_path, info_path = sys.argv[1], sys.argv[2]
-    with open(partial_path, "rb") as fh:
+
+    partial_path, info_path = Path(sys.argv[1]), Path(sys.argv[2])
+    with partial_path.open("rb") as fh:
         partial = plistlib.load(fh)
-    with open(info_path, "rb") as fh:
+    with info_path.open("rb") as fh:
         info = plistlib.load(fh)
 
-    merge(info, partial)
+    icon_keys = {k: v for k, v in partial.items() if wanted(k)}
+    if not icon_keys:
+        print("[merge_icons] ERROR: actool partial plist has no icon keys")
+        print("[merge_icons] keys seen:", ", ".join(partial.keys()))
+        return 1
 
-    with open(info_path, "wb") as fh:
+    merge(info, icon_keys)
+    with info_path.open("wb") as fh:
         plistlib.dump(info, fh, sort_keys=False)
 
-    keys = [k for k in partial.keys()]
-    print("[merge_icons] merged keys:", ", ".join(keys))
+    print("[merge_icons] merged:", ", ".join(sorted(icon_keys.keys())))
     print("[merge_icons] CFBundleIcons:", info.get("CFBundleIcons"))
+    print("[merge_icons] CFBundleIconName:", info.get("CFBundleIconName"))
     return 0
 
 

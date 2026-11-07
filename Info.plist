@@ -22,6 +22,8 @@
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<!-- 关键：允许任意加载。页面资源走本机 http://127.0.0.1:4783x，
+	     同时 App 内的 URLSession 要直连 https 源站，两者都靠这个开关放行。 -->
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
@@ -32,7 +34,7 @@
 		<true/>
 	</dict>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>App 需要在本机回环地址上启动本地服务，以便五个页面各自独立保存数据状态。</string>
+	<string>App 在本机回环地址上启动本地服务，让五个页面各自独立保存数据状态。</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchScreen</key>

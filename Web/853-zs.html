@@ -414,6 +414,9 @@ function computeStats(history,winLen){
   const win50=history.slice(-50);
   for(const z of ZODIACS)s[z].freq50=0;
   for(const r of win50)s[r.z].freq50++;
+  /* 全史指数衰减热度 hot（半衰期150期）：近期开出权重高、久远开出指数衰减（与 rankMarkov/rankOldComposite 统一衰减口径） */
+  for(const z of ZODIACS)s[z].hot=0;
+  for(let i=0;i<n;i++){const z=history[i].z;s[z].hot+=Math.pow(0.5,(n-1-i)/150);}
   return s;
 }
 /* ===== 集成成员1：反热择冷 =====
@@ -432,13 +435,16 @@ function sortDesc(scores){return ZODIACS.slice().sort((a,b)=>scores[b]-scores[a]
 function rankFreqWin(hist,w){const c=countsOf(hist,w);return sortDesc(Object.fromEntries(ZODIACS.map(z=>[z,c[z]])));}
 function rankMissDesc(hist){const m={};for(const z of ZODIACS){let k=0;for(let i=hist.length-1;i>=0;i--){if(hist[i].z===z)break;k++;}m[z]=k;}return sortDesc(m);}
 function rankStreakDesc(hist){const st={};for(const z of ZODIACS){let k=0;for(let i=hist.length-1;i>=0;i--){if(hist[i].z===z)k++;else break;}st[z]=k;}return sortDesc(st);}
-function rankMarkov(hist){const last=hist[hist.length-1].z;const c={};ZODIACS.forEach(z=>c[z]=0);for(let i=0;i<hist.length-1;i++)if(hist[i].z===last)c[hist[i+1].z]++;return sortDesc(Object.fromEntries(ZODIACS.map(z=>[z,c[z]+0.5])));}
+/* 马尔可夫1阶：转移计数带指数时间衰减加权（半衰期150期，近期转移权重高、久远转移指数衰减）+ Laplace 0.5 平滑先验 */
+function rankMarkov(hist){const last=hist[hist.length-1].z;const c={};ZODIACS.forEach(z=>c[z]=0);for(let i=0;i<hist.length-1;i++)if(hist[i].z===last)c[hist[i+1].z]+=Math.pow(0.5,(hist.length-1-i)/150);return sortDesc(Object.fromEntries(ZODIACS.map(z=>[z,c[z]+0.5])));}
 /* P16：静态权重成员改为按"目标期所属农历年"取权重（原为固定马=5） */
 function rankStatic(dateStr){
   const w=dateStr?zodiacWeights(dateStr):Z_WEIGHT;
   return sortDesc(Object.fromEntries(ZODIACS.map(z=>[z,w[z]])));
 }
-function rankOldComposite(hist){const s={};for(const z of ZODIACS){let hot=0,p=1;for(let i=hist.length-1;i>=0;i--){if(hist[i].z===z)hot+=p;p*=0.92;}let miss=0;for(let i=hist.length-1;i>=0;i--){if(hist[i].z===z)break;miss++;}let st=0;for(let i=hist.length-1;i>=0;i--){if(hist[i].z===z)st++;else break;}s[z]=hot*2+miss*0.5+Math.min(st,4);}return sortDesc(s);}
+/* 旧复合热度公式：热度项改为统一指数时间衰减口径（半衰期150期，最近一期权重1），
+   替换原内联 p*=0.92 乘法衰减，与 rankMarkov/computeStats 的 hot 同口径。 */
+function rankOldComposite(hist){const s={};for(const z of ZODIACS){let hot=0;for(let i=hist.length-1;i>=0;i--){if(hist[i].z===z)hot+=Math.pow(0.5,(hist.length-1-i)/150);}let miss=0;for(let i=hist.length-1;i>=0;i--){if(hist[i].z===z)break;miss++;}let st=0;for(let i=hist.length-1;i>=0;i--){if(hist[i].z===z)st++;else break;}s[z]=hot*2+miss*0.5+Math.min(st,4);}return sortDesc(s);}
 function predictSets(ranked){const o={};for(const n of TRACKS)o[n]=ranked.slice(0,n);return o;}
 
 /* ===== 主策略：多策略加权 Borda 集成 =====

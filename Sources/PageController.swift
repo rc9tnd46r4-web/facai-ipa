@@ -2,7 +2,7 @@ import UIKit
 import WebKit
 
 /// 每个 Tab 一个 WKWebView + 一个本机 HTTP 服务。
-/// 服务起不来先回退 file://，并在 1.5s 后重试服务，就绪即自动切回 http。
+/// 服务起不来先回退 file:// 保证页面能看，1.5s 后重试服务，一旦就绪自动切回 http。
 final class PageController: NSObject, ObservableObject, WKNavigationDelegate {
 
     let spec: PageSpec
@@ -16,9 +16,7 @@ final class PageController: NSObject, ObservableObject, WKNavigationDelegate {
     private var lastErrorText: String?
 
     static var webRoot: URL {
-        if let url = Bundle.main.url(forResource: "Web", withExtension: nil) {
-            return url
-        }
+        if let url = Bundle.main.url(forResource: "Web", withExtension: nil) { return url }
         return Bundle.main.bundleURL.appendingPathComponent("Web", isDirectory: true)
     }
 
@@ -28,6 +26,9 @@ final class PageController: NSObject, ObservableObject, WKNavigationDelegate {
         let configuration = WKWebViewConfiguration()
         configuration.allowsInlineMediaPlayback = true
         configuration.defaultWebpagePreferences.allowsContentJavaScript = true
+        // 持久化 localStorage：页面把榜单/设置都存在这里，按端口(origin)分开
+        configuration.websiteDataStore = .default()
+        configuration.suppressesIncrementalRendering = false
 
         let controller = WKUserContentController()
         controller.addUserScript(WKUserScript(source: PageController.bootstrapScript(port: spec.port),
@@ -44,14 +45,12 @@ final class PageController: NSObject, ObservableObject, WKNavigationDelegate {
 
         webView.navigationDelegate = self
         webView.scrollView.contentInsetAdjustmentBehavior = .never
-        webView.scrollView.backgroundColor = PageController.background
+        webView.scrollView.backgroundColor = PageController.background(for: spec)
         webView.isOpaque = false
-        webView.backgroundColor = PageController.background
+        webView.backgroundColor = PageController.background(for: spec)
         webView.allowsBackForwardNavigationGestures = false
         webView.allowsLinkPreview = false
-        if #available(iOS 16.4, *) {
-            webView.isInspectable = false
-        }
+        if #available(iOS 16.4, *) { webView.isInspectable = false }
     }
 
     deinit {
@@ -61,7 +60,11 @@ final class PageController: NSObject, ObservableObject, WKNavigationDelegate {
         webView.configuration.userContentController.removeAllUserScripts()
     }
 
-    private static let background = UIColor(red: 0.043, green: 0.043, blue: 0.063, alpha: 1)
+    private static func background(for spec: PageSpec) -> UIColor {
+        spec.dark
+            ? UIColor(red: 0.043, green: 0.043, blue: 0.063, alpha: 1)
+            : UIColor(red: 0.953, green: 0.961, blue: 0.976, alpha: 1)
+    }
 
     // MARK: - 启动
 
@@ -97,8 +100,8 @@ final class PageController: NSObject, ObservableObject, WKNavigationDelegate {
         retryCount = 0
         var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 30)
         request.setValue("no-store", forHTTPHeaderField: "Cache-Control")
-        webView.load(request)
-        NSLog("[facai] tab \(spec.id) load \(url.absoluteString)")
+        webView.load(request)      // load 必须传 URLRequest，不能传 URL
+        NSLog("[facai] tab \(spec.id) → \(url.absoluteString)")
     }
 
     private func loadFileFallback() {
@@ -108,25 +111,22 @@ final class PageController: NSObject, ObservableObject, WKNavigationDelegate {
             webView.loadFileURL(fileURL, allowingReadAccessTo: PageController.webRoot)
             NSLog("[facai] tab \(spec.id) fallback file://\(fileURL.lastPathComponent)")
         } else {
-            NSLog("[facai] tab \(spec.id) missing page \(fileURL.path)")
+            NSLog("[facai] tab \(spec.id) page missing: \(fileURL.path)")
         }
         scheduleRetry()
     }
 
-    /// 服务就绪前每 1.5s 重试一次；成功即切回 http
+    /// 服务没起来时每 1.5s 重试一次；成功即切回 http
     private func scheduleRetry() {
         guard retryTimer == nil, retryCount < 40 else { return }
         retryCount += 1
-        retryTimer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: false) { [weak self] _ in
+        let timer = Timer(timeInterval: 1.5, repeats: false) { [weak self] _ in
             guard let self = self else { return }
             self.retryTimer = nil
-            if self.usingFileFallback {
-                self.startServer()
-            }
+            if self.usingFileFallback { self.startServer() }
         }
-        if let timer = retryTimer {
-            RunLoop.main.add(timer, forMode: .common)
-        }
+        retryTimer = timer
+        RunLoop.main.add(timer, forMode: .common)
     }
 
     private func stopRetry() {
@@ -137,8 +137,9 @@ final class PageController: NSObject, ObservableObject, WKNavigationDelegate {
 
     // MARK: - 注入脚本
 
-    /// documentStart：先补 LAGFIT_SRV_ON 兜底（用 window 属性，避免和页面的 const 重名冲突），
-    /// 再标记原生环境。页面 srcBuildStages 里 typeof LAGFIT_SRV_ON 就能拿到值。
+    /// documentStart：补 LAGFIT_SRV_ON 兜底。
+    /// 页面用 const 定义它，但有些页面副本可能漏了这一行；漏了 srcBuildStages 就只剩「直连」一级，
+    /// 手机端直连必被跨域拦死。这里用 window 属性兜底（不冲突：页面 const 会在词法环境里遮蔽同名属性）。
     private static func bootstrapScript(port: UInt16) -> String {
         return """
         (function(){
@@ -153,28 +154,33 @@ final class PageController: NSObject, ObservableObject, WKNavigationDelegate {
         """
     }
 
-    /// documentEnd：file:// 兜底时手工挂载外部 CSS/JS（http 下服务端已注入，这里会自动跳过）
+    /// documentEnd：http 下服务端已注入外部 CSS/JS，这里只做两件事——
+    /// ① 缺了就补挂；② 补一次 LAGFIT_SRV_ON（file:// 兜底场景）。
     private static let assetInjectScript = """
     (function(){
-      function inject(){
-        try {
-          if (document.querySelector('link[data-wf-adapt]')) {
-            if (!document.querySelector('script[data-wf-adapt]')) { addScript(); }
-            return;
-          }
-          var link = document.createElement('link');
-          link.rel = 'stylesheet';
-          link.href = 'wf-adapt.css';
-          link.setAttribute('data-wf-adapt','1');
-          (document.head || document.documentElement).appendChild(link);
-          addScript();
-        } catch (e) {}
-      }
+      try {
+        if (typeof window.LAGFIT_SRV_ON === 'undefined' && location.protocol !== 'file:') {
+          window.LAGFIT_SRV_ON = true;
+        }
+      } catch (e) {}
       function addScript(){
+        if (document.querySelector('script[data-wf-adapt]')) return;
         var s = document.createElement('script');
         s.src = 'wf-adapt.js';
         s.setAttribute('data-wf-adapt','1');
         (document.body || document.documentElement).appendChild(s);
+      }
+      function inject(){
+        try {
+          if (!document.querySelector('link[data-wf-adapt]')) {
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'wf-adapt.css';
+            link.setAttribute('data-wf-adapt','1');
+            (document.head || document.documentElement).appendChild(link);
+          }
+        } catch (e) {}
+        addScript();
       }
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', inject);
@@ -196,8 +202,7 @@ final class PageController: NSObject, ObservableObject, WKNavigationDelegate {
 
     private func handleLoadError(_ error: Error) {
         let nsError = error as NSError
-        // 取消/中断属于正常切换，不触发兜底
-        if nsError.code == NSURLErrorCancelled { return }
+        if nsError.code == NSURLErrorCancelled { return }   // 正常切换，不是故障
         guard !usingFileFallback else { return }
         NSLog("[facai] tab \(spec.id) load error: \(nsError.localizedDescription)")
         lastErrorText = nsError.localizedDescription
@@ -208,10 +213,8 @@ final class PageController: NSObject, ObservableObject, WKNavigationDelegate {
         lastErrorText = nil
     }
 
-    // MARK: - 调试信息
-
     func diagnostics() -> [String: Any] {
-        return [
+        [
             "tab": spec.id,
             "port": Int(spec.port),
             "file": spec.file,

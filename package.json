@@ -1,14 +1,12 @@
 {
   "name": "facai-ipa",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "private": true,
+  "description": "发财 · 五页 WKWebView 壳工程（未签名 ipa 构建 + 真机尺寸验收）",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "icon": "node tools/make-icon.js",
+    "qa": "node qa/run-qa.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "puppeteer-core": "^23.11.1"
   }

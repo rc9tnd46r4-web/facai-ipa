@@ -1,25 +1,25 @@
 /* ============================================================================
-   发财 · 移动端适配样式（外部 CSS，只做版式，不改业务）
-   仅被 wf-adapt.js / 内置 HTTP 服务注入，页面源文件保持原样。
-   关键约束：
-     · html 加 overflow-x:hidden；body 绝对不能加（会让 .upload-bar 的 sticky 失效）
-     · 矩阵内联 grid-template-columns 由 wf-adapt.js 改写，这里只做兜底
+   发财 · 移动端适配样式（纯外部 CSS，只做版式，不改业务逻辑）
+   由内置 HTTP 服务 / WKUserScript 注入，页面源文件保持原样。
+   两条铁律：
+     · html 加 overflow-x:hidden；body 绝对不能加 —— 加了 .upload-bar 的 sticky 立刻失效
+     · 矩阵的内联 grid-template-columns 由 wf-adapt.js 按列数改写，CSS 只负责格子排版
    ========================================================================== */
 
 html {
-  overflow-x: hidden;
+  overflow-x: hidden;          /* 页面横向溢出在这里兜住 */
   max-width: 100%;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
-/* 注意：此处禁止出现 body{overflow-x:hidden} —— 见文件头说明 */
+/* 注意：此处禁止出现 body{overflow-x:hidden}，见文件头说明 */
 
 * { -webkit-tap-highlight-color: rgba(124, 108, 246, 0.12); }
 
 img, svg, canvas, video { max-width: 100%; height: auto; }
 
 /* ---------------------------------------------------------------- 顶部栏外壳 */
-/* 4 个「十维」页：.upload-bar */
+/* 4 个「十维」页：.upload-bar 原位改成两行 */
 .upload-bar {
   position: sticky;
   top: 0;
@@ -35,10 +35,10 @@ img, svg, canvas, video { max-width: 100%; height: auto; }
   border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 .upload-bar h1 {
-  font-size: 0.95rem;
-  min-width: 6.2em;
+  font-size: 0.94rem;
   font-weight: 700;
   line-height: 1.2;
+  margin: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -57,14 +57,6 @@ img, svg, canvas, video { max-width: 100%; height: auto; }
   border-bottom: 1px solid #e3e8f0;
   padding: 7px 0 7px;
   margin: 0 0 8px;
-}
-.wf-topbar .header {
-  display: flex !important;
-  flex-wrap: nowrap !important;
-  align-items: center !important;
-  gap: 8px !important;
-  margin: 0 !important;
-  padding: 0 !important;
 }
 .wf-topbar .toolbar {
   display: flex !important;
@@ -112,32 +104,13 @@ img, svg, canvas, video { max-width: 100%; height: auto; }
   color: #a78bfa;
   border: 1px solid rgba(124, 108, 246, 0.36);
 }
-.wf-topbar h1 {
-  font-size: 12.5px !important;
-  line-height: 1.28 !important;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  white-space: normal !important;
-  margin: 0 !important;
-  word-break: break-word;
-}
-.wf-topbar .wf-topline { align-items: center; }
-.wf-topbar .wf-status { max-width: 40%; }
-.wf-topbar .wf-status .wf-status-line { -webkit-line-clamp: 1; }
-.wf-topbar .wf-ver {
-  background: #eaf0fe;
-  color: #3b6ef5;
-  border-color: #c9d8fc;
-}
-.wf-spacer { flex: 1 1 auto; min-width: 4px; }
 
-/* 右侧状态区：贴右、单/双行截断，绝不挤压标题 */
+/* 右侧状态区：贴右、最多两行截断，绝不挤压标题 */
 .wf-status {
   flex: 0 1 auto;
   min-width: 0;
-  max-width: 43%;
+  max-width: 46%;
+  margin-left: auto;
   text-align: right;
   display: flex;
   flex-direction: column;
@@ -154,18 +127,51 @@ img, svg, canvas, video { max-width: 100%; height: auto; }
   -webkit-box-orient: vertical;
   overflow: hidden;
   word-break: break-all;
+  margin: 0;
+  text-align: right;
 }
-.wf-topbar .wf-status .wf-status-line { color: #6b7280; }
-.wf-topbar #dataMeta { font-size: 10px !important; text-align: right; }
-.wf-topbar #fileStatus {
-  font-size: 9.5px !important;
-  line-height: 1.35;
+/* 853 页标题：页面原本 19px 会占三行，这里压到 12.5px、最多两行 */
+.wf-topbar h1 {
+  font-size: 12.5px !important;
+  line-height: 1.3 !important;
+  font-weight: 700 !important;
+  margin: 0 !important;
+  white-space: normal !important;
+  word-break: break-word;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  word-break: break-all;
+}
+.wf-topbar h1 .badge {
+  font-size: 8px !important;
+  line-height: 1.3 !important;
+  padding: 0 4px !important;
+  margin-left: 4px;
+  vertical-align: middle;
+  border-radius: 4px;
+}
+.wf-topbar .wf-status .wf-status-line {
+  color: #6b7280;
+  -webkit-line-clamp: 1 !important;   /* 853 页状态最多两行（meta + fileStatus 各一行） */
+  display: -webkit-box !important;
+}
+.wf-topbar #dataMeta { font-size: 10px !important; text-align: right; }
+.wf-topbar #fileStatus { font-size: 9.5px !important; margin: 0 !important; }
+
+/* 状态文字（原 .upload-bar 里的 #status） */
+.upload-bar .status-text,
+.upload-bar #status {
+  flex: 0 1 auto !important;
+  width: auto !important;
   max-width: 100%;
+  font-size: 10px !important;
+  line-height: 1.35;
+  white-space: normal !important;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   margin: 0 !important;
 }
 
@@ -179,7 +185,7 @@ img, svg, canvas, video { max-width: 100%; height: auto; }
   margin-top: 7px;
 }
 .wf-btnrow > * {
-  flex: 1 1 0;
+  flex: 1 1 0;              /* 等分，不按内容宽度分配 */
   min-width: 0;
   width: auto !important;
   max-width: none !important;
@@ -202,39 +208,27 @@ img, svg, canvas, video { max-width: 100%; height: auto; }
 }
 .wf-btnrow > .src-btn.src-xg { color: #fff; }
 .wf-btnrow > .btn-file { color: #fff; }
+/* 853 页第一个按钮文字较长（选择开奖记录文本）：整词换行，别在词中间断开 */
+.wf-btnrow > .btn-file { font-size: 10px !important; word-break: keep-all; }
 
-/* 紧凑屏：再降一级字号，保证 5 个按钮不换行也不截断 */
 @media (max-width: 350px) {
-  .wf-btnrow > * { font-size: 9.5px !important; padding: 4px 2px !important; }
-  .upload-bar h1 { font-size: 0.9rem; }
-}
-
-/* 状态文字（4 页原位是被我们搬进 .wf-status 的 #status） */
-.upload-bar .status-text,
-.upload-bar #status {
-  flex: 0 1 auto !important;
-  width: auto !important;
-  max-width: 100%;
-  font-size: 10px !important;
-  line-height: 1.35;
-  white-space: normal !important;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  .wf-btnrow > * { font-size: 9.5px !important; padding: 4px 2px !important; min-height: 30px; }
+  .upload-bar h1 { font-size: 0.88rem; }
 }
 
 /* ------------------------------------------------------------- 更新记录按钮 */
-/* 桌面版更新器入口，手机上无法调用：只隐藏，不删除（页面有 getElementById 引用） */
+/* 桌面版更新器入口，手机无法调用：隐藏但保留元素（页面有 getElementById 引用） */
 #updateBtn {
   display: none !important;
   visibility: hidden !important;
   pointer-events: none !important;
   width: 0 !important;
   height: 0 !important;
+  min-width: 0 !important;
   padding: 0 !important;
   margin: 0 !important;
   border: 0 !important;
+  flex: 0 0 0 !important;
 }
 
 /* ------------------------------------------------------------------ 主体留白 */
@@ -245,7 +239,7 @@ img, svg, canvas, video { max-width: 100%; height: auto; }
 .wrap { padding: 8px 10px 40px !important; max-width: 100% !important; }
 .notice { font-size: 11.5px !important; padding: 8px 10px !important; }
 
-/* 自适应网格：把 minmax(280px,...) 这类写死的最小数压到可视宽内 */
+/* 自适应网格：把 minmax(280px,…) 这类写死的最小宽度压到可视宽之内 */
 .stats { grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)) !important; gap: 8px !important; }
 .stat { padding: 10px 6px !important; border-radius: 10px !important; }
 .stat .num { font-size: 1.15rem !important; }
@@ -277,23 +271,25 @@ img, svg, canvas, video { max-width: 100%; height: auto; }
 .stat-scroll, .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100%; }
 
 /* --------------------------------------------------------------------- 矩阵 */
-/* 内联 grid-template-columns 由 JS 改写（外部 CSS 覆盖不了内联），这里只管排版 */
-.matrix { width: 100%; gap: 2px !important; min-width: 0 !important; }
+/* 列宽由 JS 改写内联 grid-template-columns，这里只管格子里的排版 */
+.matrix { max-width: none !important; gap: 2px !important; min-width: 0 !important; }
 .matrix.wf-mx12 { gap: 1px !important; }
 .matrix .mh, .matrix .mc { min-height: 34px !important; padding: 2px 0 !important; }
-.matrix.wf-mx12 .mh, .matrix.wf-mx12 .mc { min-height: 30px !important; padding: 1px 0 !important; }
-.matrix .mh { font-size: 10px !important; }
-.matrix .mc .pct { font-size: 10px !important; letter-spacing: -0.02em; }
-.matrix .mc .cnt { font-size: 8.5px !important; }
+.matrix.wf-mx12 .mh, .matrix.wf-mx12 .mc { min-height: 27px !important; padding: 1px 0 !important; }
+.matrix .mh { font-size: 10px !important; overflow: hidden; }
+.matrix .mc { overflow: hidden; }
+.matrix .mc .pct { display: block; font-size: 10px !important; letter-spacing: -0.02em; }
+.matrix .mc .cnt { display: block; font-size: 8.5px !important; }
 /* 12 列：隐藏次数，只留概率 */
 .matrix.wf-mx12 .mc .cnt { display: none !important; }
-.matrix.wf-mx12 .mc .pct { font-size: 8px !important; letter-spacing: -0.04em; }
-.matrix.wf-mx12 .mh { font-size: 8px !important; letter-spacing: -0.04em; }
+.matrix.wf-mx12 .mc .pct { font-size: 8.5px !important; letter-spacing: -0.04em; white-space: nowrap; }
+.matrix.wf-mx12 .mh { font-size: 8px !important; letter-spacing: -0.04em; padding: 1px 0 !important; }
 .matrix.wf-mx10 .mc .pct { font-size: 9.5px !important; }
 .matrix.wf-mx10 .mc .cnt { font-size: 8px !important; }
 .matrix .mc:hover { transform: none !important; }
 
 /* ------------------------------------------------------------------ 柱状图 */
+/* 放进容器里横滑，不能把整页撑破 */
 .wf-bars {
   width: 100%;
   min-width: 0;
@@ -323,10 +319,8 @@ img, svg, canvas, video { max-width: 100%; height: auto; }
   overflow: hidden;
 }
 
-
 /* ------------------------------------------------ 期内导航 / 浮动快捷按钮 */
-/* 页面里 <h2> 用 float:right 塞「上一期/下一期」，手机上会溢出卡片并压住正文，
-   这里改成 h2 换行、导航独占一行贴右 */
+/* <h2> 里 float:right 的「上一期/下一期」在手机上会溢出卡片压住正文，改成换行独占一行 */
 .card h2, .win-card h2 { flex-wrap: wrap !important; row-gap: 4px; }
 .period-nav {
   float: none !important;
@@ -338,8 +332,7 @@ img, svg, canvas, video { max-width: 100%; height: auto; }
 .period-nav .period-btn { padding: 3px 8px !important; font-size: 10.5px !important; }
 .period-nav .period-info { font-size: 10.5px !important; }
 
-/* 手机端：卡片内已有「上一期/下一期」，右下角那两颗重复的浮动胶囊直接收起，
-   只留「↑ 回到转移预测」，避免遮住正文（纯 CSS 隐藏，元素与逻辑都还在） */
+/* 手机端：卡片里已有「上一期/下一期」，右下角重复的浮动胶囊收起，只留「↑ 回到转移预测」 */
 .fab-wrap { right: 6px !important; bottom: 10px !important; gap: 5px !important; }
 @media (max-width: 520px) {
   .fab-wrap .fab-btn:not(#predictFab) { display: none !important; }
@@ -365,7 +358,7 @@ img, svg, canvas, video { max-width: 100%; height: auto; }
 th, td { padding: 5px 6px !important; font-size: 11.5px !important; }
 .muted.small { font-size: 10.5px !important; }
 
-/* 853 页副标题（很长的一段说明）压在栏下，最多两行 */
+/* 853 页副标题（很长一段说明）压在栏下，最多两行 */
 .wf-subnote {
   font-size: 10px !important;
   line-height: 1.45;
@@ -373,6 +366,13 @@ th, td { padding: 5px 6px !important; font-size: 11.5px !important; }
   margin: 0 0 8px !important;
   max-height: 3em;
   overflow: hidden;
+}
+
+/* 极窄屏再收紧一级内边距，给 12 列矩阵多留 8px */
+@media (max-width: 350px) {
+  .container { padding: 10px 8px 24px !important; }
+  .card { padding: 10px 8px !important; }
+  .wrap { padding: 6px 8px 32px !important; }
 }
 
 /* 横屏：顶栏更矮，主体更宽 */

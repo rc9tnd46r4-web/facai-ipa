@@ -797,13 +797,17 @@ const autoMaxLag=n=>n>=4000?20:n>=2000?16:n>=1000?12:n>=500?9:n>=200?6:n>=100?4:
 // 实测（1362期 walk-forward，train/test=7:3，无泄漏）：OOS 各维平均Z由 ~0.8 升至 ~1.5，
 //   zone/mod11/mod13/mod19 改善明显；命中判定口径不变（仍以特码判定）。设为 false 可回退旧行为。
 const TARGET_ALL7 = true;
-function addTrans(counts, rowSum, dim, a, b){
+// [V2.1 时间衰减] addTrans 带指数时间衰减加权：源期索引 s 的转移权重 w=exp(-LAM·(N-1-s))，
+//   N=当次调用传入的数据总期数，LAM=ln2/半衰期，半衰期=数据量25%（clamp 100~800期）。
+//   近期转移权重高、久远转移指数衰减；回测（walk-forward/CV）与实盘（compute/computeTo）
+//   全部路径同口径。w 缺省为 1，本文件所有调用点均已显式传 w。
+function addTrans(counts, rowSum, dim, a, b, w=1){
   const key = dim.key;
   const targets = TARGET_ALL7 ? b.dims[key] : [dim.idx(b.num, b.ly)];
   for(let k=0;k<7;k++){
     const si = a.dims[key][k];
-    for(let t=0;t<targets.length;t++) counts[si][targets[t]]++;
-    if(rowSum) rowSum[si] += targets.length;
+    for(let t=0;t<targets.length;t++) counts[si][targets[t]] += w;
+    if(rowSum) rowSum[si] += w*targets.length;
   }
 }
 // 随机基线（诚实对照）：iid 假设下各维 TOP-N 命中率 = TOP-N 桶容量之和/49（见 baseHitProb）；
@@ -844,7 +848,7 @@ const zTag = (rate, total, p0) => {
 //   P_smooth(t|s) = (C[idx][t] + α·π_prior(t)) / (ev_s + α)  // 经验贝叶斯收缩：紧贴号码池真实理论先验，消除不同桶容量不等偏差
 //   w_s = (ev_s / (ev_s + β)) · attn_s                      // 证据置信权重 + 上期特码位置(第7码)注意力加权(1.5x)
 //   口径说明：此 ATTN_SPECIAL=1.5 是 V2 中特码信号的**唯一**加权层 —— V2 的矩阵计数
-//   addTrans 为整数累加（无 recencyBoost、无特码 1.5 矩阵层权重），全部回测/实盘路径
+//   addTrans 带指数时间衰减加权（半衰期=数据量25%，clamp 100~800期），回测/实盘全部路径
 //   （compute/computeTo/walk-forward/cvCrossHits/getLastWfProbs）均经 addTrans 建矩阵后
 //   统一走本函数，特码信号总权重恒为 1.5×，无 V1 那样的 1.5×1.6=2.4× 双层叠加。
 const aggregateProb=(counts,srcIndices,size,topN=4,dimObj=null,targetLy=null)=>{
@@ -938,6 +942,7 @@ function parseData(text){
 // ============ 矩阵计算（分维度独立LAG，lagMap为各维度LAG对象）============
 function compute(recs,lagMap){
   const n=recs.length;
+  const LAM=Math.LN2/Math.min(800,Math.max(100,Math.round(0.25*(n||1))));   // 指数时间衰减率：半衰期=数据量25%（clamp 100~800期）
   const mats={};
   for(const dim of DIMS){
     const sz0=dim.size;
@@ -948,7 +953,7 @@ function compute(recs,lagMap){
     const m=mats[dim.key];
     for(let i=0;i<n-lag;i++){
       const a=recs[i], b=recs[i+lag];
-      addTrans(m.c, null, dim, a, b);   // 目标端口径统一走 addTrans（7码/仅特码由 TARGET_ALL7 控制）
+      addTrans(m.c, null, dim, a, b, Math.exp(-LAM*(n-1-i)));   // 目标端口径统一走 addTrans（TARGET_ALL7 控制）+ 时间衰减加权（源期 i，N=n）
     }
   }
   for(const r of recs){
@@ -970,6 +975,7 @@ function compute(recs,lagMap){
 
 // walk-forward版：只用目标期≤endIdx的转移构建矩阵（分维度独立LAG）
 function computeTo(recs,endIdx,lagMap){
+  const LAM=Math.LN2/Math.min(800,Math.max(100,Math.round(0.25*(recs.length||1))));   // 指数时间衰减率：半衰期=数据量25%（clamp 100~800期）
   const mats={};
   for(const dim of DIMS){
     const sz0=dim.size;
@@ -981,7 +987,7 @@ function computeTo(recs,endIdx,lagMap){
     const lastSrc=endIdx-lag;
     for(let i=0;i<=lastSrc;i++){
       const a=recs[i], b=recs[i+lag];
-      addTrans(m.c, null, dim, a, b);   // 目标端口径统一走 addTrans（7码/仅特码由 TARGET_ALL7 控制）
+      addTrans(m.c, null, dim, a, b, Math.exp(-LAM*(recs.length-1-i)));   // 目标端口径统一走 addTrans（TARGET_ALL7 控制）+ 时间衰减加权（源期 i，N=recs.length）
     }
   }
   for(let i=0;i<=endIdx;i++){
@@ -1033,7 +1039,7 @@ const lagTieEpsilon = (n) => Math.min(LAG_TIE_EPS_CAP, Math.max(LAG_TIE_EPS_FLOO
 // 快照按「建榜签名」分桶：签名 = 命中阈值 + 统计口径 + 各维 TOP 数（即预设口径）。
 //   这样「换预设」不会串味（T=9 的榜单不会被 T=19 的建榜拿去当先验），
 //   而用户每天重开后重新点回自己那个预设时，正好能命中同一个桶。
-const LAGFIT_STORE_KEY='cp10v_lagfit_v1';   // 带版本前缀：结构变更时直接换 key，旧数据自动作废
+const LAGFIT_STORE_KEY='cp10v_lagfit_v2';   // 带版本前缀：口径变更（转移计数加指数时间衰减）→ v2，旧榜单数据自动作废
 const LAGFIT_STORE_MAX=12;                  // 最多保留多少个建榜签名的快照（防止无限增长）
 let lagFitSnapshot=null;
 const recFingerprint = (r) => (r ? (r.date+'|'+r.period+'|'+r.num) : '');
@@ -1887,7 +1893,9 @@ const reboundStats=(arr,k,mode='miss')=>{
     cnt++;
     if(arr[i+1]===true)hits++;
   }
-  const p=cnt>0?(hits/cnt*100).toFixed(1):null;
+  // [V2.1 先验] Beta(1,1) 拉普拉斯平滑：(hits+1)/(cnt+2) —— 观测少时向 50% 收缩，抑制小样本极端值；
+  //   cnt 保持「达标时点数」原语义不变；无任何观测（cnt===0）时仍返回 null，不展示无依据的 50%。
+  const p=cnt>0?((hits+1)/(cnt+2)*100).toFixed(1):null;
   return{cnt,hits,p};
 };
 
@@ -1995,6 +2003,7 @@ let _yesCache=new Map();
 const _YES_CACHE_MAX=20;
 const computeYesSeries = () => {
   if(typeof RECS==='undefined'||!RECS||RECS.length<2) return [];
+  const LAM=Math.LN2/Math.min(800,Math.max(100,Math.round(0.25*(RECS.length||1))));   // 指数时间衰减率：半衰期=数据量25%（clamp 100~800期）
   const _ck=JSON.stringify(getLagMap())+'|'+hitThreshold+'|'+JSON.stringify(predCounts)+'|'+_recsSig(RECS);
   const _cHit=_yesCache.get(_ck);
   if(_cHit) return _cHit.slice();
@@ -2011,7 +2020,7 @@ const computeYesSeries = () => {
       const iAdd=anchor-L;
       if(iAdd>=0){
         const a=RECS[iAdd], b=RECS[anchor];
-        addTrans(cByDim[dim.key], null, dim, a, b);
+        addTrans(cByDim[dim.key], null, dim, a, b, Math.exp(-LAM*(RECS.length-1-iAdd)));   // 时间衰减加权：源期 iAdd，N=RECS.length
       }
     }
     if(anchor<maxLag) continue;
@@ -2043,6 +2052,7 @@ const _CMS_CACHE_MAX=100;
 const crossMissSeries = (endIdx, lags, skipLag) => {
   if(typeof RECS==='undefined'||!RECS||RECS.length<2) return [];
   const n=RECS.length;
+  const LAM=Math.LN2/Math.min(800,Math.max(100,Math.round(0.25*(n||1))));   // 指数时间衰减率：半衰期=数据量25%（clamp 100~800期）
   // 显式 lags 优先；未传入时回退到全局 getLag（向后兼容 crossMissSeries(endIdx) 单参数调用）
   const useLag=(k)=> (lags&&lags[k]!=null)?lags[k]:getLag(k);
   let maxLag=1;
@@ -2063,7 +2073,7 @@ const crossMissSeries = (endIdx, lags, skipLag) => {
         const iAdd=anchor-L;
         if(iAdd>=0){
           const a=RECS[iAdd], b=RECS[anchor];
-          addTrans(cByDim[dim.key], null, dim, a, b);
+          addTrans(cByDim[dim.key], null, dim, a, b, Math.exp(-LAM*(RECS.length-1-iAdd)));   // 时间衰减加权：源期 iAdd，N=RECS.length
         }
       }
       if(anchor<skipThresh) continue;   // 早期数据不足：跳过，不 push（等价于 computeYesSeries 的 null 位）
@@ -2375,6 +2385,7 @@ function renderPrediction(){
     let hitCount=0;
     const dims=[];
     const getLastWfProbs=(dim,lg)=>{
+      const LAM=Math.LN2/Math.min(800,Math.max(100,Math.round(0.25*(RECS.length||1))));   // 指数时间衰减率：半衰期=数据量25%（clamp 100~800期）
       const targetIdx=currentIdx;
       const total=Math.max(0,targetIdx-lg+1);
       const sz0=dim.size;
@@ -2386,7 +2397,7 @@ function renderPrediction(){
         // 修正：加入所有源期索引 < i 的转移，与 runWalkForward 一致
         while(nextAdd<i){
           const src=RECS[nextAdd];
-          addTrans(counts, rowSum, dim, src, RECS[nextAdd+lg]);
+          addTrans(counts, rowSum, dim, src, RECS[nextAdd+lg], Math.exp(-LAM*(RECS.length-1-nextAdd)));   // 时间衰减加权：源期 nextAdd，N=RECS.length
           nextAdd++;
         }
         if(i+lg===targetIdx){
@@ -2669,6 +2680,7 @@ function showTargetResult(T){
 // 单一维度的walk-forward回测（修正：预测 recs[i+lg] 前，先把所有源期索引 < i 的转移加入矩阵，避免漏掉最近 lg-1 期可用数据）
 function runWalkForward(recs,dim,lg,endIdx){
   const n=recs.length;
+  const LAM=Math.LN2/Math.min(800,Math.max(100,Math.round(0.25*(n||1))));   // 指数时间衰减率：半衰期=数据量25%（clamp 100~800期）
   const total=Math.max(0,endIdx-lg+1);
   const hits=[];
   if(total===0)return hits;
@@ -2682,7 +2694,7 @@ function runWalkForward(recs,dim,lg,endIdx){
     // 加入所有源期索引 < i 的转移（目标索引 < i+lg，无数据泄漏）
     while(nextAdd<i){
       const src=recs[nextAdd];
-      addTrans(counts, rowSum, dim, src, recs[nextAdd+lg]);
+      addTrans(counts, rowSum, dim, src, recs[nextAdd+lg], Math.exp(-LAM*(n-1-nextAdd)));   // 时间衰减加权：源期 nextAdd，N=本次传入 recs.length
       nextAdd++;
     }
     const srcIndices=cur.dims[dim.key];
@@ -2741,6 +2753,7 @@ const runWalkForwardCached=(recs,dim,lg,endIdx)=>{
 // 复用 runWalkForward / crossMissSeries 的增量逻辑，不改动任何现有函数。
 function cvCrossHits(lags, fromP, toP){
   const n=RECS.length;
+  const LAM=Math.LN2/Math.min(800,Math.max(100,Math.round(0.25*(n||1))));   // 指数时间衰减率：半衰期=数据量25%（clamp 100~800期）
   const eIdx=Math.min(toP, n-1);
   const sIdx=Math.max(1, fromP);
   const cByDim={};
@@ -2757,7 +2770,7 @@ function cvCrossHits(lags, fromP, toP){
       const iAdd=anchor-L;
       if(iAdd>=0){
         const a=RECS[iAdd];
-        addTrans(cByDim[dim.key], null, dim, a, RECS[anchor]);
+        addTrans(cByDim[dim.key], null, dim, a, RECS[anchor], Math.exp(-LAM*(n-1-iAdd)));   // 时间衰减加权：源期 iAdd，N=RECS.length
       }
     }
     if(P<sIdx) continue;            // 仅统计目标窗口内的期
@@ -3086,8 +3099,8 @@ function switchTab(key){
 }
 
 function renderTop(){
-  // 注：V2 的 addTrans 是整数累加（无 recencyBoost、无特码加权），这里的 fmtCnt 属防御性格式化 ——
-  // 当前对整数输入原样输出（与改动前完全一致）；若将来给 V2 计数加权重，可避免 12.7035175879397次 这种脏数据。
+  // 注：V2 的 addTrans 已带指数时间衰减加权（计数为浮点加权值，非整数），这里的 fmtCnt 属防御性格式化 ——
+  // 对浮点加权计数保留 1 位小数输出，避免 12.7035175879397次 这种脏数据；整数值仍原样输出。
   const fmtCnt=v=>Number.isInteger(v)?String(v):v.toFixed(1);
   const mkTop=(counts,probs,size,dim,count)=>{
     const arr=[];

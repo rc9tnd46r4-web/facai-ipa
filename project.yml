@@ -5,7 +5,6 @@ options:
     iOS: "15.0"
   createIntermediateGroups: true
   groupSortPosition: top
-  generateEmptyDirectories: true
 
 settings:
   base:
@@ -27,13 +26,14 @@ targets:
     sources:
       - path: Sources
       - path: Web
-        type: folder
+        type: folder          # 整个 Web/ 目录原样拷进 bundle（目录引用，不展开成 group）
     settings:
       base:
         PRODUCT_NAME: Facai
         PRODUCT_BUNDLE_IDENTIFIER: com.facai.app
         INFOPLIST_FILE: Info.plist
         GENERATE_INFOPLIST_FILE: "NO"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         CURRENT_PROJECT_VERSION: "1"
         MARKETING_VERSION: "1.0.0"
         VALIDATE_PRODUCT: "NO"
