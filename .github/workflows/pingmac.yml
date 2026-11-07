@@ -1,0 +1,16 @@
+name: pingmac
+on:
+  workflow_dispatch:
+jobs:
+  m14:
+    runs-on: macos-14
+    steps:
+      - run: sw_vers; xcodebuild -version
+  m15:
+    runs-on: macos-15
+    steps:
+      - run: sw_vers; xcodebuild -version
+  mlatest:
+    runs-on: macos-latest
+    steps:
+      - run: sw_vers
