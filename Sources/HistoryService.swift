@@ -23,7 +23,7 @@ final class HistoryService {
     private let queue = DispatchQueue(label: "com.facai.history", qos: .userInitiated)
     private let ioQueue = DispatchQueue(label: "com.facai.history.io")
     private let cacheDir: URL
-    private var inflight: [String: [FetchResult] -> Void] = [:]
+    private var inflight: [String: [(FetchResult) -> Void]] = [:]
 
     /// 桌面 Chrome UA：源站对移动端 UA 会下发一段 JS 挑战页（200 + HTML），
     /// 桌面 UA 直接给纯文本数据，所以这里固定用桌面身份，不用手机 UA。

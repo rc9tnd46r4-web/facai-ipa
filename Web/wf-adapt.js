@@ -259,6 +259,18 @@
     top.appendChild(toolbar);
     wrap.insertBefore(top, wrap.firstChild);
 
+    /* 第一个按钮原文「选择开奖记录文本」共 8 个字，320/360 屏等分后每格只有 66~78px，
+       必然折行或被裁。这里只改文案（保留 <input type=file> 与所有事件），不动任何逻辑。 */
+    var fileLabel = q('label.btn-file', toolbar);
+    if (fileLabel) {
+      for (var node = fileLabel.firstChild; node; node = node.nextSibling) {
+        if (node.nodeType === 3 && node.nodeValue.indexOf('选择开奖记录') >= 0) {
+          node.nodeValue = '选择文件';
+          break;
+        }
+      }
+    }
+
     /* header 里那段长说明：压到栏下，最多两行 */
     if (sub) {
       sub.classList.add('wf-subnote');
