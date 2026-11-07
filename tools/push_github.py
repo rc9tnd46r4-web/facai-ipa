@@ -114,6 +114,16 @@ def main():
         tree.append({"path": rel, "mode": mode, "type": "blob", "sha": blob["sha"]})
         print(f"  blob {rel} ({len(raw)} bytes)")
 
+    # 旧版本遗留文件：显式删除（sha=null），否则 base_tree 会一直带着
+    deleted_file = os.path.join(ROOT, "tools", "deleted.txt")
+    if os.path.exists(deleted_file):
+        with open(deleted_file, "r", encoding="utf-8") as fh:
+            for line in fh:
+                path = line.strip()
+                if path and not os.path.exists(os.path.join(ROOT, path.replace("/", os.sep))):
+                    tree.append({"path": path, "mode": "100644", "type": "blob", "sha": None})
+                    print("  delete", path)
+
     tree_payload = {"tree": tree}
     if base_tree:
         tree_payload["base_tree"] = base_tree

@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-14
+    runs-on: macos-15
     timeout-minutes: 40
     steps:
       - name: Checkout
@@ -16,6 +16,8 @@ jobs:
       - name: Select Xcode 16
         run: |
           set -euo pipefail
+          # macos-14 标签已下线（任务会被瞬间取消），这里用 macos-15，仍显式切到 Xcode 16：
+          # xcodegen 2.46 生成的 objectVersion 77 老 Xcode 打不开
           ls /Applications | grep -i '^Xcode' || true
           XC="$(ls -d /Applications/Xcode_16*.app 2>/dev/null | sort -V | tail -1 || true)"
           if [ -z "${XC}" ]; then
