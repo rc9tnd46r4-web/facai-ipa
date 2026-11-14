@@ -1,0 +1,7 @@
+node_modules/
+qa/out/
+qa/.cache/
+build/
+dist/
+_prev/
+*.log

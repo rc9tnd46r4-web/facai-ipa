@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Facai Icon 1024</title>
+<style>
+  html, body { margin: 0; padding: 0; background: #0b0718; }
+  body { width: 1024px; height: 1024px; overflow: hidden; }
+  .canvas {
+    position: relative; width: 1024px; height: 1024px; overflow: hidden;
+    background:
+      radial-gradient(circle at 24% 14%, #8b6bff 0%, rgba(139,107,255,0) 52%),
+      radial-gradient(circle at 84% 90%, #b8641f 0%, rgba(184,100,31,0) 46%),
+      linear-gradient(158deg, #1d1247 0%, #130c2e 48%, #07050f 100%);
+  }
+  .grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+    background-size: 128px 128px;
+    -webkit-mask-image: radial-gradient(circle at 50% 42%, #000 18%, transparent 76%);
+    mask-image: radial-gradient(circle at 50% 42%, #000 18%, transparent 76%);
+  }
+  .ring {
+    position: absolute; left: 50%; top: 46%;
+    width: 720px; height: 720px; margin: -360px 0 0 -360px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 214, 128, .26);
+    box-shadow: inset 0 0 110px rgba(255, 190, 90, .12);
+  }
+  .ring2 {
+    position: absolute; left: 50%; top: 46%;
+    width: 628px; height: 628px; margin: -314px 0 0 -314px;
+    border-radius: 50%;
+    border: 1px dashed rgba(255, 255, 255, .16);
+  }
+  .glyph {
+    position: absolute; left: 0; right: 0; top: 46%;
+    transform: translateY(-50%); text-align: center;
+    font-family: "Microsoft YaHei", "PingFang SC", "Heiti SC", "SimHei", sans-serif;
+    font-weight: 900; font-size: 468px; line-height: 1;
+    background: linear-gradient(180deg, #fff8e2 0%, #ffdc8c 40%, #f2ab3d 76%, #d9861f 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 16px 44px rgba(255, 172, 60, .46));
+  }
+  .cap {
+    position: absolute; left: 0; right: 0; bottom: 128px; text-align: center;
+    font-family: "Helvetica Neue", Arial, sans-serif; font-weight: 700;
+    font-size: 46px; letter-spacing: 16px; text-indent: 16px;
+    color: rgba(255, 238, 205, .84);
+  }
+  .dots {
+    position: absolute; left: 0; right: 0; bottom: 88px; text-align: center;
+    font-size: 20px; letter-spacing: 12px; color: rgba(167, 139, 250, .85);
+  }
+  .edge {
+    position: absolute; inset: 26px; border-radius: 214px;
+    border: 3px solid rgba(255, 255, 255, .10);
+  }
+</style>
+</head>
+<body>
+  <div class="canvas">
+    <div class="grid"></div>
+    <div class="ring"></div>
+    <div class="ring2"></div>
+    <div class="glyph">财</div>
+    <div class="cap">FA CAI</div>
+    <div class="dots">◆ ◆ ◆</div>
+    <div class="edge"></div>
+  </div>
+</body>
+</html>

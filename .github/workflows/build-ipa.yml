@@ -1,0 +1,112 @@
+name: build-ipa
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  SCHEME: Facai
+  CONFIG: Release
+
+jobs:
+  build:
+    # macos-14 已经下线，任务会被瞬间取消；仍显式切到 Xcode 16：
+    # xcodegen 2.46 生成的工程 objectVersion 77，老 Xcode 打不开。
+    # macos-15(arm64) 机器池常年排队超时（hosted runner 拿不到机器会被自动取消），
+    # 改走 macos-15-intel：交叉编译 iphoneos/arm64 产物完全等价，队列通常更短。
+    runs-on: macos-15-intel
+    timeout-minutes: 40
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode 16
+        run: |
+          set -euo pipefail
+          ls /Applications | grep -i '^Xcode' || true
+          XC="$(ls -d /Applications/Xcode_16*.app 2>/dev/null | sort -V | tail -1 || true)"
+          if [ -z "${XC}" ]; then
+            XC="$(ls -d /Applications/Xcode*.app | sort -V | tail -1)"
+          fi
+          echo "Using ${XC}"
+          sudo xcode-select -s "${XC}/Contents/Developer"
+          xcodebuild -version
+
+      - name: Install xcodegen
+        run: |
+          brew install xcodegen || brew upgrade xcodegen
+          xcodegen --version
+
+      - name: Generate Xcode project
+        run: xcodegen generate --spec project.yml
+
+      - name: Compile app icon with actool
+        run: |
+          set -euo pipefail
+          mkdir -p build/Assets
+          # 参数必须是 --output-partial-info-plist（不是 --output-partial-info-plist=...）
+          xcrun actool \
+            --compile build/Assets \
+            --platform iphoneos \
+            --minimum-deployment-target 15.0 \
+            --app-icon AppIcon \
+            --output-partial-info-plist build/icon-partial.plist \
+            Assets.xcassets
+          ls -la build/Assets
+          plutil -p build/icon-partial.plist
+
+      - name: Merge icon keys into source Info.plist
+        run: python3 tools/merge_icons.py build/icon-partial.plist Info.plist
+
+      - name: Build unsigned app
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project Facai.xcodeproj \
+            -scheme "${SCHEME}" \
+            -configuration "${CONFIG}" \
+            -sdk iphoneos \
+            -derivedDataPath build/dd \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            build 2>&1 | tee build/xcodebuild.log | tail -80
+
+      - name: Merge icon keys into built Info.plist
+        run: python3 tools/merge_icons.py build/icon-partial.plist "build/dd/Build/Products/${CONFIG}-iphoneos/Facai.app/Info.plist"
+
+      - name: Package unsigned ipa
+        run: bash tools/make_ipa.sh
+
+      - name: Verify ipa contents
+        run: |
+          set -euo pipefail
+          IPA="$(ls dist/*.ipa | head -1)"
+          echo "ipa: $IPA"
+          unzip -l "$IPA" | head -40
+          echo "--- Web/ ---"
+          unzip -l "$IPA" | grep -c 'Payload/Facai.app/Web/'
+          echo "--- Info.plist icons ---"
+          mkdir -p build/inspect
+          unzip -o -q "$IPA" 'Payload/Facai.app/Info.plist' -d build/inspect
+          plutil -p build/inspect/Payload/Facai.app/Info.plist | grep -A8 -i CFBundleIcons || true
+          plutil -p build/inspect/Payload/Facai.app/Info.plist | grep -i NSAllowsArbitraryLoads || true
+
+      - name: Upload ipa artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: facai-unsigned-ipa
+          path: dist/*.ipa
+          if-no-files-found: error
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: |
+            build/xcodebuild.log
+            build/*.log
+          if-no-files-found: ignore
