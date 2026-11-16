@@ -1,0 +1,656 @@
+[PASS] t0 320x844 adapt ready
+[PASS] t0 320x844 data loaded
+[PASS] t0 320x844 doc width == viewport :: doc=320 vp=320 body=320
+[PASS] t0 320x844 topbar two rows :: btn=4
+[PASS] t0 320x844 buttons equal width :: [71,71,71,71]
+[PASS] t0 320x844 buttons not truncated
+[PASS] t0 320x844 updateBtn hidden
+[PASS] t0 320x844 matrix ok :: cells=144 issues=[]
+[PASS] t0 320x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t0 320x844 bar chart inside container :: []
+[PASS] t0 320x844 tables scrollable :: []
+[PASS] t0 320x844 no wide block overflow
+[PASS] t0 320x844 srcBuildStages 2 levels
+[PASS] t0 320x844 emoji guard precise
+[PASS] t0 320x844 zero proxy request ::  blocked=0
+[PASS] t0 320x844 sticky topbar top==0 :: top=0
+[PASS] t0 360x844 adapt ready
+[PASS] t0 360x844 data loaded
+[PASS] t0 360x844 doc width == viewport :: doc=360 vp=360 body=360
+[PASS] t0 360x844 topbar two rows :: btn=4
+[PASS] t0 360x844 buttons equal width :: [81,81,81,81]
+[PASS] t0 360x844 buttons not truncated
+[PASS] t0 360x844 updateBtn hidden
+[PASS] t0 360x844 matrix ok :: cells=144 issues=[]
+[PASS] t0 360x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t0 360x844 bar chart inside container :: []
+[PASS] t0 360x844 tables scrollable :: []
+[PASS] t0 360x844 no wide block overflow
+[PASS] t0 360x844 srcBuildStages 2 levels
+[PASS] t0 360x844 emoji guard precise
+[PASS] t0 360x844 zero proxy request ::  blocked=0
+[PASS] t0 360x844 sticky topbar top==0 :: top=0
+[PASS] t0 375x844 adapt ready
+[PASS] t0 375x844 data loaded
+[PASS] t0 375x844 doc width == viewport :: doc=375 vp=375 body=375
+[PASS] t0 375x844 topbar two rows :: btn=4
+[PASS] t0 375x844 buttons equal width :: [84,84,84,84]
+[PASS] t0 375x844 buttons not truncated
+[PASS] t0 375x844 updateBtn hidden
+[PASS] t0 375x844 matrix ok :: cells=144 issues=[]
+[PASS] t0 375x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t0 375x844 bar chart inside container :: []
+[PASS] t0 375x844 tables scrollable :: []
+[PASS] t0 375x844 no wide block overflow
+[PASS] t0 375x844 srcBuildStages 2 levels
+[PASS] t0 375x844 emoji guard precise
+[PASS] t0 375x844 zero proxy request ::  blocked=0
+[PASS] t0 375x844 sticky topbar top==0 :: top=0
+[PASS] t0 390x844 adapt ready
+[PASS] t0 390x844 data loaded
+[PASS] t0 390x844 doc width == viewport :: doc=390 vp=390 body=390
+[PASS] t0 390x844 topbar two rows :: btn=4
+[PASS] t0 390x844 buttons equal width :: [88,88,88,88]
+[PASS] t0 390x844 buttons not truncated
+[PASS] t0 390x844 updateBtn hidden
+[PASS] t0 390x844 matrix ok :: cells=144 issues=[]
+[PASS] t0 390x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t0 390x844 bar chart inside container :: []
+[PASS] t0 390x844 tables scrollable :: []
+[PASS] t0 390x844 no wide block overflow
+[PASS] t0 390x844 srcBuildStages 2 levels
+[PASS] t0 390x844 emoji guard precise
+[PASS] t0 390x844 zero proxy request ::  blocked=0
+[PASS] t0 390x844 sticky topbar top==0 :: top=0
+[PASS] t0 414x844 adapt ready
+[PASS] t0 414x844 data loaded
+[PASS] t0 414x844 doc width == viewport :: doc=414 vp=414 body=414
+[PASS] t0 414x844 topbar two rows :: btn=4
+[PASS] t0 414x844 buttons equal width :: [94,94,94,94]
+[PASS] t0 414x844 buttons not truncated
+[PASS] t0 414x844 updateBtn hidden
+[PASS] t0 414x844 matrix ok :: cells=144 issues=[]
+[PASS] t0 414x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t0 414x844 bar chart inside container :: []
+[PASS] t0 414x844 tables scrollable :: []
+[PASS] t0 414x844 no wide block overflow
+[PASS] t0 414x844 srcBuildStages 2 levels
+[PASS] t0 414x844 emoji guard precise
+[PASS] t0 414x844 zero proxy request ::  blocked=0
+[PASS] t0 414x844 sticky topbar top==0 :: top=0
+[PASS] t0 430x844 adapt ready
+[PASS] t0 430x844 data loaded
+[PASS] t0 430x844 doc width == viewport :: doc=430 vp=430 body=430
+[PASS] t0 430x844 topbar two rows :: btn=4
+[PASS] t0 430x844 buttons equal width :: [98,98,98,98]
+[PASS] t0 430x844 buttons not truncated
+[PASS] t0 430x844 updateBtn hidden
+[PASS] t0 430x844 matrix ok :: cells=144 issues=[]
+[PASS] t0 430x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t0 430x844 bar chart inside container :: []
+[PASS] t0 430x844 tables scrollable :: []
+[PASS] t0 430x844 no wide block overflow
+[PASS] t0 430x844 srcBuildStages 2 levels
+[PASS] t0 430x844 emoji guard precise
+[PASS] t0 430x844 zero proxy request ::  blocked=0
+[PASS] t0 430x844 sticky topbar top==0 :: top=0
+[PASS] t0 844x390-land doc width == viewport :: doc=844 vp=844
+[PASS] t0 844x390-land buttons not truncated
+[PASS] t0 844x390-land matrix ok :: []
+[PASS] t0 844x390-land bar chart inside container :: []
+[PASS] t0 844x390-land no wide block overflow
+[PASS] t0 926x428-land doc width == viewport :: doc=926 vp=926
+[PASS] t0 926x428-land buttons not truncated
+[PASS] t0 926x428-land matrix ok :: []
+[PASS] t0 926x428-land bar chart inside container :: []
+[PASS] t0 926x428-land no wide block overflow
+[PASS] t1 320x844 adapt ready
+[PASS] t1 320x844 data loaded
+[PASS] t1 320x844 doc width == viewport :: doc=320 vp=320 body=320
+[PASS] t1 320x844 topbar two rows :: btn=4
+[PASS] t1 320x844 buttons equal width :: [71,71,71,71]
+[PASS] t1 320x844 buttons not truncated
+[PASS] t1 320x844 updateBtn hidden
+[PASS] t1 320x844 matrix ok :: cells=144 issues=[]
+[PASS] t1 320x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t1 320x844 bar chart inside container :: []
+[PASS] t1 320x844 tables scrollable :: []
+[PASS] t1 320x844 no wide block overflow
+[PASS] t1 320x844 srcBuildStages 2 levels
+[PASS] t1 320x844 emoji guard precise
+[PASS] t1 320x844 zero proxy request ::  blocked=0
+[PASS] t1 320x844 sticky topbar top==0 :: top=0
+[PASS] t1 360x844 adapt ready
+[PASS] t1 360x844 data loaded
+[PASS] t1 360x844 doc width == viewport :: doc=360 vp=360 body=360
+[PASS] t1 360x844 topbar two rows :: btn=4
+[PASS] t1 360x844 buttons equal width :: [81,81,81,81]
+[PASS] t1 360x844 buttons not truncated
+[PASS] t1 360x844 updateBtn hidden
+[PASS] t1 360x844 matrix ok :: cells=144 issues=[]
+[PASS] t1 360x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t1 360x844 bar chart inside container :: []
+[PASS] t1 360x844 tables scrollable :: []
+[PASS] t1 360x844 no wide block overflow
+[PASS] t1 360x844 srcBuildStages 2 levels
+[PASS] t1 360x844 emoji guard precise
+[PASS] t1 360x844 zero proxy request ::  blocked=0
+[PASS] t1 360x844 sticky topbar top==0 :: top=0
+[PASS] t1 375x844 adapt ready
+[PASS] t1 375x844 data loaded
+[PASS] t1 375x844 doc width == viewport :: doc=375 vp=375 body=375
+[PASS] t1 375x844 topbar two rows :: btn=4
+[PASS] t1 375x844 buttons equal width :: [84,84,84,84]
+[PASS] t1 375x844 buttons not truncated
+[PASS] t1 375x844 updateBtn hidden
+[PASS] t1 375x844 matrix ok :: cells=144 issues=[]
+[PASS] t1 375x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t1 375x844 bar chart inside container :: []
+[PASS] t1 375x844 tables scrollable :: []
+[PASS] t1 375x844 no wide block overflow
+[PASS] t1 375x844 srcBuildStages 2 levels
+[PASS] t1 375x844 emoji guard precise
+[PASS] t1 375x844 zero proxy request ::  blocked=0
+[PASS] t1 375x844 sticky topbar top==0 :: top=0
+[PASS] t1 390x844 adapt ready
+[PASS] t1 390x844 data loaded
+[PASS] t1 390x844 doc width == viewport :: doc=390 vp=390 body=390
+[PASS] t1 390x844 topbar two rows :: btn=4
+[PASS] t1 390x844 buttons equal width :: [88,88,88,88]
+[PASS] t1 390x844 buttons not truncated
+[PASS] t1 390x844 updateBtn hidden
+[PASS] t1 390x844 matrix ok :: cells=144 issues=[]
+[PASS] t1 390x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t1 390x844 bar chart inside container :: []
+[PASS] t1 390x844 tables scrollable :: []
+[PASS] t1 390x844 no wide block overflow
+[PASS] t1 390x844 srcBuildStages 2 levels
+[PASS] t1 390x844 emoji guard precise
+[PASS] t1 390x844 zero proxy request ::  blocked=0
+[PASS] t1 390x844 sticky topbar top==0 :: top=0
+[PASS] t1 414x844 adapt ready
+[PASS] t1 414x844 data loaded
+[PASS] t1 414x844 doc width == viewport :: doc=414 vp=414 body=414
+[PASS] t1 414x844 topbar two rows :: btn=4
+[PASS] t1 414x844 buttons equal width :: [94,94,94,94]
+[PASS] t1 414x844 buttons not truncated
+[PASS] t1 414x844 updateBtn hidden
+[PASS] t1 414x844 matrix ok :: cells=144 issues=[]
+[PASS] t1 414x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t1 414x844 bar chart inside container :: []
+[PASS] t1 414x844 tables scrollable :: []
+[PASS] t1 414x844 no wide block overflow
+[PASS] t1 414x844 srcBuildStages 2 levels
+[PASS] t1 414x844 emoji guard precise
+[PASS] t1 414x844 zero proxy request ::  blocked=0
+[PASS] t1 414x844 sticky topbar top==0 :: top=0
+[PASS] t1 430x844 adapt ready
+[PASS] t1 430x844 data loaded
+[PASS] t1 430x844 doc width == viewport :: doc=430 vp=430 body=430
+[PASS] t1 430x844 topbar two rows :: btn=4
+[PASS] t1 430x844 buttons equal width :: [98,98,98,98]
+[PASS] t1 430x844 buttons not truncated
+[PASS] t1 430x844 updateBtn hidden
+[PASS] t1 430x844 matrix ok :: cells=144 issues=[]
+[PASS] t1 430x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t1 430x844 bar chart inside container :: []
+[PASS] t1 430x844 tables scrollable :: []
+[PASS] t1 430x844 no wide block overflow
+[PASS] t1 430x844 srcBuildStages 2 levels
+[PASS] t1 430x844 emoji guard precise
+[PASS] t1 430x844 zero proxy request ::  blocked=0
+[PASS] t1 430x844 sticky topbar top==0 :: top=0
+[PASS] t1 844x390-land doc width == viewport :: doc=844 vp=844
+[PASS] t1 844x390-land buttons not truncated
+[PASS] t1 844x390-land matrix ok :: []
+[PASS] t1 844x390-land bar chart inside container :: []
+[PASS] t1 844x390-land no wide block overflow
+[PASS] t1 926x428-land doc width == viewport :: doc=926 vp=926
+[PASS] t1 926x428-land buttons not truncated
+[PASS] t1 926x428-land matrix ok :: []
+[PASS] t1 926x428-land bar chart inside container :: []
+[PASS] t1 926x428-land no wide block overflow
+[PASS] t2 320x844 adapt ready
+[PASS] t2 320x844 data loaded
+[PASS] t2 320x844 doc width == viewport :: doc=320 vp=320 body=320
+[PASS] t2 320x844 topbar two rows :: btn=4
+[PASS] t2 320x844 buttons equal width :: [71,71,71,71]
+[PASS] t2 320x844 buttons not truncated
+[PASS] t2 320x844 updateBtn hidden
+[PASS] t2 320x844 matrix ok :: cells=144 issues=[]
+[PASS] t2 320x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t2 320x844 bar chart inside container :: []
+[PASS] t2 320x844 tables scrollable :: []
+[PASS] t2 320x844 no wide block overflow
+[PASS] t2 320x844 srcBuildStages 2 levels
+[PASS] t2 320x844 emoji guard precise
+[PASS] t2 320x844 zero proxy request ::  blocked=0
+[PASS] t2 320x844 sticky topbar top==0 :: top=0
+[PASS] t2 360x844 adapt ready
+[PASS] t2 360x844 data loaded
+[PASS] t2 360x844 doc width == viewport :: doc=360 vp=360 body=360
+[PASS] t2 360x844 topbar two rows :: btn=4
+[PASS] t2 360x844 buttons equal width :: [81,81,81,81]
+[PASS] t2 360x844 buttons not truncated
+[PASS] t2 360x844 updateBtn hidden
+[PASS] t2 360x844 matrix ok :: cells=144 issues=[]
+[PASS] t2 360x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t2 360x844 bar chart inside container :: []
+[PASS] t2 360x844 tables scrollable :: []
+[PASS] t2 360x844 no wide block overflow
+[PASS] t2 360x844 srcBuildStages 2 levels
+[PASS] t2 360x844 emoji guard precise
+[PASS] t2 360x844 zero proxy request ::  blocked=0
+[PASS] t2 360x844 sticky topbar top==0 :: top=0
+[PASS] t2 375x844 adapt ready
+[PASS] t2 375x844 data loaded
+[PASS] t2 375x844 doc width == viewport :: doc=375 vp=375 body=375
+[PASS] t2 375x844 topbar two rows :: btn=4
+[PASS] t2 375x844 buttons equal width :: [84,84,84,84]
+[PASS] t2 375x844 buttons not truncated
+[PASS] t2 375x844 updateBtn hidden
+[PASS] t2 375x844 matrix ok :: cells=144 issues=[]
+[PASS] t2 375x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t2 375x844 bar chart inside container :: []
+[PASS] t2 375x844 tables scrollable :: []
+[PASS] t2 375x844 no wide block overflow
+[PASS] t2 375x844 srcBuildStages 2 levels
+[PASS] t2 375x844 emoji guard precise
+[PASS] t2 375x844 zero proxy request ::  blocked=0
+[PASS] t2 375x844 sticky topbar top==0 :: top=0
+[PASS] t2 390x844 adapt ready
+[PASS] t2 390x844 data loaded
+[PASS] t2 390x844 doc width == viewport :: doc=390 vp=390 body=390
+[PASS] t2 390x844 topbar two rows :: btn=4
+[PASS] t2 390x844 buttons equal width :: [88,88,88,88]
+[PASS] t2 390x844 buttons not truncated
+[PASS] t2 390x844 updateBtn hidden
+[PASS] t2 390x844 matrix ok :: cells=144 issues=[]
+[PASS] t2 390x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t2 390x844 bar chart inside container :: []
+[PASS] t2 390x844 tables scrollable :: []
+[PASS] t2 390x844 no wide block overflow
+[PASS] t2 390x844 srcBuildStages 2 levels
+[PASS] t2 390x844 emoji guard precise
+[PASS] t2 390x844 zero proxy request ::  blocked=0
+[PASS] t2 390x844 sticky topbar top==0 :: top=0
+[PASS] t2 414x844 adapt ready
+[PASS] t2 414x844 data loaded
+[PASS] t2 414x844 doc width == viewport :: doc=414 vp=414 body=414
+[PASS] t2 414x844 topbar two rows :: btn=4
+[PASS] t2 414x844 buttons equal width :: [94,94,94,94]
+[PASS] t2 414x844 buttons not truncated
+[PASS] t2 414x844 updateBtn hidden
+[PASS] t2 414x844 matrix ok :: cells=144 issues=[]
+[PASS] t2 414x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t2 414x844 bar chart inside container :: []
+[PASS] t2 414x844 tables scrollable :: []
+[PASS] t2 414x844 no wide block overflow
+[PASS] t2 414x844 srcBuildStages 2 levels
+[PASS] t2 414x844 emoji guard precise
+[PASS] t2 414x844 zero proxy request ::  blocked=0
+[PASS] t2 414x844 sticky topbar top==0 :: top=0
+[PASS] t2 430x844 adapt ready
+[PASS] t2 430x844 data loaded
+[PASS] t2 430x844 doc width == viewport :: doc=430 vp=430 body=430
+[PASS] t2 430x844 topbar two rows :: btn=4
+[PASS] t2 430x844 buttons equal width :: [98,98,98,98]
+[PASS] t2 430x844 buttons not truncated
+[PASS] t2 430x844 updateBtn hidden
+[PASS] t2 430x844 matrix ok :: cells=144 issues=[]
+[PASS] t2 430x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t2 430x844 bar chart inside container :: []
+[PASS] t2 430x844 tables scrollable :: []
+[PASS] t2 430x844 no wide block overflow
+[PASS] t2 430x844 srcBuildStages 2 levels
+[PASS] t2 430x844 emoji guard precise
+[PASS] t2 430x844 zero proxy request ::  blocked=0
+[PASS] t2 430x844 sticky topbar top==0 :: top=0
+[PASS] t2 844x390-land doc width == viewport :: doc=844 vp=844
+[PASS] t2 844x390-land buttons not truncated
+[PASS] t2 844x390-land matrix ok :: []
+[PASS] t2 844x390-land bar chart inside container :: []
+[PASS] t2 844x390-land no wide block overflow
+[PASS] t2 926x428-land doc width == viewport :: doc=926 vp=926
+[PASS] t2 926x428-land buttons not truncated
+[PASS] t2 926x428-land matrix ok :: []
+[PASS] t2 926x428-land bar chart inside container :: []
+[PASS] t2 926x428-land no wide block overflow
+[PASS] t3 320x844 adapt ready
+[PASS] t3 320x844 data loaded
+[PASS] t3 320x844 doc width == viewport :: doc=320 vp=320 body=320
+[PASS] t3 320x844 topbar two rows :: btn=4
+[PASS] t3 320x844 buttons equal width :: [71,71,71,71]
+[PASS] t3 320x844 buttons not truncated
+[PASS] t3 320x844 updateBtn hidden
+[PASS] t3 320x844 matrix ok :: cells=144 issues=[]
+[PASS] t3 320x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t3 320x844 bar chart inside container :: []
+[PASS] t3 320x844 tables scrollable :: []
+[PASS] t3 320x844 no wide block overflow
+[PASS] t3 320x844 srcBuildStages 2 levels
+[PASS] t3 320x844 emoji guard precise
+[PASS] t3 320x844 zero proxy request ::  blocked=0
+[PASS] t3 320x844 sticky topbar top==0 :: top=0
+[PASS] t3 360x844 adapt ready
+[PASS] t3 360x844 data loaded
+[PASS] t3 360x844 doc width == viewport :: doc=360 vp=360 body=360
+[PASS] t3 360x844 topbar two rows :: btn=4
+[PASS] t3 360x844 buttons equal width :: [81,81,81,81]
+[PASS] t3 360x844 buttons not truncated
+[PASS] t3 360x844 updateBtn hidden
+[PASS] t3 360x844 matrix ok :: cells=144 issues=[]
+[PASS] t3 360x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t3 360x844 bar chart inside container :: []
+[PASS] t3 360x844 tables scrollable :: []
+[PASS] t3 360x844 no wide block overflow
+[PASS] t3 360x844 srcBuildStages 2 levels
+[PASS] t3 360x844 emoji guard precise
+[PASS] t3 360x844 zero proxy request ::  blocked=0
+[PASS] t3 360x844 sticky topbar top==0 :: top=0
+[PASS] t3 375x844 adapt ready
+[PASS] t3 375x844 data loaded
+[PASS] t3 375x844 doc width == viewport :: doc=375 vp=375 body=375
+[PASS] t3 375x844 topbar two rows :: btn=4
+[PASS] t3 375x844 buttons equal width :: [84,84,84,84]
+[PASS] t3 375x844 buttons not truncated
+[PASS] t3 375x844 updateBtn hidden
+[PASS] t3 375x844 matrix ok :: cells=144 issues=[]
+[PASS] t3 375x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t3 375x844 bar chart inside container :: []
+[PASS] t3 375x844 tables scrollable :: []
+[PASS] t3 375x844 no wide block overflow
+[PASS] t3 375x844 srcBuildStages 2 levels
+[PASS] t3 375x844 emoji guard precise
+[PASS] t3 375x844 zero proxy request ::  blocked=0
+[PASS] t3 375x844 sticky topbar top==0 :: top=0
+[PASS] t3 390x844 adapt ready
+[PASS] t3 390x844 data loaded
+[PASS] t3 390x844 doc width == viewport :: doc=390 vp=390 body=390
+[PASS] t3 390x844 topbar two rows :: btn=4
+[PASS] t3 390x844 buttons equal width :: [88,88,88,88]
+[PASS] t3 390x844 buttons not truncated
+[PASS] t3 390x844 updateBtn hidden
+[PASS] t3 390x844 matrix ok :: cells=144 issues=[]
+[PASS] t3 390x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t3 390x844 bar chart inside container :: []
+[PASS] t3 390x844 tables scrollable :: []
+[PASS] t3 390x844 no wide block overflow
+[PASS] t3 390x844 srcBuildStages 2 levels
+[PASS] t3 390x844 emoji guard precise
+[PASS] t3 390x844 zero proxy request ::  blocked=0
+[PASS] t3 390x844 sticky topbar top==0 :: top=0
+[PASS] t3 414x844 adapt ready
+[PASS] t3 414x844 data loaded
+[PASS] t3 414x844 doc width == viewport :: doc=414 vp=414 body=414
+[PASS] t3 414x844 topbar two rows :: btn=4
+[PASS] t3 414x844 buttons equal width :: [94,94,94,94]
+[PASS] t3 414x844 buttons not truncated
+[PASS] t3 414x844 updateBtn hidden
+[PASS] t3 414x844 matrix ok :: cells=144 issues=[]
+[PASS] t3 414x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t3 414x844 bar chart inside container :: []
+[PASS] t3 414x844 tables scrollable :: []
+[PASS] t3 414x844 no wide block overflow
+[PASS] t3 414x844 srcBuildStages 2 levels
+[PASS] t3 414x844 emoji guard precise
+[PASS] t3 414x844 zero proxy request ::  blocked=0
+[PASS] t3 414x844 sticky topbar top==0 :: top=0
+[PASS] t3 430x844 adapt ready
+[PASS] t3 430x844 data loaded
+[PASS] t3 430x844 doc width == viewport :: doc=430 vp=430 body=430
+[PASS] t3 430x844 topbar two rows :: btn=4
+[PASS] t3 430x844 buttons equal width :: [98,98,98,98]
+[PASS] t3 430x844 buttons not truncated
+[PASS] t3 430x844 updateBtn hidden
+[PASS] t3 430x844 matrix ok :: cells=144 issues=[]
+[PASS] t3 430x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t3 430x844 bar chart inside container :: []
+[PASS] t3 430x844 tables scrollable :: []
+[PASS] t3 430x844 no wide block overflow
+[PASS] t3 430x844 srcBuildStages 2 levels
+[PASS] t3 430x844 emoji guard precise
+[PASS] t3 430x844 zero proxy request ::  blocked=0
+[PASS] t3 430x844 sticky topbar top==0 :: top=0
+[PASS] t3 844x390-land doc width == viewport :: doc=844 vp=844
+[PASS] t3 844x390-land buttons not truncated
+[PASS] t3 844x390-land matrix ok :: []
+[PASS] t3 844x390-land bar chart inside container :: []
+[PASS] t3 844x390-land no wide block overflow
+[PASS] t3 926x428-land doc width == viewport :: doc=926 vp=926
+[PASS] t3 926x428-land buttons not truncated
+[PASS] t3 926x428-land matrix ok :: []
+[PASS] t3 926x428-land bar chart inside container :: []
+[PASS] t3 926x428-land no wide block overflow
+[PASS] t4 320x844 adapt ready
+[PASS] t4 320x844 data loaded
+[PASS] t4 320x844 doc width == viewport :: doc=320 vp=320 body=320
+[PASS] t4 320x844 topbar two rows :: btn=4
+[PASS] t4 320x844 buttons equal width :: [72,72,72,72]
+[PASS] t4 320x844 buttons not truncated
+[PASS] t4 320x844 updateBtn hidden
+[PASS] t4 320x844 matrix ok :: cells=0 issues=[]
+[PASS] t4 320x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t4 320x844 bar chart inside container :: []
+[PASS] t4 320x844 tables scrollable :: []
+[PASS] t4 320x844 no wide block overflow
+[PASS] t4 320x844 srcBuildStages 2 levels
+[PASS] t4 320x844 emoji guard precise
+[PASS] t4 320x844 zero proxy request ::  blocked=0
+[PASS] t4 320x844 sticky topbar top==0 :: top=0
+[PASS] t4 360x844 adapt ready
+[PASS] t4 360x844 data loaded
+[PASS] t4 360x844 doc width == viewport :: doc=360 vp=360 body=360
+[PASS] t4 360x844 topbar two rows :: btn=4
+[PASS] t4 360x844 buttons equal width :: [81,81,81,81]
+[PASS] t4 360x844 buttons not truncated
+[PASS] t4 360x844 updateBtn hidden
+[PASS] t4 360x844 matrix ok :: cells=0 issues=[]
+[PASS] t4 360x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t4 360x844 bar chart inside container :: []
+[PASS] t4 360x844 tables scrollable :: []
+[PASS] t4 360x844 no wide block overflow
+[PASS] t4 360x844 srcBuildStages 2 levels
+[PASS] t4 360x844 emoji guard precise
+[PASS] t4 360x844 zero proxy request ::  blocked=0
+[PASS] t4 360x844 sticky topbar top==0 :: top=0
+[PASS] t4 375x844 adapt ready
+[PASS] t4 375x844 data loaded
+[PASS] t4 375x844 doc width == viewport :: doc=375 vp=375 body=375
+[PASS] t4 375x844 topbar two rows :: btn=4
+[PASS] t4 375x844 buttons equal width :: [84,84,84,84]
+[PASS] t4 375x844 buttons not truncated
+[PASS] t4 375x844 updateBtn hidden
+[PASS] t4 375x844 matrix ok :: cells=0 issues=[]
+[PASS] t4 375x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t4 375x844 bar chart inside container :: []
+[PASS] t4 375x844 tables scrollable :: []
+[PASS] t4 375x844 no wide block overflow
+[PASS] t4 375x844 srcBuildStages 2 levels
+[PASS] t4 375x844 emoji guard precise
+[PASS] t4 375x844 zero proxy request ::  blocked=0
+[PASS] t4 375x844 sticky topbar top==0 :: top=0
+[PASS] t4 390x844 adapt ready
+[PASS] t4 390x844 data loaded
+[PASS] t4 390x844 doc width == viewport :: doc=390 vp=390 body=390
+[PASS] t4 390x844 topbar two rows :: btn=4
+[PASS] t4 390x844 buttons equal width :: [88,88,88,88]
+[PASS] t4 390x844 buttons not truncated
+[PASS] t4 390x844 updateBtn hidden
+[PASS] t4 390x844 matrix ok :: cells=0 issues=[]
+[PASS] t4 390x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t4 390x844 bar chart inside container :: []
+[PASS] t4 390x844 tables scrollable :: []
+[PASS] t4 390x844 no wide block overflow
+[PASS] t4 390x844 srcBuildStages 2 levels
+[PASS] t4 390x844 emoji guard precise
+[PASS] t4 390x844 zero proxy request ::  blocked=0
+[PASS] t4 390x844 sticky topbar top==0 :: top=0
+[PASS] t4 414x844 adapt ready
+[PASS] t4 414x844 data loaded
+[PASS] t4 414x844 doc width == viewport :: doc=414 vp=414 body=414
+[PASS] t4 414x844 topbar two rows :: btn=4
+[PASS] t4 414x844 buttons equal width :: [94,94,94,94]
+[PASS] t4 414x844 buttons not truncated
+[PASS] t4 414x844 updateBtn hidden
+[PASS] t4 414x844 matrix ok :: cells=0 issues=[]
+[PASS] t4 414x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t4 414x844 bar chart inside container :: []
+[PASS] t4 414x844 tables scrollable :: []
+[PASS] t4 414x844 no wide block overflow
+[PASS] t4 414x844 srcBuildStages 2 levels
+[PASS] t4 414x844 emoji guard precise
+[PASS] t4 414x844 zero proxy request ::  blocked=0
+[PASS] t4 414x844 sticky topbar top==0 :: top=0
+[PASS] t4 430x844 adapt ready
+[PASS] t4 430x844 data loaded
+[PASS] t4 430x844 doc width == viewport :: doc=430 vp=430 body=430
+[PASS] t4 430x844 topbar two rows :: btn=4
+[PASS] t4 430x844 buttons equal width :: [98,98,98,98]
+[PASS] t4 430x844 buttons not truncated
+[PASS] t4 430x844 updateBtn hidden
+[PASS] t4 430x844 matrix ok :: cells=0 issues=[]
+[PASS] t4 430x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t4 430x844 bar chart inside container :: []
+[PASS] t4 430x844 tables scrollable :: []
+[PASS] t4 430x844 no wide block overflow
+[PASS] t4 430x844 srcBuildStages 2 levels
+[PASS] t4 430x844 emoji guard precise
+[PASS] t4 430x844 zero proxy request ::  blocked=0
+[PASS] t4 430x844 sticky topbar top==0 :: top=0
+[PASS] t4 844x390-land doc width == viewport :: doc=844 vp=844
+[PASS] t4 844x390-land buttons not truncated
+[PASS] t4 844x390-land matrix ok :: []
+[PASS] t4 844x390-land bar chart inside container :: []
+[PASS] t4 844x390-land no wide block overflow
+[PASS] t4 926x428-land doc width == viewport :: doc=926 vp=926
+[PASS] t4 926x428-land buttons not truncated
+[PASS] t4 926x428-land matrix ok :: []
+[PASS] t4 926x428-land bar chart inside container :: []
+[PASS] t4 926x428-land no wide block overflow
+[PASS] t5 320x844 adapt ready
+[PASS] t5 320x844 data loaded
+[PASS] t5 320x844 doc width == viewport :: doc=320 vp=320 body=320
+[PASS] t5 320x844 topbar two rows :: btn=4
+[PASS] t5 320x844 buttons equal width :: [72,72,72,72]
+[PASS] t5 320x844 buttons not truncated
+[PASS] t5 320x844 updateBtn hidden
+[PASS] t5 320x844 matrix ok :: cells=0 issues=[]
+[PASS] t5 320x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t5 320x844 bar chart inside container :: []
+[PASS] t5 320x844 tables scrollable :: []
+[PASS] t5 320x844 no wide block overflow
+[PASS] t5 320x844 srcBuildStages 2 levels
+[PASS] t5 320x844 emoji guard precise
+[PASS] t5 320x844 zero proxy request ::  blocked=0
+[PASS] t5 320x844 sticky topbar top==0 :: top=0
+[PASS] t5 360x844 adapt ready
+[PASS] t5 360x844 data loaded
+[PASS] t5 360x844 doc width == viewport :: doc=360 vp=360 body=360
+[PASS] t5 360x844 topbar two rows :: btn=4
+[PASS] t5 360x844 buttons equal width :: [81,81,81,81]
+[PASS] t5 360x844 buttons not truncated
+[PASS] t5 360x844 updateBtn hidden
+[PASS] t5 360x844 matrix ok :: cells=0 issues=[]
+[PASS] t5 360x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t5 360x844 bar chart inside container :: []
+[PASS] t5 360x844 tables scrollable :: []
+[PASS] t5 360x844 no wide block overflow
+[PASS] t5 360x844 srcBuildStages 2 levels
+[PASS] t5 360x844 emoji guard precise
+[PASS] t5 360x844 zero proxy request ::  blocked=0
+[PASS] t5 360x844 sticky topbar top==0 :: top=0
+[PASS] t5 375x844 adapt ready
+[PASS] t5 375x844 data loaded
+[PASS] t5 375x844 doc width == viewport :: doc=375 vp=375 body=375
+[PASS] t5 375x844 topbar two rows :: btn=4
+[PASS] t5 375x844 buttons equal width :: [84,84,84,84]
+[PASS] t5 375x844 buttons not truncated
+[PASS] t5 375x844 updateBtn hidden
+[PASS] t5 375x844 matrix ok :: cells=0 issues=[]
+[PASS] t5 375x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t5 375x844 bar chart inside container :: []
+[PASS] t5 375x844 tables scrollable :: []
+[PASS] t5 375x844 no wide block overflow
+[PASS] t5 375x844 srcBuildStages 2 levels
+[PASS] t5 375x844 emoji guard precise
+[PASS] t5 375x844 zero proxy request ::  blocked=0
+[PASS] t5 375x844 sticky topbar top==0 :: top=0
+[PASS] t5 390x844 adapt ready
+[PASS] t5 390x844 data loaded
+[PASS] t5 390x844 doc width == viewport :: doc=390 vp=390 body=390
+[PASS] t5 390x844 topbar two rows :: btn=4
+[PASS] t5 390x844 buttons equal width :: [88,88,88,88]
+[PASS] t5 390x844 buttons not truncated
+[PASS] t5 390x844 updateBtn hidden
+[PASS] t5 390x844 matrix ok :: cells=0 issues=[]
+[PASS] t5 390x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t5 390x844 bar chart inside container :: []
+[PASS] t5 390x844 tables scrollable :: []
+[PASS] t5 390x844 no wide block overflow
+[PASS] t5 390x844 srcBuildStages 2 levels
+[PASS] t5 390x844 emoji guard precise
+[PASS] t5 390x844 zero proxy request ::  blocked=0
+[PASS] t5 390x844 sticky topbar top==0 :: top=0
+[PASS] t5 414x844 adapt ready
+[PASS] t5 414x844 data loaded
+[PASS] t5 414x844 doc width == viewport :: doc=414 vp=414 body=414
+[PASS] t5 414x844 topbar two rows :: btn=4
+[PASS] t5 414x844 buttons equal width :: [94,94,94,94]
+[PASS] t5 414x844 buttons not truncated
+[PASS] t5 414x844 updateBtn hidden
+[PASS] t5 414x844 matrix ok :: cells=0 issues=[]
+[PASS] t5 414x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t5 414x844 bar chart inside container :: []
+[PASS] t5 414x844 tables scrollable :: []
+[PASS] t5 414x844 no wide block overflow
+[PASS] t5 414x844 srcBuildStages 2 levels
+[PASS] t5 414x844 emoji guard precise
+[PASS] t5 414x844 zero proxy request ::  blocked=0
+[PASS] t5 414x844 sticky topbar top==0 :: top=0
+[PASS] t5 430x844 adapt ready
+[PASS] t5 430x844 data loaded
+[PASS] t5 430x844 doc width == viewport :: doc=430 vp=430 body=430
+[PASS] t5 430x844 topbar two rows :: btn=4
+[PASS] t5 430x844 buttons equal width :: [98,98,98,98]
+[PASS] t5 430x844 buttons not truncated
+[PASS] t5 430x844 updateBtn hidden
+[PASS] t5 430x844 matrix ok :: cells=0 issues=[]
+[PASS] t5 430x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t5 430x844 bar chart inside container :: []
+[PASS] t5 430x844 tables scrollable :: []
+[PASS] t5 430x844 no wide block overflow
+[PASS] t5 430x844 srcBuildStages 2 levels
+[PASS] t5 430x844 emoji guard precise
+[PASS] t5 430x844 zero proxy request ::  blocked=0
+[PASS] t5 430x844 sticky topbar top==0 :: top=0
+[PASS] t5 844x390-land doc width == viewport :: doc=844 vp=844
+[PASS] t5 844x390-land buttons not truncated
+[PASS] t5 844x390-land matrix ok :: []
+[PASS] t5 844x390-land bar chart inside container :: []
+[PASS] t5 844x390-land no wide block overflow
+[PASS] t5 926x428-land doc width == viewport :: doc=926 vp=926
+[PASS] t5 926x428-land buttons not truncated
+[PASS] t5 926x428-land matrix ok :: []
+[PASS] t5 926x428-land bar chart inside container :: []
+[PASS] t5 926x428-land no wide block overflow
+[PASS] t0 390x844 tabbar 6 items equal :: [65,65,65,65,65,65]
+[PASS] t0 390x844 tabbar icon+2 lines intact
+[PASS] t0 390x844 shell zero proxy
+[PASS] t1 390x844 tabbar 6 items equal :: [65,65,65,65,65,65]
+[PASS] t1 390x844 tabbar icon+2 lines intact
+[PASS] t1 390x844 shell zero proxy
+[PASS] t2 390x844 tabbar 6 items equal :: [65,65,65,65,65,65]
+[PASS] t2 390x844 tabbar icon+2 lines intact
+[PASS] t2 390x844 shell zero proxy
+[PASS] t3 390x844 tabbar 6 items equal :: [65,65,65,65,65,65]
+[PASS] t3 390x844 tabbar icon+2 lines intact
+[PASS] t3 390x844 shell zero proxy
+[PASS] t4 390x844 tabbar 6 items equal :: [65,65,65,65,65,65]
+[PASS] t4 390x844 tabbar icon+2 lines intact
+[PASS] t4 390x844 shell zero proxy
+[PASS] t5 390x844 tabbar 6 items equal :: [65,65,65,65,65,65]
+[PASS] t5 390x844 tabbar icon+2 lines intact
+[PASS] t5 390x844 shell zero proxy
+
+==== 654/654 passed ====
