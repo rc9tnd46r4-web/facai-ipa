@@ -189,7 +189,7 @@ table td.empty-cell{white-space:nowrap;min-width:220px;}                    /* P
   <div class="header" data-page-node-id="5EzisBPTW89a0qI524lLB3">
     <div data-page-node-id="ZyeAOuH4raRgGQ9VoXk5oC">
       <h1 data-page-node-id="eGeXmlF8PvIxsN6tmcKRwn">特别号尾数规律分析预测系统 <span class="badge" data-page-node-id="ohBEDBDenN3c9CXEbvagPU">King</span></h1>
-      <div class="muted small" style="margin-top:4px;" data-page-node-id="abtAsJGfwa5EACc2NiEt45">多窗口（近30/50/100期 + 自定义近N期）统计 · 主策略：多策略加权集成 · 7/4/3/2/1个尾组合预测 · 逐期回测 · 策略对比 · 多窗口横向对比</div>
+      <div class="muted small" style="margin-top:4px;" data-page-node-id="abtAsJGfwa5EACc2NiEt45">多窗口（近30/50/100期 + 自定义近N期）统计 · 主策略：多策略加权集成 · 7/4/3/2/1尾组合预测 · 逐期回测 · 策略对比 · 多窗口横向对比</div>
     </div>
     <div class="meta" id="dataMeta" data-page-node-id="FxUVFYRCyBMXpz0H3jXEN2"></div>
   </div>
@@ -204,30 +204,27 @@ table td.empty-cell{white-space:nowrap;min-width:220px;}                    /* P
 
   <div class="notice" style="display:none;" data-page-node-id="u8NwFkQYd60T6Ar9Bm0tZ3">
     <b data-page-node-id="2Qi3vwto1t7J9N9q8aEnQy">诚实声明：</b>彩票每期开奖为<b data-page-node-id="yDydT7LGqTDLKEQmef8TQ1">独立随机事件</b>，本系统仅对历史数据做统计描述与回测展示，不构成任何投注建议。
-    <b>本版算法按尾数结构重写，不是从生肖版直接迁移</b>。尾数与生肖虽都是把 01~49 分成若干组，但有一处根本不同：
-    生肖是「1 个 5 号码组 + 11 个 4 号码组」且 5 号码组每年轮转；尾数是「9 个 5 号码组（1尾~9尾）+ 1 个 4 号码组（0尾）」且永久固定。
-    由此产生三个必须区别处理的地方：<br>
-    ① <b>计数类信号必须先按先验标准化</b>。0尾 的先验是 4/49，其余为 5/49，所以它在任何窗口里的期望出现次数都低 20%、期望遗漏都长 20%。
-    若沿用生肖版的"按原始次数/原始遗漏排序"，0尾 会因"天生少出现、天生更久没出"被系统性排到最前，而它恰是期望命中率最低的一组。
-    现改为：出现次数用标准化偏差 devZ=(观测−期望)/σ，遗漏用 遗漏/期望遗漏 比值，马尔可夫用 观测转移率/先验率 的提升度。四个量都无量纲，10 组之间才可比。<br>
-    ② <b>期望覆盖的最优解是解析解，不能用软加权</b>。n 个尾的最优集 = 从 1尾~9尾 中任取 n 个，上限 5n/49，与任何信号无关（5/49 严格优于 4/49）。
-    生肖版只能用 λ 加性软加权去倾斜（那里 5 号码组要轮转、要与 11 个 4 号码组争席位）；但尾数下 Borda 分数跨度达 36，λ=6 根本锁不住结构，0尾 仍会混进组合。
-    现改为<b>结构优先</b>硬规则：以"是否含 5 个号码"为第一排序键，信号只在 9 个 5 号码尾之间排序，0尾 永不进组合，期望命中率恒等于理论上限。<br>
-    ③ <b>两个生肖版成员在尾数下是退化的，已删除</b>：「频率热门」与「反热择冷」互为精确镜像（Borda 里完全共线，等于同一信号算两遍）；
-    「静态权重」在尾数下退化为"9 组并列 + 0尾 末位"，并列时又按字面序打分，会伪造"1尾>2尾>…>9尾"的假梯度。
-    现成员为：反热择冷(×2) + 遗漏优先(×1) + 马尔可夫1阶(×1)，共 Σw=4，Borda 平均分常数 22。<br>
-    <b>邻期中性校正（RNC）保留</b>：上一期尾数的遗漏恒为 0，「遗漏优先」会把它恒定排在末位，故仍对该尾数的原始分做仿射标准化（参数由滚动回测标定，只用历史样本）。
-    尾数下有一个生肖版不存在的约束：若上一期就是 0尾，将它"校正"进组合会主动降低期望命中率，因此结构优先开启时 0尾 始终不入选，校正只在 9 个 5 号码尾之间起作用。
-    <b>须注意</b>：跨期独立（号码均匀、尾数转移独立）已被卡方检验证实，故上述改造抬高的是<b>期望命中率</b>（组合覆盖的号码数），不是"预测能力"；
-    实测命中率相对期望的偏离均为样本波动，已在下方<b>准确率构成与理论上限</b>面板如实列出。
+    主策略为<b data-page-node-id="r3iCLyLaRHTvVUjvll3GmN">多策略加权集成</b>：反热择冷(×2)+频率(×1)+遗漏优先(×1)+马尔可夫1阶(×1)+静态权重(×0.5) 的 Borda 计分，经 60+ 候选方案 × 1800 期滚动回测离线筛选（历史筛选记录基于上一分组口径，尾数口径需重新回测标定）；但各方案差异仍在随机波动范围内，理论上不存在稳定超越随机基线的方法，请理性看待。
+    <b>已修复（P15 邻期中性校正）</b>：原集成中「遗漏优先」按遗漏期数降序排序，而上一期尾数的遗漏恒为 0，故恒定排第 10 名，
+    造成上一期尾数被系统性排除。现对该尾数的 Borda 原始分做仿射标准化校正（参数由滚动回测标定，只用历史样本），
+    使其期望名次向中性的 5.5 名靠拢（聚合与分尾的实际值见下方"邻期偏差诊断"面板）；残余偏差与 2~8 期前尾数是否仍低于基线，均一并如实披露。
+    <b>口径变更（尾数）</b>：本版分组口径由「按农历年轮转的 12 组」改为「按号码个位数的 10 组尾数」（尾数 = 号码个位数；尾0 含 10/20/30/40 共 4 个号码，其余 9 个尾数各 5 个号码；固定映射，不随年份轮转）。
+    档位由 8/5/3/2/1 组改为 7/4/3/2/1 尾；Borda 两层尺度同时收缩：单成员 Σ_z(11−名次) 由 78 降至 55，单尾数的成员合计上限由 72 降至 55；全体尾数平均分恒为 30.25、中性名次 5.5。
+    ①保留按号码数加权的"权重感知"项（λ，默认 3，可调整）：跨期独立已被卡方检验证实，故唯一真实可优化的是组合覆盖的号码数；
+    <b>先验强度标定</b>：号码数先验同时来自「静态权重成员」与「λ 项」，二者对尾0 构成合计恒定劣势 D = 5×w_静 + λ。
+    旧取值 D=11 约等于随机四项得分标准差（σ≈4.34）的 2.5 倍，等于把"尾0 只有 4 个号码"当成确定性事实，任何数据都无法推翻，
+    结果尾0 在 4/3/2/1 尾档位入选率仅 3%/1%/0%/0%。本版取 w_静=0.5、λ=3 ⇒ D=5.5≈1.27σ（先验可被约 1 个标准差的证据推翻），
+    尾0 入选率升至 46%/19%/11%/5%/2%，代价是公平开奖下五档覆盖合计由 172.98 降至 171.79（满值 173.47，相对精度代价 0.69%）。
+    ②下列实测数字需按尾数口径重新回测标定（本页不再沿用任何旧分组口径的实测百分比作为尾数口径结论）。
+    <b>须注意</b>：可稳定复现的期望提升来自「组合优先覆盖 5 号码尾数」，理论上限为 7尾71.43% / 4尾40.82% / 3尾30.61% / 2尾20.41% / 1尾10.20%，已在下方<b>准确率构成与理论上限</b>面板如实列出。
   </div>
 
   <!-- 01 尾数映射 -->
   <div class="card" data-page-node-id="eQG63FKrOwjly90ApDlJww">
-    <h2 data-page-node-id="79JNyuuCqFlshtQYnVdqJa"><span class="bar" data-page-node-id="hFvxeyeXea8f0RG5SHo50E"></span>号码→尾数映射（固定 10 组）</h2>
-    <div class="zmap" id="zodiacMap" data-page-node-id="v1NW4W8wVs8lvCCHjmR52J"></div>
+    <h2 data-page-node-id="79JNyuuCqFlshtQYnVdqJa"><span class="bar" data-page-node-id="hFvxeyeXea8f0RG5SHo50E"></span>号码→尾数映射（<span id="mapYear" data-page-node-id="5sH7gBqPcPSGGd3LUprYnb">固定映射</span> · 尾数 = 号码个位数）</h2>
+    <div class="zmap" id="tailMap" data-page-node-id="v1NW4W8wVs8lvCCHjmR52J"></div>
     <div class="muted small" style="margin-top:8px;" data-page-node-id="meeKZhdHouwQYpmjiQnbFh">
-      规则：尾数 = num % 10；1尾=1,11,21,31,41，2尾=2,12,22,32,42，3尾=3,13,23,33,43，4尾=4,14,24,34,44，5尾=5,15,25,35,45，6尾=6,16,26,36,46，7尾=7,17,27,37,47，8尾=8,18,28,38,48，9尾=9,19,29,39,49，0尾=10,20,30,40；1尾~9尾 各含 5 个号码，0尾 含 4 个，分组固定不变。
+      规则：尾数 = 号码 % 10（即号码个位数），固定映射、与年份无关、不随农历年轮转；1~49 中尾0 只有 10/20/30/40 共 4 个号码（4/49≈8.16%），其余每个尾数各 5 个号码（5/49≈10.20%），合计 4+45=49。
     </div>
   </div>
 
@@ -240,13 +237,11 @@ table td.empty-cell{white-space:nowrap;min-width:220px;}                    /* P
   <!-- 03 四窗口预测 -->
   <h2 style="margin:6px 0 6px;display:none;" data-page-node-id="AdbKkX3mv4bbg75IfPH1Zu"><span class="bar" data-page-node-id="MzhkkBRGPTpLOjggdURiIA"></span><span id="predWinTitle">四窗口</span>组合预测（含各尾数核心支撑依据）</h2>
   <div class="muted small" style="margin-bottom:12px;display:none;">
-    <b>选择依据</b>：每个尾数的入选由集成策略决定——<b>3 个成员</b>各自排名后按名次加权计分：反=反热择冷（权重×2）、漏=遗漏优先、马=马尔可夫1阶（各×1）；
-    Borda 总分 = Σ 权重×(11−成员名次)，满分 40，分数高者优先入选。"成员名次"列展示该尾数在每个成员中的名次（如 反1·漏2·马5）。
-    <b>结构优先</b>（顶栏可关）：第一排序键是"是否含 5 个号码"——1尾~9尾 各含 5 个号码（5/49），0尾 只含 4 个（4/49），
-    故 n 个尾的最优集恒为"从 1尾~9尾 中任取 n 个"，与信号无关；因此 0尾 排在所有 9 个 5 号码尾之后、不进任何组合，Borda 分只在同层内决定先后。
-    <b>邻期中性校正</b>：「遗漏优先」按"遗漏/期望遗漏"比值排序，而上一期尾数遗漏恒为 0 ⇒ 恒定排第 10 名，导致上一期尾数被系统性排除；
+    <b>选择依据</b>：每个尾数的入选由集成策略决定——5 个成员各自排名后按名次加权计分：反=反热择冷（权重×2）、频=频率热门、漏=遗漏优先、马=马尔可夫1阶、静=静态权重（×0.5）；
+    Borda 总分 = Σ 权重×(11−成员名次)，满分 55，分数高者优先入选。"成员名次"列展示该尾数在每个成员中的名次（如 反1·频3·漏2·马5·静4）。
+    <b>邻期中性校正</b>：原始集成中「遗漏优先」按遗漏期数降序排序，而上一期尾数遗漏恒为 0 ⇒ 恒定排第 10 名，导致上一期尾数被系统性排除；
     现对该尾数的原始 Borda 分按其自身历史分布做仿射标准化后补回（表中"校+X"、组合中以紫色<b>上一期</b>标记），
-    使其期望名次回到中性附近。校正参数由滚动回测标定（只用历史样本，无未来函数），详见下方诊断面板。
+    使其期望名次向中性的 5.5 名靠拢（聚合与分尾的实际值见下方"邻期偏差诊断"面板）。校正参数由滚动回测标定（只用历史样本，无未来函数），详见下方诊断面板。
   </div>
   <!-- P14 自定义窗口输入：第四个窗口由用户填写，固定 30/50/100 三档不受影响；
        该窗口同时作用于预测卡片、多窗口对比面板、回测明细窗口按钮与连错统计。 -->
@@ -271,10 +266,12 @@ table td.empty-cell{white-space:nowrap;min-width:220px;}                    /* P
   <!-- 03c 准确率构成与理论上限（P16） -->
   <div class="card" style="margin-top:18px;display:none;">
     <h2><span class="bar"></span>准确率构成与理论上限
-      <span class="rnc-switch">结构优先
+      <span class="rnc-switch">权重优先强度
         <select id="lamSel">
-          <option value="1" selected>开启（0尾 不进组合）</option>
-          <option value="0">关闭（纯信号排序·对照）</option>
+          <option value="0">关闭 λ=0</option>
+          <option value="3" selected>温和 λ=3</option>
+          <option value="6">标准 λ=6</option>
+          <option value="12">激进 λ=12</option>
         </select>
       </span></h2>
     <div class="muted small" id="accNote" style="margin-bottom:10px;line-height:1.7;"></div>
@@ -285,10 +282,9 @@ table td.empty-cell{white-space:nowrap;min-width:220px;}                    /* P
   <div class="card" style="margin-top:18px;display:none;">
     <h2><span class="bar"></span>策略对比面板 <span class="muted small" style="font-weight:400;">（近<span id="stratScope">365</span>期滚动回测，同一协议）</span></h2>
     <div class="muted small" style="margin-bottom:8px;">
-      主策略为<b>多策略加权 Borda 集成 + 结构优先</b>：成员=反热择冷(×2)+遗漏优先(×1)+马尔可夫1阶(×1)，各成员先按自身先验标准化（devZ / 遗漏比 / 提升度），
-      再按名次加权求和（第1名10分...第10名1分），最后以"是否含 5 个号码"为第一排序键、由结构决定 0尾 是否入选。
-      "平均偏差"= 各档命中率相对组合上限（7/4/3/2/1 个尾分别为 71.4%/40.8%/30.6%/20.4%/10.2%）的平均差，越接近 0 越好。
-      结构优先开启时主策略的偏差应≈0（期望命中率已等于上限）；其余候选策略未加结构约束，偏差为负，差值即为"0尾 占用席位"的代价。
+      主策略为<b>多策略加权 Borda 集成</b>：成员=反热择冷w(×2)+频率w(×1)+遗漏优先(×1)+马尔可夫1阶(×1)+静态权重(×0.5)，每个成员输出一个排名，按名次计分加权求和（第1名10分...第10名1分）。
+      经 60+ 候选方案 × 1800 期滚动回测离线筛选（历史筛选记录基于旧分组口径，尾数口径的偏差需重新回测标定，故此处不再引用旧实测值）。
+      "平均偏差"= 五档命中率相对静态权重上限（7尾71.4%/4尾40.8%/3尾30.6%/2尾20.4%/1尾10.2%）的平均差，越接近 0 越好。
     </div>
     <div style="overflow-x:auto;"><table id="stratTable"></table></div>
   </div>
@@ -325,28 +321,18 @@ table td.empty-cell{white-space:nowrap;min-width:220px;}                    /* P
 
 <script id="core">
 /* ===== 01 核心逻辑（纯函数，无DOM，可独立测试） ===== */
-const ZODIACS=['0尾','1尾','2尾','3尾','4尾','5尾','6尾','7尾','8尾','9尾'];   /* 10 组固定尾数标签（尾=num%10；统计逻辑同构适配） */
-const LUNAR_NY={'2000':'2000-02-05','2001':'2001-01-24','2002':'2002-02-12','2003':'2003-02-01','2004':'2004-01-22','2005':'2005-02-09','2006':'2006-01-29','2007':'2007-02-18','2008':'2008-02-07','2009':'2009-01-26','2010':'2010-02-14','2011':'2011-02-03','2012':'2012-01-23','2013':'2013-02-10','2014':'2014-01-31','2015':'2015-02-19','2016':'2016-02-08','2017':'2017-01-28','2018':'2018-02-16','2019':'2019-02-05','2020':'2020-01-25','2021':'2021-02-12','2022':'2022-02-01','2023':'2023-01-22','2024':'2024-02-10','2025':'2025-01-29','2026':'2026-02-17','2027':'2027-02-06','2028':'2028-01-26','2029':'2029-02-13','2030':'2030-02-03','2031':'2031-01-23','2032':'2032-02-11','2033':'2033-01-31','2034':'2034-02-19','2035':'2035-02-08','2036':'2036-01-28','2037':'2037-02-15','2038':'2038-02-04','2039':'2039-01-24','2040':'2040-02-12','2041':'2041-02-01','2042':'2042-01-22','2043':'2043-02-10','2044':'2044-01-30','2045':'2045-02-17','2046':'2046-02-06','2047':'2047-01-26','2048':'2048-02-14','2049':'2049-02-02','2050':'2050-01-23'};   /* 旧生肖映射遗留，尾数模式下不再使用 */
+const TAILS=['尾0','尾1','尾2','尾3','尾4','尾5','尾6','尾7','尾8','尾9'];
 const TRACKS=[7,4,3,2,1];
 const STATS_WINDOW=365;   /* 统计窗口上限（期）：命中率/随机基线/最长连错一律按"最近 STATS_WINDOW 期"统计；回测不足该长度时按实际回测期数。
                              全站口径唯一来源，禁止在 runBacktest / cmpStatsAt / 各处标签里再写死 365（P13 口径修复）。 */
 const FIXED_WINDOWS=[30,50,100]; /* P14 固定窗口三档（不可变）；第四个窗口为用户自定义近N期，由 UI 侧 activeWindows() 追加。 */
 
-/* 以下农历年函数为旧"生肖映射"遗留，尾数模式下映射已固定、不再使用（保留以兼容外部调用） */
-function lunarYearOf(dateStr){
-  let y=parseInt(dateStr.slice(0,4),10);
-  const ny=LUNAR_NY[String(y)]||(String(y)+'-02-04'); // 未收录年份以2月4日近似
-  if(dateStr<ny) y-=1;
-  return y;
-}
-function lunarYearOffset(dateStr){
-  return ((lunarYearOf(dateStr)-2020)%12+12)%12;
-}
-function numToZodiac(num,dateStr){
-  /* 固定分组（不随年份变化）：尾数 = num % 10；
-     1尾=1,11,21,31,41 … 9尾=9,19,29,39,49（各 5 个号码），0尾=10,20,30,40（4 个号码） */
-  return ZODIACS[num%10];
-}
+/* 尾数口径：尾数 = 号码个位数（num % 10）。10 个尾数固定映射，与年份无关。
+   原分组口径（12 组随农历年轮转、其中 1 个含 5 个号码）已整体移除。 */
+function numToTail(num){return '尾'+(num%10);}
+function tailNumCount(t){return t==='尾0'?4:5;}          /* 尾0 只有 10/20/30/40 共 4 个号码 */
+function tailWeights(){const o={};TAILS.forEach(t=>o[t]=tailNumCount(t)/49);return o;}
+const T_WEIGHT=tailWeights();                             /* 各尾数覆盖号码数/49（常量权重，与年份无关） */
 function parseData(raw){
   const rows=[];
   for(const line of raw.trim().split(/\r?\n/)){
@@ -355,11 +341,11 @@ function parseData(raw){
     const date=p[0].trim(), issue=p[1].trim();
     const t=parseInt(p[8].trim().replace(/^T/i,''),10);
     if(isNaN(t)||isNaN(parseInt(issue,10))) continue;
-    /* 日期格式非法时 numToZodiac 得到 NaN 下标（z=undefined），会静默污染全部统计，故直接剔除该行 */
+    /* 日期格式非法时下游统计口径不可信（原实现会得到 NaN 下标 z=undefined 而静默污染全部统计），故直接剔除该行 */
     if(!/^\d{4}-\d{2}-\d{2}$/.test(date)) continue;
     /* 特别号合法范围为 1~49：越界值（如 0/50+）会污染 49 号码卡方统计与映射表 */
     if(t<1||t>49) continue;
-    rows.push({date,issue,nums:p.slice(2,8).map(x=>parseInt(x,10)),t,z:numToZodiac(t,date)});
+    rows.push({date,issue,nums:p.slice(2,8).map(x=>parseInt(x,10)),t,z:numToTail(t)});
   }
   rows.sort((a,b)=>a.date===b.date?(parseInt(a.issue,10)-parseInt(b.issue,10)):(a.date<b.date?-1:1));
   /* 重复期号剔除：同一（日期,期号）视为同一期，后出现的行覆盖先出现的（视为数据修正）。
@@ -368,208 +354,166 @@ function parseData(raw){
   for(const r of rows)uniq[r.date+'|'+r.issue]=r;
   return Object.keys(uniq).map(k=>uniq[k]).sort((a,b)=>a.date===b.date?(parseInt(a.issue,10)-parseInt(b.issue,10)):(a.date<b.date?-1:1));
 }
-/* ===== 号码权重（尾数版）=====
-   10 组尾数为固定分组：1尾~9尾 各 5 个号码（5/49=10.20%），0尾 仅 4 个（10,20,30,40，4/49=8.16%），分组不随年份变化。
-   随机基线、结构基线、组合期望命中率均按此权重计算。 */
-function zodiacWeights(dateStr){
-  const o={};
-  ZODIACS.forEach(z=>o[z]=(z==='0尾'?4:5)/49);
-  return o;
-}
-/* 兼容旧调用：尾数模式下权重恒定（仅用于无目标期的兜底展示） */
-const Z_WEIGHT=zodiacWeights(new Date().toISOString().slice(0,10));
+/* ===== 号码权重（尾数口径）=====
+   每个尾数覆盖的号码数固定：尾0 = 4 个（10/20/30/40，4/49≈8.16%），其余 9 个尾数各 5 个（5/49≈10.20%）；
+   与年份无关，故权重是常量表 T_WEIGHT（定义见 numToTail 之后）。
+   影响面：随机基线、静态权重成员、组合期望命中率——统一取 T_WEIGHT，不再随农历年改变。 */
 function setProb(set,zw){
-  const w=zw||Z_WEIGHT;
+  const w=zw||T_WEIGHT;
   let p=0;for(const z of set)p+=w[z];return p;
 }
-
-/* ===== 尾数结构常数（生肖版本没有等价物，是尾数算法必须区别处理的根源）=====
-   生肖：12 组 = 「1 个 5 号码组 + 11 个 4 号码组」，且 5 号码组每年轮转（2023兔/2024龙/2025蛇/2026马）。
-   尾数：10 组 = 「9 个 5 号码组（1尾~9尾）+ 1 个 4 号码组（0尾）」，永久固定、永不轮转。
-   这一差异导致三个不能照搬生肖逻辑的后果：
-   ① 各组先验不等且固定 ⇒ 原始计数/遗漏在组间**不可比**（0尾 期望计数低 20%、期望遗漏长 20%），
-      直接排序会把0尾（期望命中率最低的一组）系统性推到前列。故所有计数类信号必须先按自身先验标准化。
-   ② 期望覆盖的最优解可解析求出 ⇒ n 尾组合的最优集 = 从 9 个 5 号码尾中任取 n 个，与信号无关；
-      故用"结构优先"硬规则，而不是生肖式的 λ 软加权（软加权锁不住，0尾 仍会混入）。
-   ③ 生肖时代的 bigZodiac（"当年 5 号码组"）在尾数下不唯一（有 9 个），该概念整体失效。 */
-const TAIL0='0尾';
-const FIVE_TAILS=ZODIACS.filter(z=>z!==TAIL0);   /* 9 个含 5 个号码的尾 */
-/* 并列时的稳定次序：先 9 个 5 号码尾（按尾号升序），0尾 最后。
-   不用 ZODIACS.indexOf 作为并列次序——ZODIACS 是展示序（0尾 在最前），
-   直接拿它当并列键会让 0尾 在任何并列中占优，与结构结论相反。 */
-const Z_IDX={};(function(){FIVE_TAILS.slice().sort((a,b)=>parseInt(a,10)-parseInt(b,10)).forEach((z,i)=>Z_IDX[z]=i);Z_IDX[TAIL0]=99;})();
-/* 单尾先验概率：1尾~9尾 = 5/49，0尾 = 4/49 */
-function tailP(z){return (z===TAIL0?4:5)/49;}
-/* 单尾期望遗漏（期）：几何分布 (1−p)/p ⇒ 5 号码尾 8.80 期，0尾 11.25 期 */
-function expMiss(z){const p=tailP(z);return (1-p)/p;}
-/* 出现次数的标准化偏差（近似 z 值）：(观测−期望)/标准差。
-   只有用它比较，0尾 的"少出现"与其它尾的"少出现"才在同一尺度上。 */
-function devZ(cnt,W,z){
-  const p=tailP(z),e=W*p,sd=Math.sqrt(W*p*(1-p));
-  return sd>1e-9?(cnt-e)/sd:0;
-}
-/* 当前窗口的有效期数（各尾 freq 之和，恒等于窗口长度） */
-function statsW(s){let n=0;for(const z of ZODIACS)n+=s[z].freq;return n||1;}
 
 /* 窗口统计：出现频率、当前遗漏、窗口内最大遗漏、连出、热度得分 */
 function computeStats(history,winLen){
   const L=Math.min(winLen,history.length);
   const win=history.slice(-L);
   const s={};
-  for(const z of ZODIACS)s[z]={freq:0,miss:0,maxMiss:0,streak:0,hot:0,score:0};
+  for(const z of TAILS)s[z]={freq:0,miss:0,maxMiss:0,streak:0,hot:0,score:0};
   for(const r of win)s[r.z].freq++;
-  /* P17 性能：原实现 miss/streak/maxMiss 各做多轮扫描（miss/streak 全史反向、maxMiss 窗口正向），
+  /* P17 性能：原实现 miss/streak/maxMiss 各做 10 次扫描（miss/streak 全史反向、maxMiss 窗口正向），
      改为两次遍历，结果逐位等价：
-     - 一次全史尾部反向遍历：每个尾数**首次**遇到时距尾部的距离即 miss（集齐全部 10 组提前退出；
+     - 一次全史尾部反向遍历：每个尾数**首次**遇到时距尾部的距离即 miss（集齐 10 个提前退出；
        全史未出现的尾数 miss=history.length，循环结束后统一补上）；
-       streak（尾部连续相同尾数长度）在同一次遍历中顺带统计（遇第一个非尾尾数即定型）；
+       streak（尾部连续相同尾数长度）在同一次遍历中顺带统计（遇第一个不同尾数即定型）；
      - 一次窗口正向扫描：lastSeen 记录各尾数上次出现的窗口下标（初始 -1），
        遇到 z 时 i-lastSeen[z]-1 即两次出现间的非 z 长度（首遇时 lastSeen=-1 ⇒ 恰为 i），
        扫完后补尾部缺口 L-1-lastSeen[z]（z 整窗未出现时补缺口恰为 L，与原实现一致）。 */
   const n=history.length;
   const done={},tailZ=n?history[n-1].z:null;
-  let left=ZODIACS.length,streak=0,streaking=true;
+  let left=TAILS.length,streak=0,streaking=true;
   for(let i=n-1;i>=0;i--){
     const z=history[i].z;
     if(streaking){if(z===tailZ)streak++;else streaking=false;}
     if(!done[z]){done[z]=1;s[z].miss=n-1-i;if(--left===0)break;}
   }
-  if(left>0)for(const z of ZODIACS)if(!done[z])s[z].miss=n;
+  if(left>0)for(const z of TAILS)if(!done[z])s[z].miss=n;
   if(tailZ)s[tailZ].streak=streak;
   const lastSeen={};
-  for(const z of ZODIACS)lastSeen[z]=-1;
+  for(const z of TAILS)lastSeen[z]=-1;
   for(let i=0;i<L;i++){
     const z=win[i].z,gap=i-lastSeen[z]-1;
     if(gap>s[z].maxMiss)s[z].maxMiss=gap;
     lastSeen[z]=i;
   }
-  for(const z of ZODIACS){const gap=L-1-lastSeen[z];if(gap>s[z].maxMiss)s[z].maxMiss=gap;}
+  for(const z of TAILS){const gap=L-1-lastSeen[z];if(gap>s[z].maxMiss)s[z].maxMiss=gap;}
   /* 近50期出现次数（统计表"近50期"列展示用；反热择冷成员的排序主键是窗口 w 的 freq，非本值） */
   const win50=history.slice(-50);
-  for(const z of ZODIACS)s[z].freq50=0;
+  for(const z of TAILS)s[z].freq50=0;
   for(const r of win50)s[r.z].freq50++;
   /* 全史指数衰减热度 hot（半衰期150期）：近期开出权重高、久远开出指数衰减（与 rankMarkov/rankOldComposite 统一衰减口径） */
-  for(const z of ZODIACS)s[z].hot=0;
+  for(const z of TAILS)s[z].hot=0;
   for(let i=0;i<n;i++){const z=history[i].z;s[z].hot+=Math.pow(0.5,(n-1-i)/150);}
   return s;
 }
-/* ===== 集成成员1：反热择冷（标准化版）=====
-   排序键不再是"出现次数升序"，而是"出现次数相对自身先验的标准化偏差 devZ 升序"。
-   原因：0尾 的先验是 4/49（其余 4 个/5/49），在任何窗口里的期望出现次数都低 20%；
-   若按原始次数排序，0尾 会因"天生少出现"被长期误判为最冷门而排到第一，
-   而这恰好是期望命中率最低的一组——这是生肖版本没有的结构性偏差（生肖的 5 号码组每年轮转、偏差被摊平）。
-   平手时按"遗漏/期望遗漏"比值降序（同理，0尾 的期望遗漏 11.25 期 > 其余 8.80 期，原始遗漏不可比）。
-   devZ 与遗漏比值均无量纲，可直接跨档比较，本成员在 10 组之间的排名是同尺度的。 */
-function rankZodiacs(stats){
-  const W=statsW(stats),d={},r={};
-  for(const z of ZODIACS){d[z]=devZ(stats[z].freq,W,z);r[z]=stats[z].miss/expMiss(z);}
-  return ZODIACS.slice().sort((a,b)=>d[a]-d[b]||r[b]-r[a]||ZODIACS.indexOf(a)-ZODIACS.indexOf(b));
+/* ===== 集成成员1：反热择冷（集成核心成员，权重2）=====
+   窗口内出现次数升序（越冷门越优先），平手按当前遗漏降序，再按固定尾数序。
+   旧分组口径的历史回测偏差记录不适用于尾数口径，尾数口径需重新回测标定。 */
+function rankTails(stats){
+  return TAILS.slice().sort((a,b)=>{
+    if(stats[a].freq!==stats[b].freq)return stats[a].freq-stats[b].freq;
+    if(stats[b].miss!==stats[a].miss)return stats[b].miss-stats[a].miss;
+    return TAILS.indexOf(a)-TAILS.indexOf(b);
+  });
 }
 /* ---- 候选策略（供策略对比面板复现筛选过程，纯函数） ---- */
-function countsOf(hist,w){const c={};ZODIACS.forEach(z=>c[z]=0);hist.slice(-w).forEach(r=>c[r.z]++);return c;}
-function sortDesc(scores){return ZODIACS.slice().sort((a,b)=>scores[b]-scores[a]||ZODIACS.indexOf(a)-ZODIACS.indexOf(b));}
-function rankFreqWin(hist,w){const c=countsOf(hist,w);let W=0;for(const z of ZODIACS)W+=c[z];const d={};for(const z of ZODIACS)d[z]=devZ(c[z],W||1,z);return sortDesc(d);}
-function rankMissDesc(hist){const m={};for(const z of ZODIACS){let k=0;for(let i=hist.length-1;i>=0;i--){if(hist[i].z===z)break;k++;}m[z]=k/expMiss(z);}return sortDesc(m);}
-function rankStreakDesc(hist){const st={};for(const z of ZODIACS){let k=0;for(let i=hist.length-1;i>=0;i--){if(hist[i].z===z)k++;else break;}st[z]=k;}return sortDesc(st);}
-/* 马尔可夫1阶（提升度版）：转移计数带指数时间衰减加权（半衰期150期）+ 按先验配比的平滑，
-   排序键 = 提升度 lift = 观测转移率 / 该尾先验率。
-   为何不用原始转移计数：0尾 的先验只有 4/49，其转移计数天然比其余 9 组低 20%，
-   直接按计数排序等价于"把0尾 判为最不可能"——而这与它真实的先验劣势混在一起，无法区分
-   "统计上真的少"和"本来就应该少"。除以先验后两者才可比（lift=1 即与均匀无差别）。
-   平滑用 5 个伪计数按先验概率配比分配，避免0尾 因样本稀少被过度放大。 */
-function rankMarkov(hist){
-  if(!hist.length)return ZODIACS.slice();
-  const last=hist[hist.length-1].z,c={},lift={};
-  for(const z of ZODIACS)c[z]=0;
-  let tot=0;
-  for(let i=0;i<hist.length-1;i++){
-    if(hist[i].z!==last)continue;
-    const w=Math.pow(0.5,(hist.length-1-i)/150);
-    c[hist[i+1].z]+=w;tot+=w;
-  }
-  for(const z of ZODIACS){const p=tailP(z);lift[z]=((c[z]+5*p)/(tot+5))/p;}
-  return sortDesc(lift);
-}
-/* 结构基线：按各组实际号码数排序（1尾~9尾=5，0尾=4），即"完全只看结构、不看历史"的对照方案。
-   已不再是集成成员（在尾数结构下它退化为"9 组并列 + 0尾 末位"，并列还按字面序打分，
-   会伪造 1尾>2尾>…>9尾 的假梯度），仅作为策略对比面板里的理论上限参照。 */
+function countsOf(hist,w){const c={};TAILS.forEach(z=>c[z]=0);hist.slice(-w).forEach(r=>c[r.z]++);return c;}
+function sortDesc(scores){return TAILS.slice().sort((a,b)=>scores[b]-scores[a]||TAILS.indexOf(a)-TAILS.indexOf(b));}
+function rankFreqWin(hist,w){const c=countsOf(hist,w);return sortDesc(Object.fromEntries(TAILS.map(z=>[z,c[z]])));}
+function rankMissDesc(hist){const m={};for(const z of TAILS){let k=0;for(let i=hist.length-1;i>=0;i--){if(hist[i].z===z)break;k++;}m[z]=k;}return sortDesc(m);}
+function rankStreakDesc(hist){const st={};for(const z of TAILS){let k=0;for(let i=hist.length-1;i>=0;i--){if(hist[i].z===z)k++;else break;}st[z]=k;}return sortDesc(st);}
+/* 马尔可夫1阶：转移计数带指数时间衰减加权（半衰期150期，近期转移权重高、久远转移指数衰减）+ Laplace 0.5 平滑先验 */
+function rankMarkov(hist){if(!hist.length)return TAILS.slice();const last=hist[hist.length-1].z;const c={};TAILS.forEach(z=>c[z]=0);for(let i=0;i<hist.length-1;i++)if(hist[i].z===last)c[hist[i+1].z]+=Math.pow(0.5,(hist.length-1-i)/150);return sortDesc(Object.fromEntries(TAILS.map(z=>[z,c[z]+0.5])));}
+/* 静态权重成员：按尾数覆盖号码数取权重（尾0=4/49，其余=5/49），与日期无关。
+   dateStr 形参保留（忽略不用），以免改动各处按位置传参的调用点。 */
 function rankStatic(dateStr){
-  const w=dateStr?zodiacWeights(dateStr):Z_WEIGHT;
-  return sortDesc(Object.fromEntries(ZODIACS.map(z=>[z,w[z]])));
+  const w=T_WEIGHT;
+  return sortDesc(Object.fromEntries(TAILS.map(z=>[z,w[z]])));
+}
+/* 并列名次（标准 Borda 并列处理）：tieKey 相等的连续段共占名次 i+1..j+1，取平均。
+   目的：9 个等权尾数（5/49）不得因数组下标产生"尾1>尾2>…>尾9"的确定性阶梯偏置。
+   平均名次保持名次总和不变（仍为 55），故 Borda 总分与 RNC_MEAN 不受影响。 */
+function tieAwareRanks(rk,tieKey){
+  const rankOf={};
+  for(let i=0;i<rk.length;){
+    let j=i;
+    while(j+1<rk.length&&tieKey(rk[j+1])===tieKey(rk[i]))j++;
+    const avg=(i+1+j+1)/2;
+    for(let k=i;k<=j;k++)rankOf[rk[k]]=avg;
+    i=j+1;
+  }
+  return rankOf;
 }
 /* 旧复合热度公式：热度项改为统一指数时间衰减口径（半衰期150期，最近一期权重1），
    替换原内联 p*=0.92 乘法衰减，与 rankMarkov/computeStats 的 hot 同口径。 */
-function rankOldComposite(hist){const s={};for(const z of ZODIACS){let hot=0;for(let i=hist.length-1;i>=0;i--){if(hist[i].z===z)hot+=Math.pow(0.5,(hist.length-1-i)/150);}let miss=0;for(let i=hist.length-1;i>=0;i--){if(hist[i].z===z)break;miss++;}let st=0;for(let i=hist.length-1;i>=0;i--){if(hist[i].z===z)st++;else break;}s[z]=hot*2+miss*0.5+Math.min(st,4);}return sortDesc(s);}
+function rankOldComposite(hist){const s={};for(const z of TAILS){let hot=0;for(let i=hist.length-1;i>=0;i--){if(hist[i].z===z)hot+=Math.pow(0.5,(hist.length-1-i)/150);}let miss=0;for(let i=hist.length-1;i>=0;i--){if(hist[i].z===z)break;miss++;}let st=0;for(let i=hist.length-1;i>=0;i--){if(hist[i].z===z)st++;else break;}s[z]=hot*2+miss*0.5+Math.min(st,4);}return sortDesc(s);}
 function predictSets(ranked){const o={};for(const n of TRACKS)o[n]=ranked.slice(0,n);return o;}
 
-/* ===== 主策略：多策略加权 Borda 集成 + 结构优先 =====
-   每个成员输出一个排名，按 Borda 计分（第1名10分...第10名1分）加权求和。
-   成员与权重：反热择冷(×2)、遗漏优先(×1)、马尔可夫1阶(×1) —— 共 Σw=4，Borda 总分恒 220、平均 22。
-   （「频率热门」与「静态权重」已删除，原因见 ENSEMBLE_MEMBERS 上方注释：前者与反热择冷共线，后者在尾数结构下退化。）
-   各策略差异在随机波动范围内，理论上不存在稳定超越随机基线的方法。 */
+/* ===== 主策略：多策略加权 Borda 集成 =====
+   每个成员输出一个排名，按 Borda 计分（第1名10分...第10名1分，10 个尾数）加权求和。
+   成员与权重：反热择冷w(×2)、频率w(×1)、遗漏优先(×1)、马尔可夫1阶(×1)、静态权重(×0.5)。
+   静态权重取 0.5 而非 1：它与"权重感知项 λ"表达同一个号码数先验，两处重复计价会把尾0 的
+   合计劣势推到 2.5σ，使其在小档位上接近恒定排除（详见 WEIGHT_LAMBDA 处的强度推导）。
+   依据：60+候选策略/集成方案 × 1800期滚动回测离线筛选（历史筛选记录基于上一分组口径，尾数口径需重新回测标定）。
+   各策略差异仍在随机波动范围内，理论上不存在稳定超越随机基线的方法。 */
 function bordaRank(rankedLists,weights){
-  const s={};ZODIACS.forEach(z=>s[z]=0);
+  const s={};TAILS.forEach(z=>s[z]=0);
   rankedLists.forEach((rk,li)=>{
     const wgt=weights[li];
     rk.forEach((z,i)=>{s[z]+=wgt*(10-i);});
   });
-  return ZODIACS.slice().sort((a,b)=>s[b]-s[a]||ZODIACS.indexOf(a)-ZODIACS.indexOf(b));
+  return TAILS.slice().sort((a,b)=>s[b]-s[a]||TAILS.indexOf(a)-TAILS.indexOf(b));
 }
-/* 注：原「频率热门」成员已删除（与「反热择冷」互为精确镜像、Borda 里完全共线），
-   如需单独查看"偏热"方向，可在策略对比面板用「频率w30（标准化）」作对照。 */
-/* 遗漏优先（标准化版）：按"遗漏/期望遗漏"比值降序，而非原始遗漏期数。
-   原始遗漏在尾数模式下不可比——0尾 的期望遗漏 11.25 期比其余 8.80 期长 28%，
-   直接排序会让0尾 长期占据"最该补"的位置。改为比值后 10 组回到同一尺度。 */
-function rankMissOnly(stats){const r={};for(const z of ZODIACS)r[z]=stats[z].miss/expMiss(z);return ZODIACS.slice().sort((a,b)=>r[b]-r[a]||ZODIACS.indexOf(a)-ZODIACS.indexOf(b));}
+function rankHotWin(stats){return TAILS.slice().sort((a,b)=>stats[b].freq-stats[a].freq||TAILS.indexOf(a)-TAILS.indexOf(b));}
+function rankMissOnly(stats){return TAILS.slice().sort((a,b)=>stats[b].miss-stats[a].miss||TAILS.indexOf(a)-TAILS.indexOf(b));}
 /* 集成成员定义：fn(hist,stats,targetDate) => 排名数组；w 为 Borda 权重
-   尾数模式只有 3 个成员（生肖模式是 5 个），删掉的两个是尾数结构下的**退化成员**：
-   ① 「频率热门」与「反热择冷」互为精确镜像（同一 devZ 序列的正序/倒序）。Borda 里
-      cold 名次 r 得 (11−r)、hot 名次 (11−r) 得 r，两者相加恒为常数 ⇒ 完全共线，
-      在总分里只贡献一个常数平移、不携带任何信息，等价于把「反热择冷」算了两遍。
-   ② 「静态权重」在尾数下输出恒为「9 个 5 号码尾并列 + 0尾 末位」，并列又按字面序
-      （1尾…9尾）打分，会伪造出"1尾>2尾>…>9尾"的假梯度。真正的结构信息已由
-      ensembleDetail 的"结构优先"硬规则承担，不需要它再以噪声形式参与投票。
-   保留：反热择冷(×2)、遗漏优先(×1)、马尔可夫1阶(×1) —— Σw=4，Borda 总分常数 55×4/10=22。 */
+   tieKey 可选：存在时该成员的名次按等值并列取平均名次（仅静态权重成员使用，消除"尾1>尾2>…"下标阶梯偏置）。
+   尾数口径下权重与日期无关，targetDate 形参保留（rankStatic 忽略之），以免改动各处位置参数。 */
 const ENSEMBLE_MEMBERS=[
-  {name:'反热择冷',short:'反',w:2,fn:(h,s)=>rankZodiacs(s)},
+  {name:'反热择冷',short:'反',w:2,fn:(h,s)=>rankTails(s)},
+  {name:'频率热门',short:'频',w:1,fn:(h,s)=>rankHotWin(s)},
   {name:'遗漏优先',short:'漏',w:1,fn:(h,s)=>rankMissOnly(s)},
-  {name:'马尔可夫1阶',short:'马',w:1,fn:(h,s)=>rankMarkov(h)}
+  {name:'马尔可夫1阶',short:'马',w:1,fn:(h,s)=>rankMarkov(h)},
+  {name:'静态权重',short:'静',w:0.5,fn:(h,s,d)=>rankStatic(d),tieKey:z=>T_WEIGHT[z]}
 ];
 /* ===== 邻期中性校正 RNC（Recency-Neutrality Correction）=====
-   问题：「遗漏优先」成员按"遗漏/期望遗漏"比值降序排序，而上一期尾数的遗漏恒为 0 ⇒ 恒定排末位（第 10 名）；
-     「反热择冷」的并列键也是遗漏比 ⇒ 上一期尾数平均名次偏后。叠加后上一期尾数在集成中被系统性排除，故需校正。
-   原理：Borda 总分恒为常数——Σ_z(11−rank)=55 ⇒ 总分=55·Σw ⇒ 全体尾数平均分恒为 55·Σw/10=22（Σw=4）。
+   问题：
+     「遗漏优先」成员按"距今遗漏期数"降序排序，而上一期尾数的遗漏恒为 0 ⇒ 恒定末位（第 10 名）；
+     「反热择冷」成员按窗口内出现次数升序、平手按遗漏降序 ⇒ 上一期尾数名次亦偏后。
+     叠加后上一期尾数在集成中的平均名次明显偏离中性（中性应为 5.5），即"系统性排除上一期尾数"。
+   原理：Borda 总分恒为常数——Σ_z(11−rank)=55 ⇒ 总分=55·Σw ⇒ 全体尾数平均分恒为 55·Σw/10=30.25。
      故可把上一期尾数的原始分 raw 按其**自身历史分布**做仿射标准化，映射到**全体尾数**的分数尺度：
         score'(prevZ) = RNC_MEAN + (σ_all/σ_prev)·(raw − μ_prev)
      μ_prev / σ_prev / σ_all 一律用截至该期**之前**的滚动样本估计（标定窗 = STATS_WINDOW 期），严格无未来函数。
-   尾数特有的约束：若上一期就是 0尾，把它"校正"进组合会主动降低期望命中率（4/49 < 5/49）。
-     故结构优先开启时 0尾 恒不入选，校正实际只在 9 个 5 号码尾之间起作用；
-     此时中性期望名次 = (4/49)·10 + (45/49)·5 = 5.41（不是 10 组均分的 5.5），
-     各档纳入率的中性基线 = 5n/49（不是 n/10）。
-   残余 −2~−4pp 偏差来自分数分布形状差异（本校正仅匹配前两阶矩），已在诊断面板如实披露。 */
-const RNC_MEAN=55*ENSEMBLE_MEMBERS.reduce((a,m)=>a+m.w,0)/10;   /* =22：Σw=4 时全体尾数 Borda 平均分的理论常数（10 组、名次分 10..1，单成员总分恒 55） */
+   标定值说明：旧分组口径的历史实测名次/纳入率不再作为尾数口径结论；当前口径下的上一期尾数平均名次
+     与各档纳入率由下方"邻期偏差诊断"面板实时给出。 */
+const RNC_MEAN=55*ENSEMBLE_MEMBERS.reduce((a,m)=>a+m.w,0)/10;   /* =30.25：全体尾数 Borda 平均分的理论常数（Σw=5.5） */
 const RNC_MIN_SAMPLES=30;   /* 标定所需最少历史期数；样本不足时该期不做校正（退化为原集成） */
-/* ===== 结构优先（替代生肖时代的 λ 软加权）=====
-   为什么尾数不能用生肖那套 λ：生肖模式是「1 个 5 号码组 + 11 个 4 号码组」，5 号码组的成员每年轮转，
-   且它必须与 11 个 4 号码组争夺有限席位，所以只能用 λ 加性软加权去"倾斜"；
-   尾数是「9 个 5 号码组 + 1 个 4 号码组」，最优组合有解析解：
-     n 个尾的最优集 = 从 1尾~9尾（各 5 个号码）中任取 n 个，上限 5n/49，
-     且**与任何历史信号无关**——5/49 严格优于 4/49，不存在需要权衡的情形。
-   软加权在尾数下是错的：Borda 分数跨度 = Σw×9 = 36，而原来 λ=6 远小于它，
-   根本锁不住结构，0尾 仍会混进组合、把期望命中率从 5n/49 拉低。
-   故改为第一排序键 = "是否含 5 个号码"（硬结构），信号只在同层内（9 个 5 号码尾之间）排序。
-   效果：0尾 永不进入任何组合，期望命中率恒等于理论上限 5n/49，且组合不牺牲任何信息量
-   （信号本来就不携带可利用信息，见卡方检验）。STRUCT_FIRST=0 可关闭该规则、退回纯信号排序作对照。 */
-let STRUCT_FIRST=1;        /* 1=结构优先（默认）/ 0=纯信号排序（仅用于对照展示） */
+/* 权重感知强度 λ：最终得分 = Borda(含RNC) + λ×(该尾数号码数−4)。
+   原理：开奖跨期独立已被卡方检验证实，故任何"规律"都不产生稳定增益；唯一真实可利用的结构是
+   各尾数覆盖号码数不同（5 vs 4，尾0 仅 4 个），期望命中率 = Σ选中尾数号码数/49。
+   按号码数加权即可抬高期望，λ 越大越接近理论上限、推荐越向高权重尾数集中（尾0 加 0，其余 9 个尾数各加 λ）。
+   旧分组口径的历史 λ 实测量不适用于尾数口径，需重新回测标定。
+   【先验强度 D 与默认值标定】
+   号码数先验有两处来源：静态权重成员（w=0.5 ⇒ 尾0 得 0.5×(11−10)=0.5 分，其余得 0.5×(11−5)=3 分）
+   与 λ 项（尾0 加 0，其余各加 λ）。二者对尾0 的合计劣势为常量
+       D = 5·w_静 + λ
+   与开奖数据完全无关，是"硬先验"。实测随机四项（反2/频1/漏1/马1）的得分标准差 σ≈4.34 分，
+   D 每增大 1，尾0 需要随机部分多领先约 0.23σ 才能入选。
+   历史取值 D=5×1+6=11 ≈ 2.5σ，等价于把"尾0 只有 4 个号码"当成确定性事实，数据永无法推翻。
+   本版取 w_静=0.5、λ=3 ⇒ D=5.5 ≈ 1.27σ，即"先验可被约 1 个标准差的证据推翻"。
+   合成数据标定（3000 期 × 3 seed，覆盖率 = 期望命中率）：
+     公平开奖下五档覆盖合计 171.79/173.47（旧值 172.98），即相对精度代价 0.69%；
+     尾0 入选率由 19%/3%/1%/0%/0% 提升为 46%/19%/11%/5%/2%（7/4/3/2/1 尾）。 */
+let WEIGHT_LAMBDA=3;        /* UI 可调：0=关闭 / 3=温和 / 6=标准 / 12=激进（默认温和：见上方先验强度推导） */
 /* 滚动标定器：维护"上一期尾数原始分"与"全体 10 个尾数原始分"两个滑动窗口的一阶/二阶矩 */
 function makeRncCalib(){
-  const capP=STATS_WINDOW, capA=STATS_WINDOW*10;
+  const capP=STATS_WINDOW, capA=STATS_WINDOW*TAILS.length;
   const bp=new Array(capP).fill(0), ba=new Array(capA).fill(0);
   let hp=0,np=0,sp=0,sqp=0, ha=0,na=0,sa=0,sqa=0;
   return {
     /* 取截至当前（即"过去"）的校正参数；样本不足或分布退化时返回 null（不校正） */
     params:function(){
-      if(np<RNC_MIN_SAMPLES||na<RNC_MIN_SAMPLES*10)return null;
+      if(np<RNC_MIN_SAMPLES||na<RNC_MIN_SAMPLES*TAILS.length)return null;
       const muP=sp/np, muA=sa/na;
       const sdP=Math.sqrt(Math.max(0,sqp/np-muP*muP));
       const sdA=Math.sqrt(Math.max(0,sqa/na-muA*muA));
@@ -592,32 +536,29 @@ function makeRncCalib(){
 }
 /* 集成明细：返回排名 + 各成员名次 + 加权得分，供"选择依据"展示；
    rnc 为邻期中性校正参数（makeRncCalib().params()，null 表示不校正）。 */
-function ensembleDetail(hist,winLen,stats,rnc,targetDate,sf){
+function ensembleDetail(hist,winLen,stats,rnc,targetDate,lam){
   const lists=ENSEMBLE_MEMBERS.map(m=>{
-    const rk=m.fn(hist,stats,targetDate),rankOf={};
-    rk.forEach((z,i)=>rankOf[z]=i+1);
+    const rk=m.fn(hist,stats,targetDate);
+    const rankOf=m.tieKey?tieAwareRanks(rk,m.tieKey):(()=>{const o={};rk.forEach((z,i)=>o[z]=i+1);return o;})();
     return {name:m.name,short:m.short,w:m.w,rk:rk,rankOf:rankOf};
   });
-  const raw={};ZODIACS.forEach(z=>raw[z]=0);
-  lists.forEach(L=>ZODIACS.forEach(z=>{raw[z]+=L.w*(11-L.rankOf[z]);}));
-  const score={};ZODIACS.forEach(z=>score[z]=raw[z]);
+  const raw={};TAILS.forEach(z=>raw[z]=0);
+  lists.forEach(L=>TAILS.forEach(z=>{raw[z]+=L.w*(11-L.rankOf[z]);}));
+  const score={};TAILS.forEach(z=>score[z]=raw[z]);
   const prevZ=hist.length?hist[hist.length-1].z:null;
   let adj=null;
   if(rnc&&prevZ&&isFinite(rnc.muPrev)){ /* 仅校正"上一期尾数"这一个，其余尾数分数不变 */
     adj=RNC_MEAN+rnc.k*(raw[prevZ]-rnc.muPrev);
     score[prevZ]=adj;
   }
-  /* 先做邻期中性校正（保证无偏差），再按"结构优先"排序。
-     注意：结构优先用的是排序键而非加性罚分——加性罚分（原 λ）在 Borda 跨度 36 面前锁不住结构。 */
-  const zw=targetDate?zodiacWeights(targetDate):Z_WEIGHT;
-  const useStruct=(sf==null?STRUCT_FIRST:sf)?1:0;
-  /* tier=1 表示该尾含 5 个号码（1尾~9尾），tier=0 表示 0尾（仅 4 个号码） */
-  const tier=z=>useStruct?(z===TAIL0?0:1):1;
-  const ranked=ZODIACS.slice().sort((a,b)=>
-    (tier(b)-tier(a))||(score[b]-score[a])||(Z_IDX[a]-Z_IDX[b]));
-  return {ranked:ranked,lists:lists,score:score,raw:raw,prevZ:prevZ,adj:adj,rnc:rnc||null,zw:zw,structFirst:useStruct};
+  /* 先做邻期中性校正（保证无偏差），再叠加权重感知项（抬高期望命中率；权重与日期无关） */
+  const zw=T_WEIGHT;
+  const L=(lam==null?WEIGHT_LAMBDA:lam);
+  if(L)TAILS.forEach(z=>{score[z]+=L*(Math.round(zw[z]*49)-4);});
+  const ranked=TAILS.slice().sort((a,b)=>score[b]-score[a]||TAILS.indexOf(a)-TAILS.indexOf(b));
+  return {ranked:ranked,lists:lists,score:score,raw:raw,prevZ:prevZ,adj:adj,rnc:rnc||null,zw:zw,lam:L};
 }
-function rankEnsemble(hist,winLen,stats,rnc,targetDate,sf){return ensembleDetail(hist,winLen,stats,rnc,targetDate,sf).ranked;}
+function rankEnsemble(hist,winLen,stats,rnc,targetDate,lam){return ensembleDetail(hist,winLen,stats,rnc,targetDate,lam).ranked;}
 
 /* 逐期滚动回测（单窗口）：对最近 backLen 期，每期仅用之前数据生成该窗口的预测。
    口径说明（P13）：
@@ -646,7 +587,7 @@ function btWindowRows(records,backLen,w,rncOn){
                prevRank:prevZ?det.ranked.indexOf(prevZ)+1:0};
     for(const n of TRACKS){row.preds[n]=preds[n];row.hits[n]=preds[n].indexOf(cur.z)>=0;row.probs[n]=setProb(preds[n],det.zw);}
     rows.push(row);
-    if(prevZ)calib.push(det.raw[prevZ],ZODIACS.map(z=>det.raw[z]));
+    if(prevZ)calib.push(det.raw[prevZ],TAILS.map(z=>det.raw[z]));
     hist.push(records[t]);   /* P17：本期处理完（含标定 push）后再纳入历史 */
   }
   rows.rncCalib=calib.params();   /* 下一期（最新一期）预测所用的校正参数 */
@@ -691,15 +632,16 @@ let LOAD_SEQ=0;
    parseData 不校验日期/期号内容，远程数据源返回文本经 srcValidate 也只校验日期前缀，
    issue 形如 123<img src=x onerror=...> 可通过 parseInt 校验并被拼入 innerHTML。
    因此所有**来自数据源的字段**（date/issue，及由数据派生直接插入的字符串）在 innerHTML 拼接前必须经 esc() 转义；
-   尾数名来自固定 ZODIACS 列表，顺手一并转义。 */
+   尾数名来自固定 TAILS 列表，顺手一并转义。 */
 function esc(s){
   return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});
 }
-/* P16/P18：下一期日期估计（尾数模式下各尾数权重恒定，该日期仅作接口参数与展示用途）。
-   P18 修复：不再固定 +1 天，改用「开奖星期模式」推断——非每日开奖的彩票（如香港彩每周二/四/六）
-   休市时 +1 天会落到非开奖日。
+/* 下一期日期估计（仅用于日期展示，并保持各调用点的位置参数不变）。
+   P18 修复：不固定 +1 天，改用「开奖星期模式」推断——非每日开奖的彩票（如香港彩每周二/四/六）
+   休市后下一期可能相隔数日，+1 天会把目标期日期算错。
    做法：取最近 30 期出现过的星期集合，从次日起找第一个落在该集合里的日期（最多看 14 天）；
-   样本不足或日期解析失败时回退为 +1 天（每日开奖集合满 7 个星期值，天然得 gap=1）。 */
+   样本不足或日期解析失败时回退为 +1 天（每日开奖集合满 7 个星期值，天然得 gap=1）。
+   尾数口径下号码权重与日期无关，本函数的结果不再影响任何权重。 */
 function nextIssueDate(rows){
   const lastS=rows[rows.length-1].date;
   const last=new Date(lastS+'T00:00:00Z');
@@ -724,8 +666,9 @@ function nextIssueDate(rows){
   dt.setUTCDate(dt.getUTCDate()+gap);
   return dt.toISOString().slice(0,10);
 }
-/* 各档理论上限：全部选取 5 号码尾（1尾~9尾），n≤9 时上限 = 5n/49 */
-function trackCap(n){return 5*n/49;}
+/* 各档理论上限：优先计入号码数最多的尾数（9 个尾数各 5 个号码，尾0 仅 4 个）
+   7尾=35/49=71.43%、4尾=20/49=40.82%、3尾=15/49=30.61%、2尾=10/49=20.41%、1尾=5/49=10.20% */
+function trackCap(n){const c=TAILS.map(tailNumCount).sort((a,b)=>b-a);let s=0;for(let i=0;i<n&&i<c.length;i++)s+=c[i];return s/49;}
 
 /* ===== P14 自定义窗口（第四个窗口）=====
    固定三档 = FIXED_WINDOWS=[30,50,100]（永不改变）；第四个窗口由用户填写"近N期"，默认 200。
@@ -788,16 +731,16 @@ function updatePredWinTitle(){
 }
 function renderPredGrid(){
   const el=document.getElementById('predGrid');
-  if(!CUR||!BT){el.innerHTML='<div class="win-card muted small">等待加载数据…加载后此处显示多窗口统计与 7/4/3/2/1 个尾组合预测。</div>';updatePredWinTitle();return;}
+  if(!CUR||!BT){el.innerHTML='<div class="win-card muted small">等待加载数据…加载后此处显示多窗口统计与 7/4/3/2/1 尾组合预测。</div>';updatePredWinTitle();return;}
   const rows=CUR,latest=rows[rows.length-1],wins=activeWindows();
   updatePredWinTitle();
   /* P17 性能：nextIssueDate 与各窗口无关（日期解析+toISOString 不便宜），提到循环外只算一次 */
   const nextDate=nextIssueDate(rows);
   el.innerHTML=wins.map(w=>{
     /* P15：最新一期的预测使用回测过程中标定出的最新校正参数（BT.rows[w].rncCalib）；关闭开关时传 null
-       P16：传入下一期日期取号码权重（尾数模式下恒定：1尾~9尾 各有 5 个号码） */
+       P16/P20：仍传入下一期日期以保持位置参数不变；尾数口径下号码权重与日期无关 */
     const stats=computeStats(rows,w),det=ensembleDetail(rows,w,stats,RNC_ON?(BT.rows[w].rncCalib||null):null,nextDate),ranked=det.ranked,preds=predictSets(ranked),sm=BT.summary[w];
-    const maxFreq=Math.max.apply(null,ZODIACS.map(z=>stats[z].freq))||1;
+    const maxFreq=Math.max.apply(null,TAILS.map(z=>stats[z].freq))||1;
     const statRows=ranked.map(z=>{
       const s=stats[z];
       const mr=det.lists.map(L=>'<span title="'+L.name+'（权重×'+L.w+'）">'+L.short+L.rankOf[z]+'</span>').join('·');
@@ -809,14 +752,14 @@ function renderPredGrid(){
         '<td><span class="tag '+(s.streak>=2?'streak':'')+'">'+s.streak+'</span></td>'+
         '<td><span class="tag '+(s.freq50<=1?'cool':'')+'">'+s.freq50+'</span></td>'+
         '<td class="small mr-cell">'+mr+'</td>'+
-        '<td><b>'+Math.round(det.score[z])+'</b>'+(z===det.prevZ&&det.adj!=null?'<div class="tag custom" title="上一期尾数：已做邻期中性校正" style="margin-top:2px;">校'+(det.adj-det.raw[z]>=0?'+':'')+Math.round(det.adj-det.raw[z])+'</div>':'')+'</td></tr>';
+        '<td><b>'+(+det.score[z].toFixed(1))+'</b>'+(z===det.prevZ&&det.adj!=null?'<div class="tag custom" title="上一期尾数：已做邻期中性校正" style="margin-top:2px;">校'+((det.adj-det.raw[z])>=0?'+':'')+(+(det.adj-det.raw[z]).toFixed(1))+'</div>':'')+'</td></tr>';
     }).join('');
-    const comboHtml=n=>'<div class="combo"><div class="cl"><b style="color:var(--primary);">'+n+'个尾</b>'+
+    const comboHtml=n=>'<div class="combo"><div class="cl"><b style="color:var(--primary);">'+n+'尾</b>'+
       '<span>回测命中率 '+(sm[n].hitRate*100).toFixed(1)+'% ｜ 期望 '+(setProb(preds[n],det.zw)*100).toFixed(1)+'% ｜ 上限 '+(trackCap(n)*100).toFixed(1)+'%</span></div>'+
       '<div class="chips">'+preds[n].map(z=>'<div class="chip'+(n===1?' top1':'')+(z===det.prevZ?' prev':'')+'" title="'+
         det.lists.map(L=>L.name+'第'+L.rankOf[z]+'名(×'+L.w+')').join('，')+
-        (z===det.prevZ?'　【上一期尾数'+(det.adj!=null?'，已做邻期中性校正 '+(det.adj-det.raw[z]>=0?'+':'')+Math.round(det.adj-det.raw[z])+' 分':'')+'】':'')+
-        '"><b>'+z+(z===det.prevZ?'<span class="ptag">上一期</span>':'')+'</b><span class="ev">Σ'+Math.round(det.score[z])+'·'+w+'期'+stats[z].freq+'次·遗'+stats[z].miss+'</span></div>').join('')+'</div></div>';
+        (z===det.prevZ?'　【上一期尾数'+(det.adj!=null?'，已做邻期中性校正 '+((det.adj-det.raw[z])>=0?'+':'')+(+(det.adj-det.raw[z]).toFixed(1))+' 分':'')+'】':'')+
+        '"><b>'+z+(z===det.prevZ?'<span class="ptag">上一期</span>':'')+'</b><span class="ev">Σ'+(+det.score[z].toFixed(1))+'·'+w+'期'+stats[z].freq+'次·遗'+stats[z].miss+'</span></div>').join('')+'</div></div>';
     /* 窗口起始行：自定义窗口可能大于样本量，rows.length-w 为负时钳到 0（原写法会取到 undefined 而抛错） */
     const si=Math.max(0,rows.length-w);
     const rangeNote=rows.length<w?'（样本仅 '+rows.length+' 期，窗口取全部）':'';
@@ -830,10 +773,8 @@ function renderPredGrid(){
 
 /* ===== P15 邻期偏差诊断面板 =====
    口径：对逐期回测的每一期，统计"k 期之前出现过的尾数"是否落入该期各档预测组合。
-   中性基线在尾数模式下是 5n/49 而**不是** n/10：结构优先把 0尾（仅 4 个号码）恒定排在第 10 名，
-   故随机一个尾数落入前 n 名的概率 = P(非0尾)·n/9 = (45/49)(n/9) = 5n/49，
-   正是各档理论上限（7/4/3/2/1 个尾分别为 71.4%/40.8%/30.6%/20.4%/10.2%）。
-   若沿用生肖版的 n/10 基线，会把"结构约束"误读成"偏差"。
+   若预测对"上一期开的是什么尾数"不携带任何信息，则纳入率应等于 n/10——因为最终排名是
+   10 个尾数的一个排列，随机抽取的尾数落入前 n 名的概率恰为 n/10（7尾70.0%/4尾40.0%/3尾30.0%/2尾20.0%/1尾10.0%）。
    面板同时给出"当前模式"与"对照模式"（校正开/关）两套数值，便于直接验证修复效果。 */
 function lagInclusion(btRows,lags){
   const lo=CUR.length-btRows.length,a={};
@@ -861,9 +802,9 @@ function renderRncDiag(){
   }
   const w0=activeWindows()[0];
   const curRows=BT.rows[w0];
-  /* P17 性能：对照组回测加模块级缓存。键 = 数据长度+最新期号+最新日期+窗口+RNC 开关+结构优先开关；
-     数据更新（renderAll 全量重建）、开关切换或结构优先开关变化时自然失效，避免每次渲染全量重跑回测。 */
-  const refKey=CUR.length+'|'+CUR[CUR.length-1].issue+'|'+CUR[CUR.length-1].date+'|'+w0+'|'+(!RNC_ON)+'|'+STRUCT_FIRST;
+  /* P17 性能：对照组回测加模块级缓存。键 = 数据长度+最新期号+最新日期+窗口+RNC 开关+λ；
+     数据更新（renderAll 全量重建）、开关切换或 λ 调整时自然失效，避免每次渲染全量重跑回测。 */
+  const refKey=CUR.length+'|'+CUR[CUR.length-1].issue+'|'+CUR[CUR.length-1].date+'|'+w0+'|'+(!RNC_ON)+'|'+WEIGHT_LAMBDA;
   if(!RNC_REF_CACHE||RNC_REF_CACHE.key!==refKey){
     RNC_REF_CACHE={key:refKey,rows:btWindowRows(CUR,btLenFor(CUR),w0,!RNC_ON)};   /* 对照：反向模式另跑一次（未写入 WINCACHE） */
   }
@@ -873,20 +814,16 @@ function renderRncDiag(){
   const curLabel=RNC_ON?'当前（已校正）':'当前（未校正）';
   const refLabel=RNC_ON?'对照（未校正）':'对照（已校正）';
   const lastRow=curRows[curRows.length-1];
-  /* 中性基线在尾数模式下不是 n/10：结构优先把 0尾 恒定排在第 10 名，
-     故"随机一个尾数落入前 n 名"的概率 = P(该尾不是0尾)·n/9 + P(是0尾)·0 = (45/49)·(n/9) = 5n/49，
-     恰好等于各档理论上限；平均名次 = (4/49)·10 + (45/49)·5 = 5.41（而非 10 组均分的 5.5）。 */
-  const baseRate=n=>trackCap(n), baseRank=4/49*10+45/49*5;
   note.innerHTML='统计窗口：近 '+w0+' 期 · 回测 '+curRows.length+' 期（每期预测只用该期之前的数据）；'+
-    '若预测对"上一期开的是什么尾数"不携带信息，则 k 期前的尾数落入 n 个尾组合的概率应等于 <b>5n/49</b>'+
-    '（结构优先下 0尾 恒不入选，故基线不是 n/10 而是 5n/49），即 7/4/3/2/1 个尾分别为 71.4%/40.8%/30.6%/20.4%/10.2%。括号内为'+refLabel+'数值。<br>'+
-    '上一期尾数平均名次：'+curLabel+' <b>'+ma.toFixed(2)+'</b>　'+refLabel+' '+mb.toFixed(2)+'（结构优先下中性期望 '+baseRank.toFixed(2)+'）；'+
+    '若预测对"上一期开的是什么尾数"不携带信息，则 k 期前的尾数落入 n 尾组合的概率应等于 <b>n/10</b>，'+
+    '即 7尾70.0% / 4尾40.0% / 3尾30.0% / 2尾20.0% / 1尾10.0%。括号内为'+refLabel+'数值。<br>'+
+    '上一期尾数平均名次：'+curLabel+' <b>'+ma.toFixed(2)+'</b>　'+refLabel+' '+mb.toFixed(2)+'（中性期望 5.5）；'+
     '最新一期校正量：'+(lastRow?(lastRow.rncAdj>=0?'+':'')+lastRow.rncAdj.toFixed(2)+' 分':'—')+
     (lastRow&&!RNC_ON?'（未启用校正）':'')+'。<br>'+
-    '<span style="color:#b45309;">残余偏差说明：校正仅匹配分数分布的前两阶矩，档位越小残余偏差越明显（约 −2~−4pp）；'+
+    '<span style="color:#b45309;">残余偏差说明：校正仅匹配分数分布的前两阶矩，残余偏差随档位与滞后期而异（见上表实测值），档位越小、滞后期越短越明显；'+
     '2~8 期前的尾数仍低于中性基线，那是"反热择冷"类策略的固有属性（偏好久未出现的尾数），本次不做改动。</span>';
-  tbl.innerHTML='<thead><tr><th class="left">滞后期 k</th>'+TRACKS.map(n=>'<th>'+n+'个尾</th>').join('')+'</tr></thead><tbody>'+
-    '<tr class="base"><td class="left">中性基线 5n/49</td>'+TRACKS.map(n=>'<td>'+(baseRate(n)*100).toFixed(1)+'%</td>').join('')+'</tr>'+
+  tbl.innerHTML='<thead><tr><th class="left">滞后期 k</th>'+TRACKS.map(n=>'<th>'+n+'尾</th>').join('')+'</tr></thead><tbody>'+
+    '<tr class="base"><td class="left">中性基线 n/10</td>'+TRACKS.map(n=>'<td>'+(n/10*100).toFixed(1)+'%</td>').join('')+'</tr>'+
     [1,2,3,4,5,6,7,8].map(k=>{
       const cells=TRACKS.map(n=>{
         const a=A[k]&&A[k][n],b=B[k]&&B[k][n];
@@ -909,62 +846,64 @@ function renderAccPanel(){
   CUR.forEach(r=>{numCnt[r.t]++;});
   const e49=CUR.length/49;let chi49=0;
   for(let i=1;i<=49;i++)chi49+=(numCnt[i]-e49)*(numCnt[i]-e49)/e49;
-  /* 尾数一阶转移独立性卡方 */
+  /* 尾数一阶转移独立性卡方（10×10 列联表，df=81） */
   const trans={},rt={},ct={};
-  ZODIACS.forEach(a=>{trans[a]={};rt[a]=0;ZODIACS.forEach(b=>trans[a][b]=0);});
-  ZODIACS.forEach(b=>ct[b]=0);
+  TAILS.forEach(a=>{trans[a]={};rt[a]=0;TAILS.forEach(b=>trans[a][b]=0);});
+  TAILS.forEach(b=>ct[b]=0);
   for(let i=0;i<CUR.length-1;i++){trans[CUR[i].z][CUR[i+1].z]++;rt[CUR[i].z]++;ct[CUR[i+1].z]++;}
   let chiT=0;
-  ZODIACS.forEach(a=>ZODIACS.forEach(b=>{
+  TAILS.forEach(a=>TAILS.forEach(b=>{
     const e=rt[a]*ct[b]/(CUR.length-1);
     if(e>0)chiT+=(trans[a][b]-e)*(trans[a][b]-e)/e;
   }));
   const body=TRACKS.map(n=>{
-    let hit=0,exp=0,cov=0;
-    last.forEach(r=>{if(r.hits[n])hit++;exp+=r.probs[n];r.preds[n].forEach(z=>{cov+=Math.round(Z_WEIGHT[z]*49);});});
+    let hit=0,exp=0,t0In=0;   /* t0In：该档组合中是否包含 尾0（仅 4 个号码），越低越好 */
+    last.forEach(r=>{if(r.hits[n])hit++;exp+=r.probs[n];if(r.preds[n].indexOf('尾0')>=0)t0In++;});
     const cap=trackCap(n),ex=exp/T;
-    return '<tr><td class="left">'+n+'个尾</td><td><b>'+(hit/T*100).toFixed(2)+'%</b></td><td>'+(ex*100).toFixed(2)+
-      '%</td><td>'+(cap*100).toFixed(2)+'%</td><td>'+((cap-ex)*100).toFixed(2)+'pp</td><td>'+(cov/T).toFixed(1)+'</td></tr>';
+    return '<tr><td class="left">'+n+'尾</td><td><b>'+(hit/T*100).toFixed(2)+'%</b></td><td>'+(ex*100).toFixed(2)+
+      '%</td><td>'+(cap*100).toFixed(2)+'%</td><td>'+((cap-ex)*100).toFixed(2)+'pp</td><td>'+(t0In/T*100).toFixed(0)+'%</td></tr>';
   }).join('');
-  tbl.innerHTML='<thead><tr><th class="left">档位</th><th>实测命中率</th><th>期望命中率</th><th>理论上限</th><th>缺口</th><th>平均覆盖号码数</th></tr></thead><tbody>'+body+'</tbody>';
+  tbl.innerHTML='<thead><tr><th class="left">档位</th><th>实测命中率</th><th>期望命中率</th><th>理论上限</th><th>缺口</th><th>尾0（仅4号）入选率</th></tr></thead><tbody>'+body+'</tbody>';
   note.innerHTML='<b>数据检验</b>（'+CUR.length+' 期）：49 号码均匀性 χ²='+chi49.toFixed(1)+'（df=48，5%临界 65.2）→ '+
-    (chi49>65.17?'<span style="color:#b45309;">存在偏离</span>':'<b>不能拒绝均匀</b>')+'；尾数一阶转移独立性 χ²='+chiT.toFixed(1)+'（df=81，5%临界≈104）→ '+
-    (chiT>103.8?'<span style="color:#b45309;">存在依赖</span>':'<b>不能拒绝独立</b>')+
+    (chi49>65.17?'<span style="color:#b45309;">存在偏离</span>':'<b>不能拒绝均匀</b>')+'；尾数一阶转移独立性 χ²='+chiT.toFixed(1)+'（df=81，5%临界≈103）→ '+
+    (chiT>103?'<span style="color:#b45309;">存在依赖</span>':'<b>不能拒绝独立</b>')+
     '。即历史序列对下一期不携带可利用信息，准确率唯一真实可优化的部分是<b>组合覆盖的号码数</b>。<br>'+
-    '期望命中率 = Σ选中尾号码数/49（不受开奖波动影响的真实概率）；理论上限 = 组合必取 5 号码尾（1尾~9尾），n 档上限 = 5n/49。'+
+    '期望命中率 = Σ选中尾数号码数/49（不受开奖波动影响的真实概率）。'+
     '实测与期望的差值为样本波动，样本越小波动越大。<br>'+
-    '1尾~9尾 各有 5 个号码（各 5/49=10.20%），0尾 仅 4 个（10,20,30,40，4/49=8.16%）。'+
-    '结构优先='+(STRUCT_FIRST?'<b>开启</b>（0尾 永不进组合，期望命中率=理论上限，缺口应≈0）':'<b>关闭</b>（纯信号排序，0尾 可能入选，期望低于上限）')+'。';
+    '尾0 含 10/20/30/40 共 4 个号码（4/49=8.16%），其余 9 个尾数各含 5 个号码（5/49=10.20%）；'+
+    '理论上限 = 组合优先覆盖 5 号码尾数。'+
+    '权重优先强度 λ='+WEIGHT_LAMBDA+'：λ 越大越接近上限，但组合多样性越低。';
 }
 document.getElementById('rncToggle').addEventListener('change',e=>{
   RNC_ON=!!e.target.checked;
   if(CUR&&CUR_NAME)renderAll(CUR,CUR_NAME);   /* 全部面板按新模式重算（含策略对比面板的主策略行） */
 });
 document.getElementById('lamSel').addEventListener('change',e=>{
-  STRUCT_FIRST=parseFloat(e.target.value)?1:0;
-  if(CUR&&CUR_NAME)renderAll(CUR,CUR_NAME);   /* 结构优先开关影响所有预测/回测，需全量重算 */
+  WEIGHT_LAMBDA=parseFloat(e.target.value);
+  if(CUR&&CUR_NAME)renderAll(CUR,CUR_NAME);   /* λ 影响所有预测/回测，需全量重算 */
 });
 
 function renderAll(rows,sourceName){
   CUR=rows;CUR_NAME=sourceName;
   const latest=rows[rows.length-1];
-  const NUM_BY_Z={};
-  for(let n=1;n<=49;n++){const z=numToZodiac(n,latest.date);(NUM_BY_Z[z]=NUM_BY_Z[z]||[]).push(n);}
+  const NUM_BY_T={};
+  for(let n=1;n<=49;n++){const z=numToTail(n);(NUM_BY_T[z]=NUM_BY_T[z]||[]).push(n);}
 
   /* P17 安全：数据源字段（数据源名/日期/期号/尾数）拼入 innerHTML 前一律转义 */
   document.getElementById('dataMeta').innerHTML=
     '数据源：'+esc(sourceName)+'　样本：'+rows.length+' 期　'+esc(rows[0].date)+' ~ '+esc(latest.date)+
     '<br>最新一期：'+esc(latest.issue)+' 期（'+esc(latest.date)+'）特别号 <b>'+String(latest.t).padStart(2,'0')+'</b> → <b>'+esc(latest.z)+'</b>';
+  document.getElementById('mapYear').textContent='固定映射';   /* 尾数口径为固定映射，与年份无关 */
 
   /* 尾数映射表 */
-  document.getElementById('zodiacMap').innerHTML=ZODIACS.map(z=>
-    '<div class="zi"><b>'+z+'</b><div class="nums">'+NUM_BY_Z[z].map(n=>String(n).padStart(2,'0')).join(' ')+'</div></div>').join('');
+  document.getElementById('tailMap').innerHTML=TAILS.map(z=>
+    '<div class="zi"><b>'+z+'</b><div class="nums">'+NUM_BY_T[z].map(n=>String(n).padStart(2,'0')).join(' ')+'</div></div>').join('');
 
   /* 全量分布 */
-  const cnt={};ZODIACS.forEach(z=>cnt[z]=0);
+  const cnt={};TAILS.forEach(z=>cnt[z]=0);
   rows.forEach(r=>cnt[r.z]++);
-  const mx=Math.max.apply(null,ZODIACS.map(z=>cnt[z]))||1;
-  document.getElementById('distAll').innerHTML=ZODIACS.map(z=>
+  const mx=Math.max.apply(null,TAILS.map(z=>cnt[z]))||1;
+  document.getElementById('distAll').innerHTML=TAILS.map(z=>
     '<div class="d"><b>'+z+'</b>'+cnt[z]+'次<div class="bar"><i style="width:'+(cnt[z]/mx*100).toFixed(0)+'%"></i></div></div>').join('');
 
   /* 回测（样本不足时自适应缩短回测长度）；P14：窗口集合 = 固定 30/50/100 + 自定义近N期，按窗口缓存 */
@@ -985,16 +924,16 @@ function renderAll(rows,sourceName){
 
   /* 策略对比面板 */
   const STRATS=[
-    ['多策略集成5W50（当前采用'+(RNC_ON?'·含邻期中性校正':'·未校正')+'·结构优先='+(STRUCT_FIRST?'开':'关')+'）', (h,p,d)=>rankEnsemble(h,50,computeStats(h,50),p,d)],
-    ['反热择冷w50（集成核心成员）', h=>rankZodiacs(computeStats(h,50))],
-    ['频率w30（标准化）', h=>rankFreqWin(h,30)],
-    ['遗漏优先（遗漏/期望遗漏）', h=>rankMissDesc(h)],
+    ['多策略集成5W50（当前采用'+(RNC_ON?'·含邻期中性校正':'·未校正')+'·权重λ='+WEIGHT_LAMBDA+'）', (h,p,d)=>rankEnsemble(h,50,computeStats(h,50),p,d)],
+    ['反热择冷w50（集成核心成员）', h=>rankTails(computeStats(h,50))],
+    ['频率w30', h=>rankFreqWin(h,30)],
+    ['遗漏优先', h=>rankMissDesc(h)],
     ['连出优先', h=>rankStreakDesc(h)],
     ['马尔可夫1阶', h=>rankMarkov(h)],
-    ['结构上限（1尾~9尾，不含0尾）', (h,p,d)=>rankStatic(d)],
+    ['静态权重上限', (h,p,d)=>rankStatic(d)],
     ['旧复合热度公式', h=>rankOldComposite(h)]
   ];
-  const ceil=TRACKS.map(n=>trackCap(n)*100);   /* 各档理论上限（尾数模式 = 5n/49）：7/4/3/2/1 个尾 = 71.43/40.82/30.61/20.41/10.20 */
+  const ceil=TRACKS.map(n=>trackCap(n)*100);   /* 理论上限由 trackCap 统一给出（7尾71.43%…1尾10.20%） */
   /* 累计窗口 = 统计窗口 statN（与 stratScope 标签、BT.summary 口径三者一致；回测不足365期时即全部回测期） */
   const N=sc.statN,start=Math.max(0,rows.length-N);
   const acc={};
@@ -1010,15 +949,15 @@ function renderAll(rows,sourceName){
        det.prevZ 即 rows[t-1].z。无论 RNC_ON 与否主策略都需要 det。 */
     const det=ensembleDetail(hist,50,computeStats(hist,50),p,cur.date);
     STRATS.forEach((st,si)=>{
-      const ranked=si===0?det.ranked:st[1](hist,p,cur.date);   /* P16：传入目标期日期（尾数模式下权重恒定，参数兼容保留） */
+      const ranked=si===0?det.ranked:st[1](hist,p,cur.date);   /* 目标期日期仍按位置传入；尾数口径下权重与日期无关 */
       TRACKS.forEach(k=>{if(ranked.slice(0,k).indexOf(cur.z)>=0)acc[st[0]][k]++;});
     });
     /* 本期各策略评估完成后再推进标定器，确保标定只用到 t 之前的信息 */
-    if(RNC_ON&&t>0)ensCalib.push(det.raw[rows[t-1].z],ZODIACS.map(z=>det.raw[z]));
+    if(RNC_ON&&t>0)ensCalib.push(det.raw[rows[t-1].z],TAILS.map(z=>det.raw[z]));
     hist.push(cur);   /* P17：本期处理完后再纳入历史 */
   }
   document.getElementById('stratTable').innerHTML=
-    '<thead><tr><th class="left">策略</th>'+TRACKS.map(k=>'<th>'+k+'个尾</th>').join('')+'<th>平均偏差</th></tr></thead><tbody>'+
+    '<thead><tr><th class="left">策略</th>'+TRACKS.map(k=>'<th>'+k+'尾</th>').join('')+'<th>平均偏差</th></tr></thead><tbody>'+
     STRATS.map(st=>{
       let d=0;
       const cells=TRACKS.map((k,i)=>{
@@ -1041,7 +980,7 @@ function renderAll(rows,sourceName){
 
 /* ===== P11 多窗口对比面板·期次回看（P14：窗口集合 = 固定三档 + 用户自定义近N期） =====
    定位期次 CMP_IDX（records 下标，默认=最新一期）：
-   - 预测组合 = 以截至该期的历史 records[0..CMP_IDX] 重新生成该时点对"下一期"的各窗口预测（窗口集合由 activeWindows() 提供）；
+   - 预测尾数组 = 以截至该期的历史 records[0..CMP_IDX] 重新生成该时点对"下一期"的各窗口预测（窗口集合由 activeWindows() 提供）；
    - 连错/命中统计 = 取逐期回测 BT.rows[w] 中截至该期（行号 k）的行重算：当前连错（尾部）+ 最长连错 + 命中率与基线；
      命中率/基线的窗口 = 最近 min(STATS_WINDOW, 可用行数) 行（可用行数 = k+1，不足 STATS_WINDOW 时按实际）；
      最长连错的各档窗口 = activeWindows() + 统计窗口，长度按可用行数收缩后去重（P13-2 沿用），
@@ -1061,11 +1000,11 @@ function renderCmpPanel(){
   const isLatest=(CMP_IDX===hi), nextRec=isLatest?null:CUR[CMP_IDX+1], nextZ=nextRec?nextRec.z:null;   /* P17：历史回看时下一期已开奖，用于实开提示与 chip 命中标识 */
   /* 各"近N期"标签一律取自 cmpStatsAt 按可用行数收缩后的实际长度（P13/P14） */
   document.getElementById('cmpScope').textContent=Math.min(STATS_WINDOW,k+1); /* 同步面板标题里的统计窗口期数（≤ 全量 statN） */
-  tbl.innerHTML='<thead><tr><th style="min-width:70px;">窗口</th>'+TRACKS.map(n=>'<th>'+n+'个尾</th>').join('')+'</tr></thead><tbody>'+
+  tbl.innerHTML='<thead><tr><th style="min-width:70px;">窗口</th>'+TRACKS.map(n=>'<th>'+n+'尾</th>').join('')+'</tr></thead><tbody>'+
     activeWindows().map(w=>{
       /* P17 预测口径修正：面板语义为"该时点基于历史对下一期的预测"。
          - 定位历史期次（CMP_IDX<hi）：直接复用回测第 k+1 行存储的预测（= 对 CUR[CMP_IDX+1] 的预测，
-           与回测明细/CSV 导出逐位一致且免重算；RNC 开关或结构优先开关变化时 renderAll 会重建 WINCACHE，存储值无陈旧风险）；
+           与回测明细/CSV 导出逐位一致且免重算；RNC 开关或 λ 变化时 renderAll 会重建 WINCACHE，存储值无陈旧风险）；
          - 定位最新一期：现算，与预测卡片完全同参（RNC 参数用 rncCalib、目标日期用 nextIssueDate）；
          - k+1 行缺失的兜底：沿用原口径现算（row k 的 rncParams + 定位期日期）。 */
       const rowsW=BT.rows[w]||[],rowNext=rowsW[k+1];
@@ -1136,7 +1075,7 @@ function exportBT(){
   if(!BT)return;
   const rows=BT.rows[btWin];
   const esc=v=>'"'+String(v).replace(/"/g,'""')+'"';
-  const lines=['日期,期号,特别号,真实尾数,'+TRACKS.map(n=>n+'个尾预测,'+n+'个尾命中').join(',')];
+  const lines=['日期,期号,特别号,真实尾数,'+TRACKS.map(n=>n+'尾预测,'+n+'尾命中').join(',')];
   rows.forEach(r=>{
     lines.push([r.date,r.issue,String(r.t).padStart(2,'0'),r.actual,
       TRACKS.map(n=>esc(r.preds[n].join(' '))+(r.hits[n]?'中':'×')).join(',')].join(','));
@@ -1175,10 +1114,10 @@ function renderBT(){
   document.getElementById('btScopeNote').innerHTML=
     statSentence+tableSentence+'<br>每期预测仅使用该期之前的历史数据，滚动更新。'+customNote;
   document.getElementById('btSum').innerHTML=TRACKS.map(n=>
-    '<div class="sum-box"><div class="t">'+n+'个尾命中</div><div class="v '+(sm[n].hitRate>=sm[n].base?'hit':'')+'">'+
+    '<div class="sum-box"><div class="t">'+n+'尾命中</div><div class="v '+(sm[n].hitRate>=sm[n].base?'hit':'')+'">'+
     sm[n].hits+' / '+sm[n].total+'（'+(sm[n].hitRate*100).toFixed(1)+'%）</div><div class="b">随机基线 '+(sm[n].base*100).toFixed(1)+'%</div></div>').join('');
   document.getElementById('btTable').innerHTML=
-    '<thead><tr><th>日期</th><th>期号</th><th>特号</th><th>真实尾数</th>'+TRACKS.map(n=>'<th>'+n+'个尾预测</th><th>中</th>').join('')+'</tr></thead><tbody>'+
+    '<thead><tr><th>日期</th><th>期号</th><th>特号</th><th>真实尾数</th>'+TRACKS.map(n=>'<th>'+n+'尾预测</th><th>中</th>').join('')+'</tr></thead><tbody>'+
     rows.map(r=>'<tr><td class="muted">'+esc(r.date)+'</td><td>'+esc(r.issue)+'</td><td>'+String(r.t).padStart(2,'0')+'</td><td class="zname">'+esc(r.actual)+'</td>'+
       TRACKS.map(n=>'<td class="zset">'+r.preds[n].join(' ')+'</td><td><span class="mark '+(r.hits[n]?'h':'m')+'">'+(r.hits[n]?'中':'×')+'</span></td>').join('')+'</tr>').join('')+
     '</tbody>';
@@ -1267,7 +1206,7 @@ document.getElementById('cmpTable').addEventListener('click',e=>{
   if(!preds||!TRACKS.some(n=>preds[n]&&preds[n].length)){setStatus('暂无可复制的预测数据，请先加载数据',true);return;}
   /* 复制文本格式：首行窗口名，随后每行“N尾\t尾数1 尾数2 …”（尾数间空格分隔，轨道顺序 7→4→3→2→1） */
   const lines=['近'+fwNum(w)+'期预测'];
-  TRACKS.forEach(n=>lines.push(fwNum(n)+'个尾\t'+preds[n].join(' ')));
+  TRACKS.forEach(n=>lines.push(fwNum(n)+'尾\t'+preds[n].join(' ')));
   const text=lines.join('\n');
   const done=()=>{ /* 成功反馈：直接改被点按钮文字，1.2 秒后还原，不触发整表重渲染 */
     btn.textContent='已复制✓';btn.classList.add('ok');
@@ -1460,15 +1399,14 @@ document.getElementById('btExport').addEventListener('click',exportBT);
 
 /* 初始空状态：等待用户选择开奖记录文件（本系统不内置任何数据） */
 function renderEmptyState(){
-  const t=new Date();
-  const ds=t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0');
-  const NUM_BY_Z={};
-  for(let n=1;n<=49;n++){const z=numToZodiac(n,ds);(NUM_BY_Z[z]=NUM_BY_Z[z]||[]).push(n);}
+  const NUM_BY_T={};
+  for(let n=1;n<=49;n++){const z=numToTail(n);(NUM_BY_T[z]=NUM_BY_T[z]||[]).push(n);}
   document.getElementById('dataMeta').innerHTML='<b style="color:var(--hit);">未加载数据</b>　请点击上方"选择开奖记录文本"（需约130期以上）';
-  document.getElementById('zodiacMap').innerHTML=ZODIACS.map(z=>
-    '<div class="zi"><b>'+z+'</b><div class="nums">'+NUM_BY_Z[z].map(n=>String(n).padStart(2,'0')).join(' ')+'</div></div>').join('');
+  document.getElementById('mapYear').textContent='固定映射';   /* 尾数口径为固定映射，与年份无关 */
+  document.getElementById('tailMap').innerHTML=TAILS.map(z=>
+    '<div class="zi"><b>'+z+'</b><div class="nums">'+NUM_BY_T[z].map(n=>String(n).padStart(2,'0')).join(' ')+'</div></div>').join('');
   document.getElementById('distAll').innerHTML='<div class="muted small" style="padding:6px 2px;">等待加载数据…</div>';
-  document.getElementById('predGrid').innerHTML='<div class="win-card muted small">等待加载数据…加载后此处显示多窗口统计与 7/4/3/2/1 个尾组合预测。</div>';
+  document.getElementById('predGrid').innerHTML='<div class="win-card muted small">等待加载数据…加载后此处显示多窗口统计与 7/4/3/2/1 尾组合预测。</div>';
   document.getElementById('predWinTitle').textContent='四窗口';   /* P14：空状态下按默认 30/50/100/200 显示为四窗口 */
   document.getElementById('stratTable').innerHTML='<tbody><tr><td class="muted empty-cell" style="padding:14px;">等待加载数据…</td></tr></tbody>';
   document.getElementById('cmpTable').innerHTML='<tbody><tr><td class="muted empty-cell" style="padding:14px;">等待加载数据…</td></tr></tbody>';
