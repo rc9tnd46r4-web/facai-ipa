@@ -1,0 +1,15 @@
+[PASS] t0 320x844 adapt ready
+[PASS] t0 320x844 data loaded
+[PASS] t0 320x844 doc width == viewport :: doc=320 vp=320 body=320
+[PASS] t0 320x844 topbar two rows :: btn=4
+[PASS] t0 320x844 buttons equal width :: [71,71,71,71]
+[PASS] t0 320x844 buttons not truncated
+[PASS] t0 320x844 updateBtn hidden
+[PASS] t0 320x844 matrix ok :: cells=144 issues=[]
+[PASS] t0 320x844 matrix 12col cnt hidden :: cnt=0
+[PASS] t0 320x844 bar chart inside container :: []
+[PASS] t0 320x844 tables scrollable :: []
+[PASS] t0 320x844 no wide block overflow
+[PASS] t0 320x844 srcBuildStages 2 levels
+[PASS] t0 320x844 emoji guard precise
+[PASS] t0 320x844 zero proxy request ::  blocked=0
